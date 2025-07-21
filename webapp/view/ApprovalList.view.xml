@@ -1,0 +1,128 @@
+<mvc:View controllerName="com.bmc.hcm.drf.zhcmuxdrf.controller.ApprovalList" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:semantic="sap.f.semantic"
+	xmlns:footerbar="sap.ushell.ui.footerbar" busy="{approvalListView>/busy}" busyIndicatorDelay="100">
+	<Page showFooter="true" showHeader="true" floatingFooter="true" showNavButton="true" navButtonPress="onNavBack"
+		title="{i18n>EMPLOYEE_REQUEST_FORM_LIST}" class="erfListPage">
+		<IconTabBar class="sapUiResponsiveContentPadding">
+			<items>
+				<IconTabFilter icon="sap-icon://pending" iconColor="Negative" text="{i18n>REQUESTS_PENDING}" key="info">
+					<content>
+						<Table id="idApprovalListTable" width="auto" class="erfTable"
+							items="{ path: '/EmployeeRequestFormSet',filters : [ { path : 'Erfap', operator : 'EQ', value1 : 'REQUESTS_ON_ME'}, { path : 'Erfsf', operator : 'EQ', value1 : 'ALL'} ] }"
+							noDataText="{approvalListView>/tableNoDataText}" busyIndicatorDelay="{approvalListView>/tableBusyDelay}" growing="true"
+							growingScrollToLoad="true" updateFinished="onUpdateFinished" updateStarted="onUpdateStarted" inset="false">
+							<headerToolbar>
+								<Toolbar>
+									<ToolbarSpacer/>
+									<SearchField id="searchField" tooltip="{i18n>REQUEST_SEARCH_TOOLTIP}" search="onSearch"
+										width="{= ${device>/system/phone} ? '100%' : '50%' }"></SearchField>
+								</Toolbar>
+							</headerToolbar>
+							<infoToolbar>
+								<Toolbar>
+									<Title id="idApprovalListTableHeader" text="{approvalListView>/requestListTableTitle}"/>
+								</Toolbar>
+							</infoToolbar>
+							<columns>
+								<Column id="idRequestNumberColumn">
+									<Text text="{i18n>ERF_NUMBER}"/>
+								</Column>
+								<Column id="idPositionColumn1">
+									<Text text="Pozisyon"/>
+								</Column>
+								<Column id="idRequestKapsam2">
+									<Text text="Kadro kapsamı"/>
+								</Column>
+								<Column id="idRequestReasonColumn">
+									<Text text="{i18n>REQUEST_REASON}"/>
+								</Column>
+								<Column id="idRequestOwnerColumn" demandPopin="true">
+									<Text text="{i18n>REQUEST_OWNER}"/>
+								</Column>
+								<Column id="idRequestDateColumn" minScreenWidth="Tablet" demandPopin="true">
+									<Text text="{i18n>REQUEST_DATE}"/>
+								</Column>
+								<Column id="idRequestStatusColumn" minScreenWidth="Tablet" demandPopin="true">
+									<Text text="{i18n>REQUEST_STATUS}"/>
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem type="Navigation" press="onRequestDetail">
+									<cells>
+										<ObjectIdentifier title="{Erfno}"/>
+										<Text text="{= ${Nopln} ? ${Plaft} : ${Plstx} }"/>
+										<Text text="{Stasx}"/>
+										<Text text="{Erfrx}"/>
+										<Text text="{Rqowe}" wrapping="true"/>
+										<Text
+											text="{ path: 'Rqdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} } - { path: 'Rqtim', type: 'sap.ui.model.odata.type.Time', formatOptions: { pattern:'HH:mm'} }"/>
+										<Text text="{ parts: [ {path: 'Erfsx' }, {path: 'Erfsy' }], formatter: '.formatter.getStatusText' }"/>
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</content>
+				</IconTabFilter>
+				<IconTabFilter icon="sap-icon://accept" key="attachments" iconColor="Positive" text="{i18n>REQUESTS_OPERATION}">
+					<content>
+						<Table id="idApprovalListTableAPP" width="auto" class="erfTable"
+							items="{ path: '/EmployeeRequestFormSet',filters : [ { path : 'Erfap', operator : 'EQ', value1 : 'REQUESTS_ON_ME'}, { path : 'Erfsf', operator : 'EQ', value1 : 'APP'} ] }"
+							noDataText="{approvalListView>/tableNoDataText}" busyIndicatorDelay="{approvalListView>/tableBusyDelay}" growing="true"
+							growingScrollToLoad="true" inset="false">
+							<headerToolbar>
+								<Toolbar>
+									<ToolbarSpacer/>
+									<DateRangeSelection dateValue="{path:'approvalListView>/FBegda',formatOptions:{ UTC: true}}" placeholder="Tarih Aralığı İle Filtrele"
+										secondDateValue="{path:'approvalListView>/FEndda' ,formatOptions:{ UTC: true}}" change="onFilterDateChange" width="30%"/>
+									<SearchField tooltip="{i18n>REQUEST_SEARCH_TOOLTIP}" search="onSearchApp" width="{= ${device>/system/phone} ? '100%' : '30%' }"
+										value="{path:'approvalListView>/FSearch'}"></SearchField>
+								</Toolbar>
+							</headerToolbar>
+							<infoToolbar>
+								<Toolbar>
+									<Title text="{i18n>REQUESTS_WAITING_OPERATION}"/>
+								</Toolbar>
+							</infoToolbar>
+							<columns>
+								<Column >
+									<Text text="{i18n>ERF_NUMBER}"/>
+								</Column>
+								<Column >
+									<Text text="Pozisyon"/>
+								</Column>
+								<Column id="idRequestKapsam3">
+									<Text text="Kadro kapsamı"/>
+								</Column>
+								<Column >
+									<Text text="{i18n>REQUEST_REASON}"/>
+								</Column>
+								<Column demandPopin="true">
+									<Text text="{i18n>REQUEST_OWNER}"/>
+								</Column>
+								<Column minScreenWidth="Tablet" demandPopin="true">
+									<Text text="{i18n>REQUEST_DATE}"/>
+								</Column>
+								<Column minScreenWidth="Tablet" demandPopin="true">
+									<Text text="{i18n>REQUEST_STATUS}"/>
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem type="Navigation" press="onRequestDetailApp">
+									<cells>
+										<ObjectIdentifier title="{Erfno}"/>
+										<Text text="{= ${Nopln} ? ${Plaft} : ${Plstx} }"/>
+										<Text text="{Stasx}"/>
+										<Text text="{Erfrx}"/>
+										<Text text="{Rqowe}" wrapping="true"/>
+										<Text
+											text="{ path: 'Rqdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} } - { path: 'Rqtim', type: 'sap.ui.model.odata.type.Time', formatOptions: { pattern:'HH:mm'} }"/>
+										<Text text="{ parts: [ {path: 'Erfsx' }, {path: 'Erfsy' }], formatter: '.formatter.getStatusText' }"/>
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</content>
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+	</Page>
+</mvc:View>

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="ZHCM_UX_DRF_SRV" xml:lang="tr" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="ApplicationAuthorization" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Uname"/>
+                </Key>
+                <Property Name="Uname" Type="Edm.String" Nullable="false" MaxLength="12" sap:unicode="false" sap:label="Kullanıcı"/>
+                <Property Name="DrfcrApp" Type="Edm.Boolean" sap:unicode="false" sap:label="BTF oluşturma uygula"/>
+                <Property Name="DrfapApp" Type="Edm.Boolean" sap:unicode="false" sap:label="BTF onay uygulaması"/>
+                <Property Name="DrfrcApp" Type="Edm.Boolean" sap:unicode="false" sap:label="BTF işe alım uzmanı"/>
+                <Property Name="DrfraApp" Type="Edm.Boolean" sap:unicode="false" sap:label="BTF işe alım yönetic"/>
+                <Property Name="DrfclApp" Type="Edm.Boolean" sap:unicode="false" sap:label="Kapanan Personel Tal"/>
+            </EntityType>
+            <EntityType Name="DocumentRequestForm" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Drfid"/>
+                </Key>
+                <Property Name="Drfid" Type="Edm.String" Nullable="false" MaxLength="32" sap:unicode="false" sap:label="BTF no"/>
+                <Property Name="Drfsd" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="BTF Açıklaması"/>
+                <Property Name="Drfno" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="Form numarası"/>
+                <Property Name="Drfst" Type="Edm.String" MaxLength="3" sap:unicode="false" sap:label="BTF durumu"/>
+                <Property Name="Drfss" Type="Edm.String" MaxLength="3" sap:unicode="false" sap:label="BTF alt durumu"/>
+                <Property Name="Drfpt" Type="Edm.String" MaxLength="3" sap:unicode="false" sap:label="BTF süreç türü"/>
+                <Property Name="Bukrs" Type="Edm.String" MaxLength="4" sap:unicode="false" sap:label="Şirket ayrımı"/>
+                <Property Name="Drfrs" Type="Edm.String" MaxLength="1" sap:unicode="false" sap:label="Talep gerekçesi"/>
+                <Property Name="Drfrt" Type="Edm.String" MaxLength="2" sap:unicode="false" sap:label="Belge talep türü"/>
+                <Property Name="Drfbl" Type="Edm.String" MaxLength="2" sap:unicode="false" sap:label="Belge Türü"/>
+                <Property Name="Drfbn" Type="Edm.String" MaxLength="60" sap:unicode="false" sap:label="Belge adı"/>
+                <Property Name="Drfcn" Type="Edm.String" MaxLength="60" sap:unicode="false" sap:label="Kurum adı"/>
+                <Property Name="Drfdt" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="Belge tarihi"/>
+                <Property Name="Drfgc" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="Geçerlilik tar"/>
+                <Property Name="Drfnt" Type="Edm.String" MaxLength="100" sap:unicode="false" sap:label="not"/>
+                <Property Name="Rqown" Type="Edm.String" MaxLength="12" sap:unicode="false" sap:label="Talep sahibi"/>
+                <Property Name="Rqdat" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="Talep tarihi"/>
+                <Property Name="Rqtim" Type="Edm.Time" Precision="0" sap:unicode="false" sap:label="Talep saati"/>
+                <Property Name="Lscdt" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="Tarih"/>
+                <Property Name="Lsctm" Type="Edm.Time" Precision="0" sap:unicode="false" sap:label="Saat"/>
+                <Property Name="Lscus" Type="Edm.String" MaxLength="12" sap:unicode="false" sap:label="Değiştiren"/>
+                <NavigationProperty Name="DocumentRequestPrintOut" Relationship="ZHCM_UX_DRF_SRV.FormToPrintOut" FromRole="FromRole_FormToPrintOut" ToRole="ToRole_FormToPrintOut"/>
+                <NavigationProperty Name="DocumentRequestHistorySet" Relationship="ZHCM_UX_DRF_SRV.FormToHistory" FromRole="FromRole_FormToHistory" ToRole="ToRole_FormToHistory"/>
+                <NavigationProperty Name="FormActionsSet" Relationship="ZHCM_UX_DRF_SRV.FormToActions" FromRole="FromRole_FormToActions" ToRole="ToRole_FormToActions"/>
+                <NavigationProperty Name="DocumentRequestEmployeeSet" Relationship="ZHCM_UX_DRF_SRV.FormToEmployee" FromRole="FromRole_FormToEmployee" ToRole="ToRole_FormToEmployee"/>
+            </EntityType>
+            <EntityType Name="DocumentRequestHistory" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Drfid"/>
+                    <PropertyRef Name="DrfstOld"/>
+                    <PropertyRef Name="DrfssOld"/>
+                    <PropertyRef Name="DrfstNew"/>
+                    <PropertyRef Name="DrfssNew"/>
+                    <PropertyRef Name="Chnby"/>
+                    <PropertyRef Name="Actdt"/>
+                    <PropertyRef Name="Acttm"/>
+                </Key>
+                <Property Name="Drfid" Type="Edm.String" Nullable="false" MaxLength="32" sap:unicode="false" sap:label="BTF no"/>
+                <Property Name="DrfstOld" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="BTF durumu"/>
+                <Property Name="DrfssOld" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="BTF alt durumu"/>
+                <Property Name="DrfstNew" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="BTF durumu"/>
+                <Property Name="DrfssNew" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="BTF alt durumu"/>
+                <Property Name="Chnby" Type="Edm.String" Nullable="false" MaxLength="12" sap:unicode="false" sap:label="Kullanıcı adı"/>
+                <Property Name="Actdt" Type="Edm.DateTime" Nullable="false" Precision="7" sap:unicode="false" sap:label="İşlem tarihi"/>
+                <Property Name="Acttm" Type="Edm.Time" Nullable="false" Precision="0" sap:unicode="false" sap:label="İşlem zamanı"/>
+                <Property Name="Stcnt" Type="Edm.String" MaxLength="1000" sap:unicode="false" sap:label="Durum değişikliği no"/>
+            </EntityType>
+            <EntityType Name="DocumentRequestPrintOut" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Drfid"/>
+                </Key>
+                <Property Name="Drfid" Type="Edm.String" Nullable="false" MaxLength="32" sap:unicode="false" sap:label="BTF no"/>
+                <Property Name="Drfcn" Type="Edm.Binary" sap:unicode="false" sap:label="İçerik"/>
+                <Property Name="Mimty" Type="Edm.String" sap:unicode="false" sap:label="Dosya türü"/>
+            </EntityType>
+            <EntityType Name="FormActions" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Drfid"/>
+                    <PropertyRef Name="Drfbt"/>
+                </Key>
+                <Property Name="Drfid" Type="Edm.String" Nullable="false" MaxLength="32" sap:unicode="false" sap:label="BTF no"/>
+                <Property Name="Drfbt" Type="Edm.String" Nullable="false" MaxLength="15" sap:unicode="false" sap:label="Düğme kodu"/>
+                <Property Name="Drfbx" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="Düğme metni"/>
+                <Property Name="DrfstN" Type="Edm.String" MaxLength="3" sap:unicode="false" sap:label="BTF durumu"/>
+                <Property Name="DrfsxN" Type="Edm.String" MaxLength="50" sap:unicode="false" sap:label="BTF durum metni"/>
+                <Property Name="DrfssN" Type="Edm.String" MaxLength="3" sap:unicode="false" sap:label="BTF alt durumu"/>
+                <Property Name="DrfsyN" Type="Edm.String" MaxLength="50" sap:unicode="false" sap:label="BTF alt durum metni"/>
+                <Property Name="Drfbi" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="Düğme ikonu"/>
+                <Property Name="Drfbs" Type="Edm.String" MaxLength="1" sap:unicode="false" sap:label="Düğme özelliği"/>
+                <Property Name="Noact" Type="Edm.Boolean" sap:unicode="false" sap:label="Süreç sahibi yok"/>
+            </EntityType>
+            <EntityType Name="ReturnMessage" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Type"/>
+                    <PropertyRef Name="Id"/>
+                    <PropertyRef Name="Number"/>
+                </Key>
+                <Property Name="Type" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="İleti tipi"/>
+                <Property Name="Id" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Message Class"/>
+                <Property Name="Number" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="İleti numarası"/>
+                <Property Name="Message" Type="Edm.String" MaxLength="220" sap:unicode="false" sap:label="İleti metni"/>
+            </EntityType>
+            <EntityType Name="UsedPosition" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Drfid"/>
+                    <PropertyRef Name="Plans"/>
+                </Key>
+                <Property Name="Drfid" Type="Edm.String" Nullable="false" MaxLength="32" sap:unicode="false" sap:label="BTF no"/>
+                <Property Name="Drfno" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="Form numarası"/>
+                <Property Name="Plans" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="Pozisyon"/>
+                <Property Name="Plstx" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="Tanım"/>
+                <Property Name="Rqown" Type="Edm.String" MaxLength="12" sap:unicode="false" sap:label="Talep sahibi"/>
+                <Property Name="Rqowp" Type="Edm.String" MaxLength="8" sap:unicode="false" sap:label="Personel no."/>
+                <Property Name="Rqowe" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="Çlşn/bşv.adı"/>
+                <Property Name="Drfst" Type="Edm.String" MaxLength="3" sap:unicode="false" sap:label="BTF durumu"/>
+                <Property Name="Drfss" Type="Edm.String" MaxLength="3" sap:unicode="false" sap:label="BTF alt durumu"/>
+            </EntityType>
+            <EntityType Name="User" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Uname"/>
+                </Key>
+                <Property Name="Isaut" Type="Edm.Boolean" sap:unicode="false" sap:label="DOĞRU"/>
+                <Property Name="IsautDrfoa" Type="Edm.Boolean" sap:unicode="false" sap:label="DOĞRU"/>
+                <Property Name="IsautDrfaa" Type="Edm.Boolean" sap:unicode="false" sap:label="DOĞRU"/>
+                <Property Name="Uname" Type="Edm.String" Nullable="false" MaxLength="12" sap:unicode="false" sap:label="Kullanıcı adı"/>
+                <Property Name="Pernr" Type="Edm.String" MaxLength="8" sap:unicode="false" sap:label="Personel no."/>
+                <Property Name="Ename" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="Çlşn/bşv.adı"/>
+                <Property Name="Bukrs" Type="Edm.String" MaxLength="4" sap:unicode="false" sap:label="Şirket ayrımı"/>
+            </EntityType>
+            <EntityType Name="ValueHelp" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Drfvh"/>
+                    <PropertyRef Name="Fldky"/>
+                </Key>
+                <Property Name="Drfvh" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Arama yardımı" sap:updatable="false"/>
+                <Property Name="Fldky" Type="Edm.String" Nullable="false" sap:unicode="false" sap:label="Alan değeri"/>
+                <Property Name="Fldvl" Type="Edm.String" sap:unicode="false" sap:label="Alan yardımı"/>
+                <Property Name="Selky" Type="Edm.String" sap:unicode="false" sap:label="Arama parametresi"/>
+            </EntityType>
+            <EntityType Name="DocumentRequestEmployee" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Drfid"/>
+                    <PropertyRef Name="Pernr"/>
+                </Key>
+                <Property Name="Drfid" Type="Edm.String" Nullable="false" MaxLength="32" sap:unicode="false" sap:label="BTF no"/>
+                <Property Name="Pernr" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="Personel no."/>
+                <Property Name="Drfno" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="Form numarası"/>
+                <Property Name="Drfst" Type="Edm.String" MaxLength="3" sap:unicode="false" sap:label="BTF durumu"/>
+                <Property Name="Drfss" Type="Edm.String" MaxLength="3" sap:unicode="false" sap:label="BTF alt durumu"/>
+                <Property Name="Drfpt" Type="Edm.String" MaxLength="3" sap:unicode="false" sap:label="BTF süreç türü"/>
+                <Property Name="Bukrs" Type="Edm.String" MaxLength="4" sap:unicode="false" sap:label="Şirket ayrımı"/>
+                <Property Name="Erfsd" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="PTF Açıklaması"/>
+                <Property Name="Drfrs" Type="Edm.String" MaxLength="1" sap:unicode="false" sap:label="Talep gerekçesi"/>
+                <Property Name="Drfrt" Type="Edm.String" MaxLength="2" sap:unicode="false" sap:label="Belge talep türü"/>
+                <Property Name="Drfbl" Type="Edm.String" MaxLength="2" sap:unicode="false" sap:label="Belge Türü"/>
+                <Property Name="Drfbn" Type="Edm.String" MaxLength="60" sap:unicode="false" sap:label="Belge adı"/>
+                <Property Name="Drfcn" Type="Edm.String" MaxLength="60" sap:unicode="false" sap:label="Kurum adı"/>
+                <Property Name="Drfdt" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="Belge tarihi"/>
+                <Property Name="Drfgc" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="Geçerlilik tar"/>
+                <Property Name="Drfnt" Type="Edm.String" MaxLength="100" sap:unicode="false" sap:label="not"/>
+                <Property Name="Leaem" Type="Edm.String" MaxLength="8" sap:unicode="false" sap:label="Ayrılan çalışan"/>
+                <Property Name="Trnem" Type="Edm.String" MaxLength="8" sap:unicode="false" sap:label="Transfer olan çalışa"/>
+                <Property Name="Cntty" Type="Edm.String" MaxLength="1" sap:unicode="false" sap:label="Sözleşme türü"/>
+                <Property Name="Cnted" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="Sözleşme bitiş tarih"/>
+                <Property Name="Mngps" Type="Edm.Boolean" sap:unicode="false" sap:label="Müdür ve üstü pozisy"/>
+                <Property Name="Nopln" Type="Edm.Boolean" sap:unicode="false" sap:label="Pozisyon yapıda yok"/>
+                <Property Name="Plans" Type="Edm.String" MaxLength="8" sap:unicode="false" sap:label="Pozisyon"/>
+                <Property Name="Plaft" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="Tanım"/>
+                <Property Name="Orgeh" Type="Edm.String" MaxLength="8" sap:unicode="false" sap:label="Org.birimi"/>
+                <Property Name="Stell" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="Karakter alanı uzunluğu 10"/>
+                <Property Name="Rqown" Type="Edm.String" MaxLength="12" sap:unicode="false" sap:label="Talep sahibi"/>
+                <Property Name="Rqdat" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="Talep tarihi"/>
+                <Property Name="Rqtim" Type="Edm.Time" Precision="0" sap:unicode="false" sap:label="Talep saati"/>
+                <Property Name="Lscdt" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="Tarih"/>
+                <Property Name="Lsctm" Type="Edm.Time" Precision="0" sap:unicode="false" sap:label="Saat"/>
+                <Property Name="Lscus" Type="Edm.String" MaxLength="12" sap:unicode="false" sap:label="Değiştiren"/>
+            </EntityType>
+            <ComplexType Name="Return">
+                <Property Name="Type" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="İleti tipi" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Id" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Message Class" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Number" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="İleti numarası" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Message" Type="Edm.String" Nullable="false" MaxLength="220" sap:label="İleti metni" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </ComplexType>
+            <Association Name="FormToHistory" sap:content-version="1">
+                <End Type="ZHCM_UX_DRF_SRV.DocumentRequestForm" Multiplicity="1" Role="FromRole_FormToHistory"/>
+                <End Type="ZHCM_UX_DRF_SRV.DocumentRequestHistory" Multiplicity="*" Role="ToRole_FormToHistory"/>
+            </Association>
+            <Association Name="FormToPrintOut" sap:content-version="1">
+                <End Type="ZHCM_UX_DRF_SRV.DocumentRequestForm" Multiplicity="1" Role="FromRole_FormToPrintOut"/>
+                <End Type="ZHCM_UX_DRF_SRV.DocumentRequestPrintOut" Multiplicity="1" Role="ToRole_FormToPrintOut"/>
+            </Association>
+            <Association Name="FormToEmployee" sap:content-version="1">
+                <End Type="ZHCM_UX_DRF_SRV.DocumentRequestForm" Multiplicity="1" Role="FromRole_FormToEmployee"/>
+                <End Type="ZHCM_UX_DRF_SRV.DocumentRequestEmployee" Multiplicity="*" Role="ToRole_FormToEmployee"/>
+            </Association>
+            <Association Name="FormToActions" sap:content-version="1">
+                <End Type="ZHCM_UX_DRF_SRV.DocumentRequestForm" Multiplicity="1" Role="FromRole_FormToActions"/>
+                <End Type="ZHCM_UX_DRF_SRV.FormActions" Multiplicity="*" Role="ToRole_FormToActions"/>
+            </Association>
+            <EntityContainer Name="ZHCM_UX_DRF_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="ApplicationAuthorizationSet" EntityType="ZHCM_UX_DRF_SRV.ApplicationAuthorization" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="DocumentRequestFormSet" EntityType="ZHCM_UX_DRF_SRV.DocumentRequestForm" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="DocumentRequestHistorySet" EntityType="ZHCM_UX_DRF_SRV.DocumentRequestHistory" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="DocumentRequestPrintOutSet" EntityType="ZHCM_UX_DRF_SRV.DocumentRequestPrintOut" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="FormActionsSet" EntityType="ZHCM_UX_DRF_SRV.FormActions" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="ReturnMessageSet" EntityType="ZHCM_UX_DRF_SRV.ReturnMessage" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="UsedPositionSet" EntityType="ZHCM_UX_DRF_SRV.UsedPosition" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="UserSet" EntityType="ZHCM_UX_DRF_SRV.User" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="ValueHelpSet" EntityType="ZHCM_UX_DRF_SRV.ValueHelp" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="DocumentRequestEmployeeSet" EntityType="ZHCM_UX_DRF_SRV.DocumentRequestEmployee" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <AssociationSet Name="FormToHistorySet" Association="ZHCM_UX_DRF_SRV.FormToHistory" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="DocumentRequestFormSet" Role="FromRole_FormToHistory"/>
+                    <End EntitySet="DocumentRequestHistorySet" Role="ToRole_FormToHistory"/>
+                </AssociationSet>
+                <AssociationSet Name="FormToActionsSet" Association="ZHCM_UX_DRF_SRV.FormToActions" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="DocumentRequestFormSet" Role="FromRole_FormToActions"/>
+                    <End EntitySet="FormActionsSet" Role="ToRole_FormToActions"/>
+                </AssociationSet>
+                <AssociationSet Name="FormToEmployeeSet" Association="ZHCM_UX_DRF_SRV.FormToEmployee" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="DocumentRequestFormSet" Role="FromRole_FormToEmployee"/>
+                    <End EntitySet="DocumentRequestEmployeeSet" Role="ToRole_FormToEmployee"/>
+                </AssociationSet>
+                <AssociationSet Name="FormToPrintOutSet" Association="ZHCM_UX_DRF_SRV.FormToPrintOut" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="DocumentRequestFormSet" Role="FromRole_FormToPrintOut"/>
+                    <End EntitySet="DocumentRequestPrintOutSet" Role="ToRole_FormToPrintOut"/>
+                </AssociationSet>
+                <FunctionImport Name="GetNewDocReqDefaultActions" ReturnType="Collection(ZHCM_UX_DRF_SRV.FormActions)" EntitySet="FormActionsSet" m:HttpMethod="GET"/>
+                <FunctionImport Name="GetNewDocReqDefaults" ReturnType="ZHCM_UX_DRF_SRV.DocumentRequestForm" EntitySet="DocumentRequestFormSet" m:HttpMethod="GET"/>
+                <FunctionImport Name="SetDocReqApprover" ReturnType="ZHCM_UX_DRF_SRV.Return" m:HttpMethod="POST">
+                    <Parameter Name="Pernr" Type="Edm.String" Mode="In" MaxLength="8"/>
+                    <Parameter Name="Drfid" Type="Edm.String" Mode="In" MaxLength="32"/>
+                </FunctionImport>
+                <FunctionImport Name="SetOpenOrClose" ReturnType="ZHCM_UX_DRF_SRV.Return" m:HttpMethod="POST" sap:label="DRF aç kapa">
+                    <Parameter Name="Drfid" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Drfst" Type="Edm.String" Mode="In"/>
+                </FunctionImport>
+            </EntityContainer>
+            <atom:link rel="self" href="https://bmcfioridev.bmc.com.tr:44300/sap/opu/odata/sap/ZHCM_UX_DRF_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="https://bmcfioridev.bmc.com.tr:44300/sap/opu/odata/sap/ZHCM_UX_DRF_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>
