@@ -2219,7 +2219,6 @@ sap.ui.define(
             });
         },
 
-        // EmployeeSearch fragment'ı için kapat butonu
         onCloseButtonEmployeePress: function (oEvent) {
             if (this._oEmployeeSearchDialog) {
                 this._oEmployeeSearchDialog.close();
