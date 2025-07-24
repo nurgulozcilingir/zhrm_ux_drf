@@ -27,7 +27,7 @@
                         </f:FormElement>
                         <f:FormElement label="{i18n>DOCUMENT_NAME}">
                             <f:fields>
-                                <Input value="{employeeRequestView>/request/Drfbn}">
+                                <Input value="{employeeRequestView>/request/Drfbn}" required="true">
                                 </Input>
                             </f:fields>
                         </f:FormElement>
@@ -40,21 +40,11 @@
                                     placeholder="Seçiniz..." />
                             </f:fields>
                         </f:FormElement>
-                        <!-- <f:FormElement label="Pozisyon" visible="{= !${employeeRequestView>/request/Nopln} }">
-                            <f:fields>
-                                <Input value="{ parts: [{ path: 'employeeRequestView>/request/Plans' }, { path: 'employeeRequestView>/request/Plstx'}], formatter: '.formatter.convertZeroObjectNumber'}" required="{= !${employeeRequestView>/request/Nopln} }" enabled="{= !${employeeRequestView>/request/Nopln} }" valueHelpOnly="true" valueHelpRequest="onPositionValueRequest" showValueHelp="true"/>
-                                <Button icon="sap-icon://reset" press="onResetPosition" type="Reject" tooltip="{i18n>RESET_FIELD}" enabled="{= !${employeeRequestView>/request/Nopln} }">
-                                    <layoutData>
-                                        <l:GridData span="XL1 L1 M1 S3"/>
-                                    </layoutData>
-                                </Button>
-                            </f:fields>
-                        </f:FormElement> -->
                     </f:formElements>
                 </f:FormContainer>
             </f:formContainers>
         </f:Form>
-        <Table id="idEmployeeRequestChangeTable" width="auto" class="erfTable" items="{employeeRequestView>/RequestTable}" noDataText="Veri bulunamadı" busyIndicatorDelay="0" growing="true" growingScrollToLoad="true" inset="false">
+        <Table id="idEmployeeRequestChangeTable"  class="erfTable centeredTable" items="{employeeRequestView>/RequestTable}" noDataText="Veri bulunamadı" busyIndicatorDelay="0" growing="true" growingScrollToLoad="true" inset="false" width="95%">
             <headerToolbar>
                 <Toolbar>
                     <ToolbarSpacer/>

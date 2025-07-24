@@ -137,8 +137,7 @@
         "viewPath": "com.bmc.hcm.drf.zhcmuxdrf.view",
         "controlAggregation": "pages",
         "controlId": "app",
-        "clearControlAggregation": false,
-        "fullWidth": true
+        "clearControlAggregation": false
       },
 
       "routes": [
@@ -200,6 +199,9 @@
           "title": "{i18n>EMPLOYEE_REQUEST_FORM_DETAIL}"
         }
       }
+    },
+    "config": {
+      "fullWidth": true
     },
     "rootView": {
       "viewName": "com.bmc.hcm.drf.zhcmuxdrf.view.App",

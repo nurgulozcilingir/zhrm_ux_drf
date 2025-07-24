@@ -18,7 +18,23 @@
     margin-left: auto!important;
     margin-right: auto!important
 }
-
+.erfMainPage .sapMPageEnableScrolling::after {
+    content: "";
+    background: url(../images/background.png) center/cover no-repeat !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100%; 
+    z-index: -1; 
+   opacity: 0.6;
+}
+.centeredTable {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    float: none !important;
+    display: block !important;
+}
 .erfPageBackButton,
 .erfPageBackButtonLight {
     display: flex;

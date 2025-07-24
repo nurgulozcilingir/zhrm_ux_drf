@@ -1,5 +1,6 @@
 <core:FragmentDefinition xmlns="sap.m"
-    xmlns:core="sap.ui.core">
+    xmlns:core="sap.ui.core"
+    xmlns:cd="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
     <Dialog id="idEmployeeSearchDialog" title="Personel Seçimi" draggable="true" resizable="true" contentWidth="500px" contentHeight="500px">
         <VBox>
             <Table id="idListEmployeeTable" items="{employeeRequestView>/List}" mode="MultiSelect" selectionChange="onColumnListItemEmployeePress">
@@ -22,7 +23,7 @@
             </Table>
         </VBox>
         <beginButton>
-            <Button text="Seç" press="onSaveButtonEmployeePress"/>
+            <Button text="Seç" press="onSaveButtonEmployeePress" cd:actionType="SAVE"/>
         </beginButton>
         <endButton>
             <Button text="Kapat" press="onCloseButtonEmployeePress"/>

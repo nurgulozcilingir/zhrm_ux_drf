@@ -70,7 +70,7 @@ sap.ui.define(
               organizationHelp: {
                 enableAdd: false,
               },
-              request:{},
+              request: {},
               formActions: [],
               upperLevelJobs: [],
               formHistory: [],
@@ -97,6 +97,7 @@ sap.ui.define(
                 },
               ],
             }),
+            
             oCandidateList = new JSONModel({
               SearchResults: {
                 C: 0,
@@ -111,6 +112,7 @@ sap.ui.define(
                 ActionsColumnVisible: false,
                 SelectColumnVisible: false,
               },
+              
               Filters: {
                 Cplty: "C",
                 Ename: "",
@@ -124,7 +126,6 @@ sap.ui.define(
                 Isvic: false,
               },
             });
-
           // this.getRouter().getRoute("employeerequestnew").attachPatternMatched(this._onNewRequestMatched, this);
           // this.getRouter().getRoute("employeerequestedit").attachPatternMatched(this._onRequestMatched, this);
 
@@ -2122,74 +2123,91 @@ sap.ui.define(
         },
         onDrfvhInputValueHelpRequest: function (oEvent) {
           debugger;
-            var oView = this.getView();
-            var oModel = this.getModel();
-            var oViewModel = this.getModel("employeeRequestView");
-            var that = this;
-
-            oModel.read("/ValueHelpSet", {
-                filters: [
-                  new sap.ui.model.Filter("Drfvh", sap.ui.model.FilterOperator.EQ, "Emplye")
-                ],
-                success: function (oData) {
-                    oViewModel.setProperty("/List", oData.results); 
-                    // Dialogu aç
-                    if (!that._oEmployeeSearchDialog) {
-                        sap.ui.core.Fragment.load({
-                            name: "com.bmc.hcm.drf.zhcmuxdrf.fragment.EmployeeSearch",
-                            id: "EmployeeSearchFragment",
-                            controller: that
-                        }).then(function (oDialog) {
-                            oView.addDependent(oDialog);
-                            that._oEmployeeSearchDialog = oDialog;
-                            oDialog.open();
-                        });
-                    } else {
-                        that._oEmployeeSearchDialog.open();
-                    }
-                },
-                error: function () {
-
-                }
-            });
+          var oView = this.getView();
+          var oModel = this.getModel();
+          var oViewModel = this.getModel("employeeRequestView");
+          var oRequest = oViewModel.getProperty("/request");
+          var that = this;
+          // Alanları kontrol et
+          if (!oRequest.Drfrt || !oRequest.Drfbl || !oRequest.Drfbn) {
+            this._sweetToast(
+              "Lütfen zorunlu alanlarını doldurunuz.",
+              "E"
+            );
+            return;
+          }
+          oModel.read("/ValueHelpSet", {
+            filters: [
+              new sap.ui.model.Filter(
+                "Drfvh",
+                sap.ui.model.FilterOperator.EQ,
+                "Emplye"
+              ),
+            ],
+            success: function (oData) {
+              oViewModel.setProperty("/List", oData.results);
+              // Dialogu aç
+              if (!that._oEmployeeSearchDialog) {
+                sap.ui.core.Fragment.load({
+                  name: "com.bmc.hcm.drf.zhcmuxdrf.fragment.EmployeeSearch",
+                  id: "EmployeeSearchFragment",
+                  controller: that,
+                }).then(function (oDialog) {
+                  oView.addDependent(oDialog);
+                  that._oEmployeeSearchDialog = oDialog;
+                  oDialog.open();
+                });
+              } else {
+                that._oEmployeeSearchDialog.open();
+              }
+            },
+            error: function () {},
+          });
         },
-        onSaveButtonEmployeePress: function () {
+        onSaveButtonEmployeePress: function (oEvent) {
           debugger;
           var that = this;
           var oModel = this.getModel(),
             oViewModel = this.getModel("employeeRequestView");
-            var oRequest = oViewModel.getProperty("/request");
+          var oRequest = oViewModel.getProperty("/request");
+          var oSource = oEvent.getSource();
+            var sAction = oSource.data("actionType");
 
-          var oTable = sap.ui.core.Fragment.byId("EmployeeSearchFragment", "idListEmployeeTable");
+          oRequest.Actio = sAction;
+
+          var oTable = sap.ui.core.Fragment.byId(
+            "EmployeeSearchFragment",
+            "idListEmployeeTable"
+          );
           if (!oTable) {
             oTable = this.getView().byId("idListEmployeeTable");
           }
-          
+
           if (!oTable) {
             console.error("Table not found");
-            this._sweetAlert("Tablo bulunamadı", "E");
+            this._sweetToast("Tablo bulunamadı", "E");
             return;
           }
-          
+
           var aSelectedItems = oTable.getSelectedItems();
           if (!aSelectedItems || aSelectedItems.length === 0) {
-            this._sweetAlert(this.getText("NO_SELECTED_ITEMS"), "E");
+            this._sweetToast(this.getText("NO_SELECTED_ITEMS"), "E");
             return;
           }
           // var aDocumentSet = [];
-  
+
           // aSelectedItems.forEach(function (oItem) {
           //   var Item = oItem
           //     .getBindingContext("employeeRequestView")
           //     .getObject();
-  
+
           //   if (Item.hasOwnProperty("Index")) {
           //     delete Item.Index;
           //   }
           //   aDocumentSet.push(Item);
           // });
           // var oRequest = oViewModel.getProperty("/request") || {}; // Ana form verisi
-          // oRequest.DocumentRequestEmployeeSet = aDocumentSet; 
+          // oRequest.DocumentRequestEmployeeSet = aDocumentSet;
 
           oModel.create("/DocumentRequestFormSet", oRequest, {
             success: function (oData, oResponse) {
@@ -2206,23 +2224,48 @@ sap.ui.define(
 
         onColumnListItemEmployeePress: function (oEvent) {
           debugger;
-            var oSelectedItem = oEvent.getSource(),
+          var oSelectedItem = oEvent.getSource(),
             oViewModel = this.getModel("employeeRequestView"),
             oRequest = oViewModel.getProperty("/request"),
-            aEmployeeList = oSelectedItem.getSelectedContexts("employeeRequestView"),
+            aEmployeeList = oSelectedItem.getSelectedContexts(
+              "employeeRequestView"
+            ),
             oEmployeeTemp = {};
-            oViewModel.setProperty("/request/DocumentRequestEmployeeSet", []);
-            aEmployeeList.forEach(function (oItem) {
-              var oEmployee = oItem.getObject();
-              oEmployeeTemp.Pernr = oEmployee.Fldky;
-              oRequest.DocumentRequestEmployeeSet.push(oEmployeeTemp);
-            });
+          oViewModel.setProperty("/request/DocumentRequestEmployeeSet", []);
+          aEmployeeList.forEach(function (oItem) {
+            var oEmployee = oItem.getObject();
+            oEmployeeTemp.Pernr = oEmployee.Fldky;
+            oRequest.DocumentRequestEmployeeSet.push(oEmployeeTemp);
+          });
         },
 
         onCloseButtonEmployeePress: function (oEvent) {
-            if (this._oEmployeeSearchDialog) {
-                this._oEmployeeSearchDialog.close();
+          if (this._oEmployeeSearchDialog) {
+            this._oEmployeeSearchDialog.close();
+          }
+        },
+        onAvailableRequestActions:function(oEvent){
+          debugger;
+          var oSource = oEvent.getSource();
+          var oData = this.getModel().getProperty(oSource.getParent().getBindingContextPath());
+          if (oData) {
+            this._openRequestActions(oData, oSource);
+          }
+        },
+        _openRequestActions: function (oData, oSource) {
+          if (this._adjustRequestActions(oData)) {
+            if (!this._requestActions) {
+              this._requestActions = sap.ui.xmlfragment(
+                "com.bmc.hcm.drf.zhcmuxdrf.fragment.RequestActions",
+                this
+              );
+              this.getView().addDependent(this._requestActions);
             }
+            this._requestActions.data("formData", oData);
+            this._requestActions.openBy(oSource);
+          } else {
+            this._callMessageToast(this.getText("NO_ACTIONS_DEFINED"), "W");
+          }
         },
       }
     );

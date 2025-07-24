@@ -207,6 +207,7 @@ sap.ui.define([
 					new Filter("Erfrf", FilterOperator.EQ, "APM")
 				]
 			}
+	
 		},
 		/* =========================================================== */
 		/* lifecycle methods                                           */
@@ -276,6 +277,7 @@ sap.ui.define([
 			});
 
 			this.setModel(oViewModel, "requestListView");
+			
 
 			// Make sure, busy indication is showing immediately so there is no
 			// break after the busy indication for loading the view's meta data is
@@ -316,6 +318,7 @@ sap.ui.define([
 			document.addEventListener("backbutton", this.onExit.bind(this), false);
 
 			this.initOperations();
+			this.onEmployeeRequestList();
 		},
 
 		// onClick1: function (oID) {
@@ -869,7 +872,35 @@ sap.ui.define([
 				}
 			});
 
-		}
+		},
+		onEmployeeRequestList: function (oModel) {
+			debugger;
+			var oViewModel = this.getModel("requestListView");
+			var oModel = this.getOwnerComponent().getModel();
+			
+			var that = this;
+			var sExpand = "DocumentRequestEmployeeSet";
+			var aFilters = [
+			  new Filter("Drfap", FilterOperator.EQ, "MY_REQUESTS"),
+			  new Filter("Drfsf", FilterOperator.EQ, "DRF"),
+			];
+			// this.openBusyFragment("Veriler yükleniyor...", []);
+	
+			oModel.read("/DocumentRequestFormSet", {
+			  filters: aFilters,
+			  urlParameters: {
+				$expand: sExpand,
+			  },
+			  success: function (oData) {
+				console.log("DRF data:", oData);
+	
+			  },
+			  error: function () {
+				// this.closeBusyFragment();
+				sap.m.MessageToast.show("Veri yüklenirken bir hata oluştu.");
+			  }.bind(this),
+			});
+		  },
 
 	});
 });
