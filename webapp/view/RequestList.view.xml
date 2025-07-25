@@ -18,9 +18,9 @@
 			</items>
 			<content>
 				<Table id="idEmployeeRequestTable" width="auto"
-					items="{ path: '/EmployeeRequestFormSet',filters : [ { path : 'Erfap', operator : 'EQ', value1 : 'MY_REQUESTS'}, { path : 'Erfsf', operator : 'EQ', value1 : 'DRF'} ] }"
-					noDataText="{requestListView>/tableNoDataText}" busyIndicatorDelay="{requestListView>/tableBusyDelay}" growing="true"
-					growingScrollToLoad="true" updateFinished="onUpdateFinished" updateStarted="onUpdateStarted" class="erfTable">
+				items="{ path: '/DocumentRequestFormSet',filters : [ { path : 'Drfap', operator : 'EQ', value1 : 'MY_REQUESTS'}, { path : 'Drfsf', operator : 'EQ', value1 : 'DRF'} ] }"
+					noDataText="{requestListView>/tableNoDataText}" growing="true"
+					growingScrollToLoad="true" class="erfTable">
 					<headerToolbar>
 						<Toolbar>
 							<ToolbarSpacer/>
@@ -35,46 +35,25 @@
 					</infoToolbar>
 					<columns>
 						<Column id="idRequestNumberColumn">
-							<Text text="{i18n>ERF_NUMBER}"/>
+							<Text text="Form Numarası"/>
 						</Column>
 						<Column id="idPositionColumn">
-							<Text text="{i18n>POSITION}"/>
+							<Text text="Belge Talep Türü"/>
 						</Column>
-						<Column id="idRequestReasonColumn">
-							<Text text="{i18n>REQUEST_REASON}"/>
+						<Column id="idRequestReasonColumns">
+							<Text text="Belge Türü"/>
 						</Column>
 						<Column id="idRequiredQualificationColumn" minScreenWidth="Desktop">
-							<Text text="{i18n>REQUIRED_QUALIFICATION_TR}"/>
+							<Text text="Belge Adı"/>
 						</Column>
-						<Column id="idJobDescriptionColumn" minScreenWidth="Desktop">
-							<Text text="{i18n>JOB_DESCRIPTION_TR}"/>
+						<!-- <Column id="idRequiredQualificationColumn2" minScreenWidth="Desktop">
+							<Text text="Belge Tarihi"/>
+						</Column> -->
+						<Column id="idRequiredQualificationColumn3" minScreenWidth="Desktop">
+							<Text text="Talep Tarihi"/>
 						</Column>
-						<Column id="idRequestKapsam1">
-							<Text text="Kadro kapsamı"/>
-						</Column>
-						<Column id="idRequestDateColumn" minScreenWidth="Tablet" demandPopin="true"
-							visible="{ path:'requestListView>/selectedKey', formatter: '.formatter.checkDateColumnVisible' }">
-							<Text text="{i18n>REQUEST_DATE}"/>
-						</Column>
-						<Column id="idRequestStatusColumn" minScreenWidth="Tablet" demandPopin="true"
-							visible="{ path:'requestListView>/selectedKey', formatter: '.formatter.checkStatusColumnVisible' }">
-							<Text text="{i18n>REQUEST_STATUS}"/>
-						</Column>
-						<Column id="idRequestOnWhoColumn" minScreenWidth="Desktop" demandPopin="true"
-							visible="{ path:'requestListView>/selectedKey', formatter: '.formatter.checkStatusColumnVisible' }">
-							<Text text="{i18n>REQUEST_ON_WHO}"/>
-						</Column>
-						<Column id="idRecruiterColumn" minScreenWidth="Tablet" demandPopin="true"
-							visible="{ path:'requestListView>/selectedKey', formatter: '.formatter.checkIfApproved' }">
-							<Text text="{i18n>RECRUITER_NAME}"/>
-						</Column>
-						<Column id="idRecruiterAssignDateColumn" minScreenWidth="Tablet" demandPopin="true" hAlign="Center"
-							visible="{ path:'requestListView>/selectedKey', formatter: '.formatter.checkIfApproved' }">
-							<Text text="{i18n>RECRUITER_ASSIGN_DATE}"/>
-						</Column>
-						<Column id="idRecruitmentStatusColumn" minScreenWidth="Tablet" demandPopin="true" hAlign="Center"
-							visible="{ path:'requestListView>/selectedKey', formatter: '.formatter.checkIfApproved' }">
-							<Text text="{i18n>RECRUITMENT_STATUS}"/>
+						<Column id="idRequiredQualificationColumn4" minScreenWidth="Desktop">
+							<Text text="Talep Sahibi"/>
 						</Column>
 						<Column id="idActionsColumn" minScreenWidth="Tablet" width="5rem" hAlign="Center">
 							<Text text="{i18n>ACTION_LIST}"/>
@@ -83,37 +62,17 @@
 					<items>
 						<ColumnListItem type="Navigation" press="onPress">
 							<cells>
-								<ObjectIdentifier title="{Erfno}"/>
-								<Text text="{= ${Nopln} ? ${Plaft} : ${Plstx} }"/>
-								<Text text="{Erfrx}"/>
-								<Text text="{ErfrqTr}" wrapping="true" maxLines="3" tooltip="{ErfrqTr}"/>
-								<Text text="{ErfjdTr}" wrapping="true" maxLines="3" tooltip="{ErfjdTr}"/>
-								<Text text="{Stasx}"/>
+								<Text text="{Drfno}"/>
+								<Text text="{Drrtx}"/>
+								<Text text="{Drfbx}"/>
+								<Text text="{Drfbn}"/>
+								<!-- <Text
+								text="{ path: 'Drfdt', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }"/> -->
 								<Text
-									text="{ path: 'Rqdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} } - { path: 'Rqtim', type: 'sap.ui.model.odata.type.Time', formatOptions: { pattern:'HH:mm'} }"/>
-								<Text text="{ parts: [ {path: 'Erfsx' }, {path: 'Erfsy' }], formatter: '.formatter.getStatusText' }"/>
-								<Text text="{Frone}"/>
-								<Text text="{Erfoe}"/>
-								<Text
-									text="{ path: 'Erfad', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} } - { path: 'Erfat', type: 'sap.ui.model.odata.type.Time', formatOptions: { pattern:'HH:mm'} }"/>
-								<VBox alignItems="Center" justifyContent="Center">
-									<HBox class="sapUiTinyMarginBottom">
-										<Text text="{i18n>INTERNAL_POSTING_ON}" visible="{ErfpiInt}" class="sapUiTinyMarginEnd"/>
-										<Text text="{i18n>EXTERNAL_POSTING_ON}" visible="{ErfpiExt}"/>
-									</HBox>
-									<Link text="{parts:[{path:'Cndex'},{path:'Cndin'}], formatter: '.formatter.sumCandidate'} {i18n>CANDIDATE_IS_ADDED}" wrapping="true"
-										press="onDisplayForm" class="erfActionLinkMiddle" cd:formId="{Erfid}"/>
-									<HBox class="sapUiTinyMarginBottom">
-										<Text text="{Cndex} {i18n>EXTERNAL_APPLICANT_LC}" class="erfExternalCandidateToken sapUiTinyMarginEnd"/>
-										<Text text="{Cndin} {i18n>INTERNAL_APPLICANT_LC}" class="erfInternalCandidateToken"/>
-									</HBox>
-									<Link text=" {Cprin} {i18n>CANDIDATE_IN_INTERVIEW_PROCESS}" visible="{= ${Cprin} > 0 }" wrapping="true" press="onDisplayForm"
-										class="erfActionLinkSmall" cd:formId="{Erfid}"/>
-									<Link text="{Cprrc} {i18n>CANDIDATE_IN_RECRUITMENT_PROCESS}" visible="{= ${Cprrc} > 0 }" wrapping="true" press="onDisplayForm"
-										class="erfActionLinkSmall" cd:formId="{Erfid}"/>
-								</VBox>
+								text="{ path: 'Rqdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }"/>
+								<Text text="{Rqown}"/>
 								<Button icon="sap-icon://menu" type="Accept" press="onAvailableRequestActions" tooltip="{i18n>ACTION_LIST}"
-									visible="{ path:'Erfsf', formatter: '.onCheckActionAvailable'}" class="erfActionButton"></Button>
+									class="erfActionButton"></Button>
 							</cells>
 						</ColumnListItem>
 					</items>
