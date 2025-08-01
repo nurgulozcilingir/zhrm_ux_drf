@@ -23,7 +23,7 @@
             </Table>
         </VBox>
         <beginButton>
-            <Button text="Seç" press="onSaveButtonEmployeePress" cd:actionType="SAVE"/>
+            <!-- <Button text="Tabloya Ekle" icon="sap-icon://add" type="Emphasized" press="onSaveButtonEmployeePress"/> -->
         </beginButton>
         <endButton>
             <Button text="Kapat" press="onCloseButtonEmployeePress"/>

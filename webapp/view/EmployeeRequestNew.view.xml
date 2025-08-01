@@ -12,7 +12,7 @@
         <footer>
             <OverflowToolbar visible="true">
                 <ToolbarSpacer/>
-                <Button id="idFormActionsButton" busyIndicatorDelay="0" icon="sap-icon://menu2" type="Emphasized" tooltip="{i18n>ACTION_LIST}" press="onOpenFormActions" text="{i18n>ACTION_LIST}" visible="true"/>
+                <Button text="Kaydet" icon="sap-icon://save" type="Emphasized" press="onSaveEmployeeRequest"/>
             </OverflowToolbar>
         </footer>
     </Page>

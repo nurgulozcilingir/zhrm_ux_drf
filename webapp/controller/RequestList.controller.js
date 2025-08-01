@@ -283,7 +283,7 @@ sap.ui.define(
           // Put down requestList table's original value for busy indicator delay,
           // so it can be restored later on. Busy handling on the table is
           // taken care of by the table itself.
-          iOriginalBusyDelay = oTable.getBusyIndicatorDelay();
+          // iOriginalBusyDelay = oTable.getBusyIndicatorDelay();
 
           // keeps the search state
           this._aTableSearchState = [];
@@ -292,6 +292,9 @@ sap.ui.define(
           oViewModel = new JSONModel({
             requestListTableTitle: "",
             selectedRequestList: {
+              DocumentRequestEmployeeSet: [],
+            },
+            dataList: {
               DocumentRequestEmployeeSet: [],
             },
             tableNoDataText: this.getText("EMPTY_REQUEST_LIST"),
@@ -347,10 +350,10 @@ sap.ui.define(
           // Make sure, busy indication is showing immediately so there is no
           // break after the busy indication for loading the view's meta data is
           // ended (see promise 'oWhenMetadataIsLoaded' in AppController)
-          oTable.attachEventOnce("updateFinished", function () {
-            // Restore original busy indicator delay for requestList's table
-            oViewModel.setProperty("/tableBusyDelay", iOriginalBusyDelay);
-          });
+          // oTable.attachEventOnce("updateFinished", function () {
+          //   // Restore original busy indicator delay for requestList's table
+          //   oViewModel.setProperty("/tableBusyDelay", iOriginalBusyDelay);
+          // },);
 
           oViewModel.setProperty("/newRequestButtonVisible", false);
 
@@ -378,7 +381,7 @@ sap.ui.define(
           // }, oTable);
 
           // if (!this._oResponsivePopover) {
-          // 	this._oResponsivePopover = sap.ui.xmlfragment("com.bmc.hcm.erf.fragment.PopoverFilter", this);
+          // 	this._oResponsivePopover = sap.ui.xmlfragment("com.bmc.hcm.drf.zhcmuxdrf.fragment.PopoverFilter", this);
           // }
 
           this.getRouter()
@@ -393,7 +396,7 @@ sap.ui.define(
             false
           );
 
-          this.initOperations();
+          // this.initOperations();
         },
 
         // onClick1: function (oID) {
@@ -512,6 +515,50 @@ sap.ui.define(
             //oModel.refresh(true);
           }
         },
+        
+        /* =========================================================== */
+        /* Data loading and navigation methods                         */
+        /* =========================================================== */
+        
+        _loadRequestDataAndNavigate: function (sDrfid, sRouteName, bEditMode) {
+          debugger;
+          var oModel = this.getModel();
+          var oViewModel = this.getModel("requestListView");
+          var that = this;
+          
+          var sPath = "/DocumentRequestFormSet('" + sDrfid + "')";
+          var sExpand = 
+                "DocumentRequestEmployeeSet" +
+                ",DocumentRequestHistorySet" +
+                ",DocumentRequestPrintOut";
+
+          
+          oModel.read(sPath, {
+            urlParameters: {
+              "$expand": sExpand
+            },
+            success: function (oData) {
+              oViewModel.setProperty("/requestList", oData);
+              oViewModel.setProperty("/dataList/DocumentRequestEmployeeSet", _.cloneDeep(oData.DocumentRequestEmployeeSet.results));
+              console.log(oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet"));
+              that.getRouter().navTo(sRouteName, {
+                Drfid: sDrfid
+              });
+        
+            },
+            error: function (oError) {
+              oViewModel.setProperty("/busy", false);
+              
+              // Show error message
+              that._callMessageToast("Error loading request data", "E");
+              
+              // Navigate anyway with original data
+              that.getRouter().navTo(sRouteName, {
+                Drfid: sDrfid
+              });
+            }
+          });
+        },
         /**
          * Triggered by the table's 'updateStarted' event: after new table
          * data is available, this handler method updates the table counter.
@@ -538,7 +585,7 @@ sap.ui.define(
         onRequestFilterPressed: function (oEvent) {
           if (!this._oRequestFilterDialog) {
             this._oRequestFilterDialog = sap.ui.xmlfragment(
-              "com.bmc.hcm.erf.fragment.EmployeeRequestFilterDialog",
+              "com.bmc.hcm.drf.zhcmuxdrf.fragment.EmployeeRequestFilterDialog",
               this
             );
             this.getView().addDependent(this._oRequestFilterDialog);
@@ -609,7 +656,7 @@ sap.ui.define(
           if (this._adjustRequestActions(oData)) {
             if (!this._requestActions) {
               this._requestActions = sap.ui.xmlfragment(
-                "com.bmc.hcm.erf.fragment.RequestActions",
+                "com.bmc.hcm.drf.zhcmuxdrf.fragment.RequestActions",
                 this
               );
               this.getView().addDependent(this._requestActions);
@@ -651,7 +698,7 @@ sap.ui.define(
               SharedData.setCurrentRequest(_.cloneDeep(oFormData));
               oViewModel.setProperty("/busy", true);
               this.getRouter().navTo("employeerequestedit", {
-                Erfid: sErfid,
+                Drfid: sErfid,
               });
             }
           } catch (oEx) {
@@ -677,13 +724,13 @@ sap.ui.define(
               if (this.callerRole === "RECRUITER") {
                 oApplicationSettings.Edit = false;
               }
-              SharedData.setApplicationSettings(oApplicationSettings);
-              /*Set request data*/
-              SharedData.setCurrentRequest(_.cloneDeep(oFormData));
-              oViewModel.setProperty("/busy", true);
-              this.getRouter().navTo("employeerequestnew", {
-                Drfid: oFormData.Drfid,
-              });
+              // SharedData.setApplicationSettings(oApplicationSettings);
+              // // /*Set request data*/
+              // SharedData.setCurrentRequest(_.cloneDeep(oFormData));
+              // oViewModel.setProperty("/busy", true);
+              
+              // Load data with expand before navigation
+              this._loadRequestDataAndNavigate(oFormData.Drfid, "employeerequestedit", true);
               break;
             case "Display":
               /*Set application settings*/
@@ -693,15 +740,15 @@ sap.ui.define(
               /*Set request data*/
               SharedData.setCurrentRequest(_.cloneDeep(oFormData));
               oViewModel.setProperty("/busy", true);
-              this.getRouter().navTo("employeerequestedit", {
-                Erfid: oFormData.Erfid,
-              });
+              
+              // Load data with expand before navigation
+              this._loadRequestDataAndNavigate(oFormData.Drfid, "employeerequestedit", false);
               break;
             case "Assign":
               /*Set application settings*/
 
               var _assignConfirmed = function () {
-                oThis._assignRequest(oFormData.Erfid, "ME", function () {
+                oThis._assignRequest(oFormData.Drfid, "ME", function () {
                   oThis.onRefresh();
                 });
               };
@@ -725,7 +772,7 @@ sap.ui.define(
               break;
             case "Delete":
               var _deleteConfirmed = function () {
-                oThis._deleteRequest(oFormData.Erfid);
+                oThis._deleteRequest(oFormData.Drfid);
               };
 
               oBeginButtonProp = {
@@ -760,11 +807,11 @@ sap.ui.define(
               break;
             case "Open":
               sErfst = sAction === "Open" ? "30" : "90";
-              this._openOrClose(oFormData.Erfid, sErfst);
+              this._openOrClose(oFormData.Drfid, sErfst);
               break;
             case "Close":
               sErfst = sAction === "Open" ? "30" : "90";
-              this._openOrClose(oFormData.Erfid, sErfst);
+              this._openOrClose(oFormData.Drfid, sErfst);
               break;
           }
         },
@@ -1099,115 +1146,116 @@ sap.ui.define(
             this._callMessageToast(this.getText("NO_ACTIONS_DEFINED"), "W");
           }
         },
-        onRequestActionSelected: function (oEvent) {
-          var oSource = oEvent.getSource();
-          var sAction = oSource.data("actionId");
-          var oFormData = oSource.getParent().data("formData");
-          var oThis = this;
-          var oBeginButtonProp = {};
-          var oApplicationSettings = {};
-          var oViewModel = this.getModel("requestListView");
-          var sErfst = {};
+        // onRequestActionSelected: function (oEvent) {
+        //   debugger;
+        //   var oSource = oEvent.getSource();
+        //   var sAction = oSource.data("actionId");
+        //   var oFormData = oSource.getParent().data("formData");
+        //   var oThis = this;
+        //   var oBeginButtonProp = {};
+        //   var oApplicationSettings = {};
+        //   var oViewModel = this.getModel("requestListView");
+        //   var sErfst = {};
 
-          switch (sAction) {
-            case "Edit":
-              /*Set application settings*/
-              oApplicationSettings.Edit = true;
-              oApplicationSettings.CallerRole = this.callerRole;
-              if (this.callerRole === "RECRUITER") {
-                oApplicationSettings.Edit = false;
-              }
-              SharedData.setApplicationSettings(oApplicationSettings);
-              /*Set request data*/
-              SharedData.setCurrentRequest(_.cloneDeep(oFormData));
-              oViewModel.setProperty("/busy", true);
-              this.getRouter().navTo("employeerequestedit", {
-                Erfid: oFormData.Erfid,
-              });
-              break;
-            case "Display":
-              /*Set application settings*/
-              oApplicationSettings.Edit = false;
-              oApplicationSettings.CallerRole = this.callerRole;
-              SharedData.setApplicationSettings(oApplicationSettings);
-              /*Set request data*/
-              SharedData.setCurrentRequest(_.cloneDeep(oFormData));
-              oViewModel.setProperty("/busy", true);
-              this.getRouter().navTo("employeerequestedit", {
-                Erfid: oFormData.Erfid,
-              });
-              break;
-            case "Assign":
-              /*Set application settings*/
+        //   switch (sAction) {
+        //     case "Edit":
+        //       /*Set application settings*/
+        //       oApplicationSettings.Edit = true;
+        //       oApplicationSettings.CallerRole = this.callerRole;
+        //       if (this.callerRole === "RECRUITER") {
+        //         oApplicationSettings.Edit = false;
+        //       }
+        //       SharedData.setApplicationSettings(oApplicationSettings);
+        //       /*Set request data*/
+        //       SharedData.setCurrentRequest(_.cloneDeep(oFormData));
+        //       oViewModel.setProperty("/busy", true);
+        //       this.getRouter().navTo("employeerequestedit", {
+        //         Drfid: oFormData.Drfid,
+        //       });
+        //       break;
+        //     case "Display":
+        //       /*Set application settings*/
+        //       oApplicationSettings.Edit = false;
+        //       oApplicationSettings.CallerRole = this.callerRole;
+        //       SharedData.setApplicationSettings(oApplicationSettings);
+        //       /*Set request data*/
+        //       SharedData.setCurrentRequest(_.cloneDeep(oFormData));
+        //       oViewModel.setProperty("/busy", true);
+        //       this.getRouter().navTo("employeerequestedit", {
+        //         Drfid: oFormData.Drfid,
+        //       });
+        //       break;
+        //     case "Assign":
+        //       /*Set application settings*/
 
-              var _assignConfirmed = function () {
-                oThis._assignRequest(oFormData.Erfid, "ME", function () {
-                  oThis.onRefresh();
-                });
-              };
+        //       var _assignConfirmed = function () {
+        //         oThis._assignRequest(oFormData.Drfid, "ME", function () {
+        //           oThis.onRefresh();
+        //         });
+        //       };
 
-              oBeginButtonProp = {
-                text: this.getText("ASSIGN_ACTION"),
-                type: "Accept",
-                icon: "sap-icon://activity-assigned-to-goal",
-                onPressed: _assignConfirmed,
-              };
+        //       oBeginButtonProp = {
+        //         text: this.getText("ASSIGN_ACTION"),
+        //         type: "Accept",
+        //         icon: "sap-icon://activity-assigned-to-goal",
+        //         onPressed: _assignConfirmed,
+        //       };
 
-              this._callConfirmDialog(
-                this.getText("CONFIRMATION_REQUIRED"),
-                "Message",
-                "Warning",
-                this.getText("FORM_ASSIGN_CONFIRMATION"),
-                oBeginButtonProp,
-                null
-              ).open();
+        //       this._callConfirmDialog(
+        //         this.getText("CONFIRMATION_REQUIRED"),
+        //         "Message",
+        //         "Warning",
+        //         this.getText("FORM_ASSIGN_CONFIRMATION"),
+        //         oBeginButtonProp,
+        //         null
+        //       ).open();
 
-              break;
-            case "Delete":
-              var _deleteConfirmed = function () {
-                oThis._deleteRequest(oFormData.Erfid);
-              };
+        //       break;
+        //     case "Delete":
+        //       var _deleteConfirmed = function () {
+        //         oThis._deleteRequest(oFormData.Drfid);
+        //       };
 
-              oBeginButtonProp = {
-                text: this.getText("DELETE_ACTION"),
-                type: "Reject",
-                icon: "sap-icon://delete",
-                onPressed: _deleteConfirmed,
-              };
+        //       oBeginButtonProp = {
+        //         text: this.getText("DELETE_ACTION"),
+        //         type: "Reject",
+        //         icon: "sap-icon://delete",
+        //         onPressed: _deleteConfirmed,
+        //       };
 
-              this._callConfirmDialog(
-                this.getText("CONFIRMATION_REQUIRED"),
-                "Message",
-                "Warning",
-                this.getText("FORM_DELETE_CONFIRMATION"),
-                oBeginButtonProp,
-                null
-              ).open();
+        //       this._callConfirmDialog(
+        //         this.getText("CONFIRMATION_REQUIRED"),
+        //         "Message",
+        //         "Warning",
+        //         this.getText("FORM_DELETE_CONFIRMATION"),
+        //         oBeginButtonProp,
+        //         null
+        //       ).open();
 
-              break;
-            case "PrintOut":
-              var sPrintOutPath =
-                "/sap/opu/odata/sap/ZHCM_RECRUITMENT_SRV/EmployeeRequestFormSet('" +
-                oFormData.Erfid +
-                "')/EmployeeRequestPrintOut/$value";
-              var sPlstx = oFormData.Nopln ? oFormData.Plaft : oFormData.Plstx;
-              var sPrintOutTitle = this.getText("REQUEST_PRINT_OUT_TITLE", [
-                sPlstx,
-              ]);
+        //       break;
+        //     case "PrintOut":
+        //       var sPrintOutPath =
+        //         "/sap/opu/odata/sap/ZHCM_RECRUITMENT_SRV/EmployeeRequestFormSet('" +
+        //         oFormData.Drfid +
+        //         "')/EmployeeRequestPrintOut/$value";
+        //       var sPlstx = oFormData.Nopln ? oFormData.Plaft : oFormData.Plstx;
+        //       var sPrintOutTitle = this.getText("REQUEST_PRINT_OUT_TITLE", [
+        //         sPlstx,
+        //       ]);
 
-              this._callPDFViewer(sPrintOutPath, sPrintOutTitle);
+        //       this._callPDFViewer(sPrintOutPath, sPrintOutTitle);
 
-              break;
-            case "Open":
-              sErfst = sAction === "Open" ? "30" : "90";
-              this._openOrClose(oFormData.Erfid, sErfst);
-              break;
-            case "Close":
-              sErfst = sAction === "Open" ? "30" : "90";
-              this._openOrClose(oFormData.Erfid, sErfst);
-              break;
-          }
-        },
+        //       break;
+        //     case "Open":
+        //       sErfst = sAction === "Open" ? "30" : "90";
+        //       this._openOrClose(oFormData.Drfid, sErfst);
+        //       break;
+        //     case "Close":
+        //       sErfst = sAction === "Open" ? "30" : "90";
+        //       this._openOrClose(oFormData.Drfid, sErfst);
+        //       break;
+        //   }
+        // }
       }
     );
   }

@@ -1,0 +1,82 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns:cd="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+    <VBox class="sapUiNoContentPaddings">
+        <f:Form editable="true" id="idEmployeeRequestForm2">
+            <f:layout>
+                <f:ResponsiveGridLayout labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="2" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false"/>
+            </f:layout>
+            <f:formContainers>
+                <f:FormContainer title="{i18n>REQUEST_DETAILS}">
+                    <f:formElements>
+                        <f:FormElement label="{i18n>REQUEST_REASON}">
+                            <f:fields>
+                                <ComboBox selectedKey="{path: 'employeeRequestView>/request/Drfrt'}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrt' } ] }" change="onReasonChanged">
+                                    <core:Item key="{Fldky}" text="{Fldvl}"/>
+                                </ComboBox>
+                            </f:fields>
+                        </f:FormElement>
+                        <f:FormElement label="{i18n>DOCUMENT_TYPE}">
+                            <f:fields>
+                                <ComboBox selectedKey="{employeeRequestView>/request/Drfbl}" required="true" items="{ path:'/ValueHelpSet', filters : [ { path : 'Drfvh', operator : 'EQ', value1 : 'Drfbl'} ] }">
+                                    <core:Item key="{Fldky}" text="{Fldvl}"/>
+                                </ComboBox>
+                            </f:fields>
+                        </f:FormElement>
+                        <f:FormElement label="{i18n>DOCUMENT_NAME}">
+                            <f:fields>
+                                <Input value="{employeeRequestView>/request/Drfbn}" required="true">
+                                </Input>
+                            </f:fields>
+                        </f:FormElement>
+                        <f:FormElement label="{i18n>EMPLOYEE_NAME}">
+                            <f:fields>
+                                <Input value="{employeeRequestView>/request/Drfvh}" showValueHelp="true" valueHelpRequest="onDrfvhInputValueHelpRequest" placeholder="Seçiniz..." />
+                            </f:fields>
+                        </f:FormElement>
+                    </f:formElements>
+                </f:FormContainer>
+            </f:formContainers>
+        </f:Form>
+        <Table id="idEmployeeRequestChangeTable" class="erfTable centeredTable" items="{employeeRequestView>/dataList/DocumentRequestEmployeeSet}" noDataText="Veri bulunamadı" busyIndicatorDelay="0" growing="true" growingScrollToLoad="true" inset="false" width="95%">
+            <headerToolbar>
+                <Toolbar>
+                    <ToolbarSpacer/>
+                    <SearchField id="employeeSearchField" tooltip="Arama" search="onSearch" width="{= ${device>/system/phone} ? '100%' : '50%' }"></SearchField>
+                </Toolbar>
+            </headerToolbar>
+            <infoToolbar>
+                <Toolbar>
+                    <Title id="idEmployeeRequestTableHeader" text="Personel Listesi"/>
+                </Toolbar>
+            </infoToolbar>
+            <columns>
+                <Column id="idEmployeeNameColumn">
+                    <Text text="Drfid"/>
+                </Column>
+                <Column id="idEmployeePositionColumn">
+                    <Text text="Personel No"/>
+                </Column>
+                <Column id="idEmployeePositionColumn2">
+                    <Text text="Personel Adı"/>
+                </Column>
+                <Column id="idEmployeeActionColumn">
+                    <Text text="İşlemler"/>
+                </Column>
+
+            </columns>
+            <items>
+                <ColumnListItem type="Navigation" press="onRequestDetail">
+                    <cells>
+                        <Text text="{employeeRequestView>Drfid}"/>
+                        <Text text="{employeeRequestView>Pernr}"/>
+                        <Text text="{employeeRequestView>Ename}"/>
+                        <Button icon="sap-icon://menu" type="Accept" press="onShowRequestActions" tooltip="{i18n>ACTION_LIST}" visible="{ path:'Erfsf', formatter: '.onCheckActionAvailable'}" class="erfActionButton"></Button>
+                    </cells>
+                </ColumnListItem>
+            </items>
+        </Table>
+    </VBox>
+</core:FragmentDefinition>

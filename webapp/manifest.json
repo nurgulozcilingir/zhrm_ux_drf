@@ -165,6 +165,13 @@
           "pattern": "employeerequestnew",
           "name": "employeerequestnew",
           "target": ["employeerequestnew"]
+        },
+        {
+          "pattern": "employeerequestedit/{Drfid}",
+          "name": "employeerequestedit",
+          "target": [
+              "employeerequestedit"
+          ]
         }
       ],
       "targets": {
@@ -195,6 +202,12 @@
         "employeerequestnew": {
           "viewName": "EmployeeRequestNew",
           "viewId": "employeerequestnew",
+          "viewLevel": 3,
+          "title": "{i18n>EMPLOYEE_REQUEST_FORM_DETAIL}"
+        },
+        "employeerequestedit": {
+          "viewName": "EmployeeRequestEdit",
+          "viewId": "employeerequestedit",
           "viewLevel": 3,
           "title": "{i18n>EMPLOYEE_REQUEST_FORM_DETAIL}"
         }

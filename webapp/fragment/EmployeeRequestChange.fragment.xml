@@ -13,7 +13,7 @@
                     <f:formElements>
                         <f:FormElement label="{i18n>REQUEST_REASON}">
                             <f:fields>
-                                <ComboBox selectedKey="{path: 'employeeRequestView>/request/Drfrt'}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrt' } ] }" change="onReasonChanged">
+                                <ComboBox selectedKey="{path: 'employeeRequestView>/request/Drfrt'}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrt' } ] }">
                                     <core:Item key="{Fldky}" text="{Fldvl}"/>
                                 </ComboBox>
                             </f:fields>
@@ -33,54 +33,45 @@
                         </f:FormElement>
                         <f:FormElement label="{i18n>EMPLOYEE_NAME}">
                             <f:fields>
-                                <Input
-                                    value="{employeeRequestView>/request/Drfvh}"
-                                    showValueHelp="true"
-                                    valueHelpRequest="onDrfvhInputValueHelpRequest"
-                                    placeholder="Seçiniz..." />
+                                <Input value="{employeeRequestView>/request/Drfvh}" showValueHelp="true" valueHelpRequest="onEmployeeSearchValueHelpRequest" placeholder="Personel seçiniz..." />
                             </f:fields>
                         </f:FormElement>
                     </f:formElements>
                 </f:FormContainer>
             </f:formContainers>
         </f:Form>
-        <Table id="idEmployeeRequestChangeTable"  class="erfTable centeredTable" items="{employeeRequestView>/RequestTable}" noDataText="Veri bulunamadı" busyIndicatorDelay="0" growing="true" growingScrollToLoad="true" inset="false" width="95%">
-            <headerToolbar>
-                <Toolbar>
-                    <ToolbarSpacer/>
-                    <SearchField id="employeeSearchField" tooltip="Arama" search="onSearch" width="{= ${device>/system/phone} ? '100%' : '50%' }"></SearchField>
-                </Toolbar>
-            </headerToolbar>
-            <infoToolbar>
-                <Toolbar>
-                    <Title id="idEmployeeRequestTableHeader" text="Personel Listesi"/>
-                </Toolbar>
-            </infoToolbar>
-            <columns>
-                <Column id="idEmployeeNameColumn">
-                    <Text text="Ad soyad"/>
-                </Column>
-                <Column id="idEmployeePositionColumn">
-                    <Text text="Pozisyon"/>
-                </Column>
-                <Column id="idEmployeeDepartmentColumn">
-                    <Text text="Departmanı"/>
-                </Column>
-                <Column id="idEmployeeDepartmentColumn2">
-                    <Text text="İşlemler"/>
-                </Column>
-
-            </columns>
-            <items>
-                <ColumnListItem type="Navigation" press="onRequestDetail">
-                    <cells>
-                        <Text text="{employeeRequestView>Last1}"/>
-                        <Text text="{employeeRequestView>Last2}"/>
-                        <Text text="{employeeRequestView>Last3}" />
-                        <Button icon="sap-icon://menu" type="Accept" press="onAvailableRequestActions" tooltip="{i18n>ACTION_LIST}" visible="{ path:'Erfsf', formatter: '.onCheckActionAvailable'}" class="erfActionButton"></Button>
-                    </cells>
-                </ColumnListItem>
-            </items>
-        </Table>
+        
+        <!-- Seçilen Personeller Tablosu -->
+        <Panel headerText="Seçilen Personeller ({employeeRequestView>/selectedEmployees/length})" class="sapUiResponsiveMargin" expandable="true" expanded="true" width="95%">
+            <Table id="idEmployeeRequestTableChanges" class="erfTable centeredTable" items="{employeeRequestView>/selectedEmployees}" noDataText="Henüz personel seçilmedi" busyIndicatorDelay="0" growing="true" growingScrollToLoad="true" inset="false">
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="Seçilen Personeller"/>
+                        <ToolbarSpacer/>
+                    </Toolbar>
+                </headerToolbar>
+                <columns>
+                    <Column>
+                        <Text text="Personel No"/>
+                    </Column>
+                    <Column>
+                        <Text text="Personel Adı"/>
+                    </Column>
+                    <Column width="100px">
+                        <Text text="İşlemler"/>
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{employeeRequestView>Pernr}"/>
+                            <Text text="{employeeRequestView>Ename}"/>
+                            <Button icon="sap-icon://delete" type="Reject" press="onRemoveSelectedEmployee" tooltip="Personeli Kaldır" 
+                                    cd:employeeId="{employeeRequestView>Pernr}" cd:employeeName="{employeeRequestView>Ename}"/>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </Panel>
     </VBox>
 </core:FragmentDefinition>

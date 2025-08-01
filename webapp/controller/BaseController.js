@@ -64,28 +64,28 @@ sap.ui.define([
 		getResourceBundle: function () {
 			return this.getOwnerComponent().getModel("i18n").getResourceBundle();
 		},
-		initOperations: function () {
-			var oThis = this;
-			if (!SharedData.getRootLoaded()) {
-				this.getRouter().navTo("appdispatcher", {}, true);
-			}
-			var oModel = this.getOwnerComponent().getModel();
-			oModel.metadataLoaded().then(function () {
-				oThis.readUpperLevelJob(oModel);
-			});
-		},
-		readUpperLevelJob: function (oModel) {
-			var sPath = "/UpperLevelJobSet";
+		// initOperations: function () {
+		// 	var oThis = this;
+		// 	if (!SharedData.getRootLoaded()) {
+		// 		this.getRouter().navTo("appdispatcher", {}, true);
+		// 	}
+		// 	var oModel = this.getOwnerComponent().getModel();
+		// 	oModel.metadataLoaded().then(function () {
+		// 		oThis.readUpperLevelJob(oModel);
+		// 	});
+		// },
+		// readUpperLevelJob: function (oModel) {
+		// 	var sPath = "/UpperLevelJobSet";
 
-			oModel.read(sPath, {
-				method: "GET",
-				success: function (oData, oResponse) {
-					SharedData.setUpperLevelJobs(oData.results);
-				},
-				error: function (oError) {}
-			});
+		// 	oModel.read(sPath, {
+		// 		method: "GET",
+		// 		success: function (oData, oResponse) {
+		// 			SharedData.setUpperLevelJobs(oData.results);
+		// 		},
+		// 		error: function (oError) {}
+		// 	});
 
-		},
+		// },
 		getText: function (sTextCode, aParam) {
 			var aTextParam = aParam;
 			if (!aTextParam) {

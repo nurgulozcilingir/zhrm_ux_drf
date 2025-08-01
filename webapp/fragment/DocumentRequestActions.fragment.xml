@@ -1,0 +1,16 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+>
+	<ActionSheet
+		title="Doküman İşlemleri"
+		placement="Bottom">
+		<buttons>
+			<Button 
+				text="Doküman Ekle" 
+				icon="sap-icon://add-document" 
+				type="Emphasized" 
+				press="onAddDocument"/>
+		</buttons>
+	</ActionSheet>
+</c:FragmentDefinition>
