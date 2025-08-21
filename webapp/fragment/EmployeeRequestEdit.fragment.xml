@@ -53,14 +53,17 @@
                 </Toolbar>
             </infoToolbar>
             <columns>
-                <Column id="idEmployeeNameColumn">
+                <!-- <Column id="idEmployeeNameColumn">
                     <Text text="Drfid"/>
-                </Column>
+                </Column> -->
                 <Column id="idEmployeePositionColumn">
                     <Text text="Personel No"/>
                 </Column>
                 <Column id="idEmployeePositionColumn2">
                     <Text text="Personel Adı"/>
+                </Column>
+                <Column>
+                    <Text text="Yenileme Talebi"/>
                 </Column>
                 <Column id="idEmployeeActionColumn">
                     <Text text="İşlemler"/>
@@ -70,10 +73,21 @@
             <items>
                 <ColumnListItem type="Navigation" press="onRequestDetail">
                     <cells>
-                        <Text text="{employeeRequestView>Drfid}"/>
+                        <!-- <Text text="{employeeRequestView>Drfid}"/> -->
                         <Text text="{employeeRequestView>Pernr}"/>
+
                         <Text text="{employeeRequestView>Ename}"/>
-                        <Button icon="sap-icon://menu" type="Accept" press="onShowRequestActions" tooltip="{i18n>ACTION_LIST}" visible="{ path:'Erfsf', formatter: '.onCheckActionAvailable'}" class="erfActionButton"></Button>
+                        <MenuButton text="{i18n>CHOOSE_AN_ACTION}">
+                            <menu>
+                                <Menu>
+                                    <items>
+                                        <MenuItem text="Evet" icon="sap-icon://accept" press="onYesMenuItemPress"/>
+                                        <MenuItem text="Hayır" icon="sap-icon://decline" press="onNopeMenuItemPress" />
+                                    </items>
+                                </Menu>
+                            </menu>
+                        </MenuButton>
+                        <Button icon="sap-icon://menu" type="Accept" press="onShowRequestActions" tooltip="{i18n>ACTION_LIST}" visible="{ path:'Drfsf', formatter: '.onCheckActionAvailable'}" class="erfActionButton"></Button>
                     </cells>
                 </ColumnListItem>
             </items>

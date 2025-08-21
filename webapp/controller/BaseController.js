@@ -64,28 +64,28 @@ sap.ui.define([
 		getResourceBundle: function () {
 			return this.getOwnerComponent().getModel("i18n").getResourceBundle();
 		},
-		// initOperations: function () {
-		// 	var oThis = this;
-		// 	if (!SharedData.getRootLoaded()) {
-		// 		this.getRouter().navTo("appdispatcher", {}, true);
-		// 	}
-		// 	var oModel = this.getOwnerComponent().getModel();
-		// 	oModel.metadataLoaded().then(function () {
-		// 		oThis.readUpperLevelJob(oModel);
-		// 	});
-		// },
-		// readUpperLevelJob: function (oModel) {
-		// 	var sPath = "/UpperLevelJobSet";
+		initOperations: function () {
+			var oThis = this;
+			if (!SharedData.getRootLoaded()) {
+				this.getRouter().navTo("appdispatcher", {}, true);
+			}
+			var oModel = this.getOwnerComponent().getModel();
+			oModel.metadataLoaded().then(function () {
+				oThis.readUpperLevelJob(oModel);
+			});
+		},
+		readUpperLevelJob: function (oModel) {
+			var sPath = "/UpperLevelJobSet";
 
-		// 	oModel.read(sPath, {
-		// 		method: "GET",
-		// 		success: function (oData, oResponse) {
-		// 			SharedData.setUpperLevelJobs(oData.results);
-		// 		},
-		// 		error: function (oError) {}
-		// 	});
+			oModel.read(sPath, {
+				method: "GET",
+				success: function (oData, oResponse) {
+					SharedData.setUpperLevelJobs(oData.results);
+				},
+				error: function (oError) {}
+			});
 
-		// },
+		},
 		getText: function (sTextCode, aParam) {
 			var aTextParam = aParam;
 			if (!aTextParam) {
@@ -270,12 +270,13 @@ sap.ui.define([
 				MessageToast.show(sMessg);
 			}
 		},
-		_deleteRequest: function (sErfid) {
+		_deleteRequest: function (sDrfid) {
+			debugger;
 			var oModel = this.getModel();
 			var oThis = this;
 
-			var sPath = oModel.createKey("/EmployeeRequestFormSet", {
-				Erfid: sErfid
+			var sPath = oModel.createKey("/DocumentRequestFormSet", {
+				Drfid: sDrfid
 			});
 
 			oThis._openBusyFragment("FORM_BEING_DELETED");
@@ -292,8 +293,16 @@ sap.ui.define([
 			});
 		},
 		_updateRequest: function (oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack) {
+			debugger;
 			var oModel = this.getModel();
 			var oThis = this;
+
+			if (oFormData.DocumentRequestHistorySet) {
+				delete oFormData.DocumentRequestHistorySet;
+			}
+			if (oFormData.DocumentRequestPrintOut) {
+				delete oFormData.DocumentRequestPrintOut;
+			}
 
 			if (sStatusChange) {
 				oThis._openBusyFragment("FORM_STATUS_BEING_CHANGED");
@@ -301,7 +310,7 @@ sap.ui.define([
 				oThis._openBusyFragment("FORM_BEING_SAVED");
 			}
 			if (sNewRequest) {
-				oModel.create("/EmployeeRequestFormSet", oFormData, {
+				oModel.create("/DocumentRequestFormSet", oFormData, {
 					success: function (oData, oResponse) {
 						oThis._closeBusyFragment();
 
@@ -324,25 +333,44 @@ sap.ui.define([
 					}
 				});
 			} else {
-				var sPath = oModel.createKey("/EmployeeRequestFormSet", {
-					Erfid: oFormData.Erfid
-				});
-				oModel.update(sPath, oFormData, {
-					success: function (oData, oResponse) {
-						oThis._closeBusyFragment();
-						if (sStatusChange) {
-							oThis._callMessageToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
-						} else {
-							oThis._callMessageToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
+				// var sPath = oModel.create("/DocumentRequestFormSet", oFormData, {
+					var sPath = oModel.createKey("/DocumentRequestFormSet", {
+						Drfid: oFormData.Drfid
+					});
+
+					oModel.update(sPath, oFormData, {
+						success: function (oData, oResponse) {
+							oThis._closeBusyFragment();
+							if (sStatusChange) {
+								oThis._callMessageToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+							} else {
+								oThis._callMessageToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
+							}
+							if (sNavBack) {
+								oThis.goBack(History);
+							}
+						},
+						error: function (oError) {
+							oThis._closeBusyFragment();
 						}
-						if (sNavBack) {
-							oThis.goBack(History);
-						}
-					},
-					error: function (oError) {
-						oThis._closeBusyFragment();
-					}
-				});
+					});
+			
+				// oModel.create('/DocumentRequestFormSet', oFormData, {
+				// 	success: function (oData, oResponse) {
+				// 		oThis._closeBusyFragment();
+				// 		if (sStatusChange) {
+				// 			oThis._callMessageToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+				// 		} else {
+				// 			oThis._callMessageToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
+				// 		}
+				// 		if (sNavBack) {
+				// 			oThis.goBack(History);
+				// 		}
+				// 	},
+				// 	error: function (oError) {
+				// 		oThis._closeBusyFragment();
+				// 	}
+				// });
 			}
 
 		},

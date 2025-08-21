@@ -677,10 +677,11 @@ sap.ui.define(
         },
 
         onOpenFormActions: function (oEvent) {
+          debugger;
           var oSource = oEvent.getSource();
           if (!this._formActions) {
             this._formActions = sap.ui.xmlfragment(
-              "com.bmc.hcm.erf.fragment.FormActions",
+              "com.bmc.hcm.drf.zhcmuxdrf.fragment.FormActions",
               this
             );
             this.getView().addDependent(this._formActions);
@@ -689,26 +690,27 @@ sap.ui.define(
         },
 
         onFormActionSelected: function (oEvent) {
+          debugger;
           var oSource = oEvent.getSource();
           var oViewModel = this.getModel("employeeRequestView");
           var oFormData = oViewModel.getProperty("/request");
           var aFormActions = oViewModel.getProperty("/formActions");
           var sButtonId = oSource.data("buttonId");
           var aButtonProp = _.filter(aFormActions, {
-            Erfbt: sButtonId,
+            Drfbt: sButtonId,
           });
           var sStatusChange = false;
           var oStatusChange = {};
 
           try {
-            oFormData.Actio = aButtonProp[0].Erfbt;
-            oFormData.ErfstN = aButtonProp[0].ErfstN;
-            oFormData.ErfssN = aButtonProp[0].ErfssN;
+            oFormData.Actio = aButtonProp[0].Drfbt;
+            oFormData.DrfstN = aButtonProp[0].DrfstN;
+            oFormData.DrfssN = aButtonProp[0].DrfssN;
             oViewModel.setProperty("/request", oFormData);
-            if (!this._validateForm()) {
-              return;
-            }
-            switch (aButtonProp[0].Erfbs) {
+            // if (!this._validateForm()) {
+            //   return;
+            // }
+            switch (aButtonProp[0].Drfbs) {
               case "S": //Save
                 this._updateRequest(
                   oFormData,
@@ -745,9 +747,9 @@ sap.ui.define(
 
             if (sStatusChange) {
               oStatusChange.statusChangeNote = "";
-              oStatusChange.beginButtonText = aButtonProp[0].Erfbx;
-              oStatusChange.beginButtonType = aButtonProp[0].Erfbs;
-              oStatusChange.beginButtonIcon = aButtonProp[0].Erfbi;
+              oStatusChange.beginButtonText = aButtonProp[0].Drfbx;
+              oStatusChange.beginButtonType = aButtonProp[0].Drfbs;
+              oStatusChange.beginButtonIcon = aButtonProp[0].Drfbi;
               if (this._sNewRequest) {
                 oStatusChange.informationNote = this.getText(
                   "NEW_EMPLOYEE_REQUEST_INFORMATION_NOTE"
@@ -755,9 +757,9 @@ sap.ui.define(
               } else {
                 oStatusChange.informationNote = this.getText(
                   "STATUS_CHANGE_NOTE",
-                  aButtonProp[0].ErfsyN === ""
-                    ? aButtonProp[0].ErfsxN
-                    : aButtonProp[0].ErfsxN + "-" + aButtonProp[0].ErfsyN
+                  aButtonProp[0].DrfsyN === ""
+                    ? aButtonProp[0].DrfsxN
+                    : aButtonProp[0].DrfsxN + "-" + aButtonProp[0].DrfsyN
                 );
               }
 
@@ -768,7 +770,7 @@ sap.ui.define(
                 this._statusChangeDialog.bIsDestroyed
               ) {
                 this._statusChangeDialog = sap.ui.xmlfragment(
-                  "com.bmc.hcm.erf.fragment.StatusChange",
+                  "com.bmc.hcm.drf.zhcmuxdrf.fragment.StatusChange",
                   this
                 );
                 this.getView().addDependent(this._statusChangeDialog, this);
@@ -781,6 +783,7 @@ sap.ui.define(
         },
 
         onStatusChangeConfirmed: function (oEvent) {
+          debugger;
           var oViewModel = this.getModel("employeeRequestView");
           var oFormData = oViewModel.getProperty("/request");
           var oStatusChange = oViewModel.getProperty("/statusChangeDialog");
@@ -1204,6 +1207,39 @@ sap.ui.define(
          * @param {sap.ui.base.Event} oEvent pattern match event in route 'object'
          * @private
          */
+        _setFormFieldsEditable: function(bEditable) {
+          // Set form editable state
+          var oForm = this.byId("idEmployeeRequestForm2");
+          if (oForm) {
+              oForm.setEditable(bEditable);
+          }
+          
+          
+          // Set all input controls editable state
+          var oView = this.getView();
+          if (oView) {
+              var aControls = oView.findAggregatedObjects(true, function(oControl) {
+                  return oControl instanceof sap.m.ComboBox ||
+                         oControl instanceof sap.m.Input ||
+                         oControl instanceof sap.m.TextArea ||
+                         oControl instanceof sap.m.DatePicker ||
+                         oControl instanceof sap.m.TimePicker ||
+                         oControl instanceof sap.m.CheckBox ||
+                         oControl instanceof sap.m.RadioButton;
+                        //  oControl instanceof sap.m.Button;
+                        // oControl instanceof sap.ui.unified.FileUploader; 
+              });
+              
+              aControls.forEach(function(oControl) {
+                  if (oControl.setEditable) {
+                      oControl.setEditable(bEditable);
+                  } else if (oControl.setEnabled) {
+                      oControl.setEnabled(bEditable);
+                  }
+              });   
+          }
+      },
+        
         _initiateModels: function () {
           var oViewModel = this.getModel("employeeRequestView");
 
@@ -1252,7 +1288,6 @@ sap.ui.define(
           }
         },
         _loadRequestDataAndNavigate: function (sDrfid) {
-          debugger;
           var oModel = this.getModel();
           var oViewModel = this.getModel("employeeRequestView");
           var that = this;
@@ -1305,9 +1340,22 @@ sap.ui.define(
         _onRequestMatched: function (oEvent) {
           debugger;
           var sDrfid = oEvent.getParameter("arguments").Drfid;
+          var oApplicationSettings = SharedData.getApplicationSettings();
+          var oViewModel = this.getModel("employeeRequestView");
+          
           this._sDrfid = sDrfid;
           this._sNewRequest = false;
           this._setChangeListeners();
+          
+          // Set form editable state based on DisplayMode
+          if (oApplicationSettings && oApplicationSettings.DisplayMode) {
+            // Display mode - form should not be editable
+            this._setFormFieldsEditable(false);
+          } else if (oApplicationSettings && oApplicationSettings.Edit) {
+            // Edit mode - form should be editable
+            this._setFormFieldsEditable(true);
+          }
+          
           // this._getRequest(sDrfid);
           this._loadRequestDataAndNavigate(sDrfid);
           this._getFormActions(sDrfid);
@@ -1355,7 +1403,7 @@ sap.ui.define(
           }
 
           oFormFragment = sap.ui.xmlfragment(
-            "com.bmc.hcm.erf.fragment." + sFragmentName,
+            "com.bmc.hcm.drf.zhcmuxdrf.fragment." + sFragmentName,
             this
           );
 
@@ -1611,33 +1659,33 @@ sap.ui.define(
           });
         },
 
-        _validateForm: function () {
-          var oValidator = new FormValidator(this);
-          var oViewModel = this.getModel("employeeRequestView");
-          var oFormData = oViewModel.getProperty("/request");
-          var oFormToValidate =
-            sap.ui.getCore().byId("idEmployeeRequestForm") ||
-            this.byId("idEmployeeRequestForm");
+        // _validateForm: function () {
+        //   var oValidator = new FormValidator(this);
+        //   var oViewModel = this.getModel("employeeRequestView");
+        //   var oFormData = oViewModel.getProperty("/request");
+        //   var oFormToValidate =
+        //     sap.ui.getCore().byId("idEmployeeRequestForm") ||
+        //     this.byId("idEmployeeRequestForm");
 
-          if (!oFormData.Extja && !oFormData.Intja) {
-            this._callMessageToast(this.getText("AT_LEAST_ONE_RESOURCE"), "E");
-            return false;
-          }
+        //   if (!oFormData.Extja && !oFormData.Intja) {
+        //     this._callMessageToast(this.getText("AT_LEAST_ONE_RESOURCE"), "E");
+        //     return false;
+        //   }
 
-          if (oFormData.Cnted) {
-            oFormData.Cnted.setHours(9);
-            oViewModel.setProperty("/request", oFormData);
-          }
-          if (oFormToValidate) {
-            var sResult = oValidator.validate(oFormToValidate);
-            if (!sResult) {
-              this._callMessageToast(this.getText("FORM_HAS_ERRORS"), "E");
-            }
-            return sResult;
-          } else {
-            return true;
-          }
-        },
+        //   if (oFormData.Cnted) {
+        //     oFormData.Cnted.setHours(9);
+        //     oViewModel.setProperty("/request", oFormData);
+        //   }
+        //   if (oFormToValidate) {
+        //     var sResult = oValidator.validate(oFormToValidate);
+        //     if (!sResult) {
+        //       this._callMessageToast(this.getText("FORM_HAS_ERRORS"), "E");
+        //     }
+        //     return sResult;
+        //   } else {
+        //     return true;
+        //   }
+        // },
         _clearValidationTraces: function () {
           var oValidator = new FormValidator(this);
           var oFormToValidate =
@@ -1648,12 +1696,12 @@ sap.ui.define(
           }
         },
 
-        _getFormActions: function (sErfid) {
+        _getFormActions: function (sDrfid) {
           var oButton = this.byId("idFormActionsButton");
           var oModel = this.getModel();
           var oViewModel = this.getModel("employeeRequestView");
           var sPath =
-            "/EmployeeRequestFormSet('" + sErfid + "')/FormActionsSet";
+            "/DocumentRequestFormSet('" + sDrfid + "')/FormActionsSet";
           var oSettings = SharedData.getApplicationSettings();
 
           if (oButton) {
@@ -1670,7 +1718,7 @@ sap.ui.define(
                 aActions = oSettings.Edit
                   ? oData.results
                   : _.remove(oData.results, function (oLine) {
-                      return oLine.Erfbs !== "S";
+                      return oLine.Drfbs !== "S";
                     });
 
                 if (aActions.length > 0) {
@@ -1695,13 +1743,14 @@ sap.ui.define(
           return oJob ? true : false;
         },
 
-        _getFormHistory: function (sErfid) {
+        _getFormHistory: function (sDrfid) {
+          debugger;
           var oModel = this.getModel();
           var oViewModel = this.getModel("employeeRequestView");
           var sPath =
-            "/EmployeeRequestFormSet('" +
-            sErfid +
-            "')/EmployeeRequestHistorySet";
+            "/DocumentRequestFormSet('" +
+            sDrfid +
+            "')/DocumentRequestHistorySet";
 
           oViewModel.setProperty("/formHistory", []);
 
@@ -2357,7 +2406,7 @@ sap.ui.define(
           var oRequestData = oViewModel.getProperty("/request");
           var aSelectedEmployees =
             oViewModel.getProperty("/selectedEmployees") || [];
-        
+
           var that = this;
 
           if (aSelectedEmployees.length === 0) {
@@ -2399,8 +2448,6 @@ sap.ui.define(
 
           if (oBindingContext) {
             var oRowData = oBindingContext.getObject();
-
-            console.log("Tüm satır datası:", oRowData);
             this._selectedRowData = oRowData;
             this._openRequestActions(oRowData, oSource);
           } else {
@@ -2429,15 +2476,6 @@ sap.ui.define(
           var oViewModel = this.getModel("employeeRequestView");
           oViewModel.setProperty("/attachmentFilters/Pernr", oRowData.Pernr);
           oViewModel.setProperty("/attachmentFilters/Drfid", oRowData.Drfid);
-          console.log(
-            "Set edilen Pernr:",
-            oViewModel.getProperty("/attachmentFilters/Pernr")
-          );
-          console.log(
-            "Set edilen Drfid:",
-            oViewModel.getProperty("/attachmentFilters/Drfid")
-          );
-          // Document ekleme dialog'unu aç
           if (!this._documentAddDialog) {
             this._documentAddDialog = sap.ui.xmlfragment(
               "com.bmc.hcm.drf.zhcmuxdrf.fragment.DocumentAddDialog",
@@ -2550,6 +2588,14 @@ sap.ui.define(
             "W"
           );
         },
+        onValueHelpSetComboBoxChange:function(oEvent){
+          debugger;
+          var oComboBox = oEvent.getSource();
+          var sSelectedKey = oComboBox.getSelectedKey();
+          if(sSelectedKey == "02"){
+            MessageBox.warning("Bulundu");
+          }
+        },
         onFileTypeMissmatch: function (oEvent) {
           debugger;
           var aFileTypes = oEvent.getSource().getFileType();
@@ -2563,6 +2609,20 @@ sap.ui.define(
               sSupportedFileTypes,
             ])
           );
+        },
+        onNopeMenuItemPress:function(oEvent){
+          debugger;
+          if (!this._renewalRequestDialog) {
+            this._renewalRequestDialog = sap.ui.xmlfragment(
+              "com.bmc.hcm.drf.zhcmuxdrf.fragment.RenewalRequestDialog",
+              this
+            );
+            this.getView().addDependent(this._renewalRequestDialog);
+          }
+          this._renewalRequestDialog.open();
+        },
+        onYesMenuItemPress:function(oEvent){
+          debugger;
         },
         onFileSizeExceed: function (oEvent) {
           this._callMessageToast(
@@ -2585,6 +2645,9 @@ sap.ui.define(
             Attid +
             "')/$value";
           window.open(oUrlPath);
+        },
+        onCloseUploadFormDialog: function () {
+          this._documentAddDialog.close();
         },
       }
     );

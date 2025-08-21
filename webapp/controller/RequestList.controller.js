@@ -521,10 +521,10 @@ sap.ui.define(
         /* =========================================================== */
         
         _loadRequestDataAndNavigate: function (sDrfid, sRouteName, bEditMode) {
-          debugger;
           var oModel = this.getModel();
           var oViewModel = this.getModel("requestListView");
           var that = this;
+          var oApplicationSettings = {};
           
           var sPath = "/DocumentRequestFormSet('" + sDrfid + "')";
           var sExpand = 
@@ -532,6 +532,18 @@ sap.ui.define(
                 ",DocumentRequestHistorySet" +
                 ",DocumentRequestPrintOut";
 
+          // Set editable mode based on bEditMode parameter
+          oApplicationSettings.Edit = bEditMode;
+          oApplicationSettings.CallerRole = this.callerRole;
+          oApplicationSettings.DisplayMode = !bEditMode; // Display mode flag
+          
+          // If RECRUITER role, always set edit to false
+          if (this.callerRole === "RECRUITER") {
+            oApplicationSettings.Edit = false;
+            oApplicationSettings.DisplayMode = true;
+          }
+          
+          SharedData.setApplicationSettings(oApplicationSettings);
           
           oModel.read(sPath, {
             urlParameters: {
@@ -540,6 +552,10 @@ sap.ui.define(
             success: function (oData) {
               oViewModel.setProperty("/requestList", oData);
               oViewModel.setProperty("/dataList/DocumentRequestEmployeeSet", _.cloneDeep(oData.DocumentRequestEmployeeSet.results));
+              
+              // Set request data
+              SharedData.setCurrentRequest(_.cloneDeep(oData));
+              
               console.log(oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet"));
               that.getRouter().navTo(sRouteName, {
                 Drfid: sDrfid
@@ -643,15 +659,15 @@ sap.ui.define(
             this._openRequestActions(oData, oSource);
           }
         },
-        onAvailableRequestActions: function (oEvent) {
-          var oSource = oEvent.getSource();
-          var oData = this.getModel().getProperty(
-            oSource.getParent().getBindingContextPath()
-          );
-          if (oData) {
-            this._openRequestActions(oData, oSource);
-          }
-        },
+        // onAvailableRequestActions: function (oEvent) {
+        //   var oSource = oEvent.getSource();
+        //   var oData = this.getModel().getProperty(
+        //     oSource.getParent().getBindingContextPath()
+        //   );
+        //   if (oData) {
+        //     this._openRequestActions(oData, oSource);
+        //   }
+        // },
         _openRequestActions: function (oData, oSource) {
           if (this._adjustRequestActions(oData)) {
             if (!this._requestActions) {
@@ -718,30 +734,13 @@ sap.ui.define(
 
           switch (sAction) {
             case "Edit":
-              /*Set application settings*/
-              oApplicationSettings.Edit = true;
-              oApplicationSettings.CallerRole = this.callerRole;
-              if (this.callerRole === "RECRUITER") {
-                oApplicationSettings.Edit = false;
-              }
-              // SharedData.setApplicationSettings(oApplicationSettings);
-              // // /*Set request data*/
-              // SharedData.setCurrentRequest(_.cloneDeep(oFormData));
-              // oViewModel.setProperty("/busy", true);
-              
-              // Load data with expand before navigation
+              oViewModel.setProperty("/busy", true);
+              // Load data with expand before navigation - Edit mode
               this._loadRequestDataAndNavigate(oFormData.Drfid, "employeerequestedit", true);
               break;
             case "Display":
-              /*Set application settings*/
-              oApplicationSettings.Edit = false;
-              oApplicationSettings.CallerRole = this.callerRole;
-              SharedData.setApplicationSettings(oApplicationSettings);
-              /*Set request data*/
-              SharedData.setCurrentRequest(_.cloneDeep(oFormData));
               oViewModel.setProperty("/busy", true);
-              
-              // Load data with expand before navigation
+              // Load data with expand before navigation - Display mode
               this._loadRequestDataAndNavigate(oFormData.Drfid, "employeerequestedit", false);
               break;
             case "Assign":
@@ -840,19 +839,20 @@ sap.ui.define(
           }
         },
         _getActiveFilters: function (sKey) {
+          debugger;
           var aFilters = [];
           var oThis = this;
           var oViewModel = this.getModel("requestListView");
           if (this.callerRole === "MANAGER") {
             aFilters = [
-              new Filter("Erfap", FilterOperator.EQ, "MY_REQUESTS"),
-              new Filter("Erfsf", FilterOperator.EQ, sKey),
+              new Filter("Drfap", FilterOperator.EQ, "MY_REQUESTS"),
+              new Filter("Drfsf", FilterOperator.EQ, sKey),
             ];
           } else if (this.callerRole === "RECRUITER") {
             aFilters = [
-              new Filter("Erfap", FilterOperator.EQ, "REQUESTS_APPROVED"),
+              new Filter("Drfap", FilterOperator.EQ, "REQUESTS_APPROVED"),
               //new Filter("Erfsf", FilterOperator.EQ, "APP"),
-              new Filter("Erfrf", FilterOperator.EQ, sKey),
+              new Filter("Drfrf", FilterOperator.EQ, sKey),
             ];
             var aStatusFilters = _.filter(
               oViewModel.getProperty("/statusFilters"),
@@ -862,7 +862,7 @@ sap.ui.define(
             if (aStatusFilters.length > 0) {
               $.each(aStatusFilters, function (sFilterIndex, oStatusFilter) {
                 aFilters.push(
-                  new Filter("Erfsf", FilterOperator.EQ, oStatusFilter.Erfsf)
+                  new Filter("Drfsf", FilterOperator.EQ, oStatusFilter.Drfsf)
                 );
               });
             } else {
@@ -874,7 +874,7 @@ sap.ui.define(
                 oDefaultFilters.DefaultStatus,
                 function (sStatusIndex, sDefaultStatus) {
                   aFilters.push(
-                    new Filter("Erfsf", FilterOperator.EQ, sDefaultStatus)
+                    new Filter("Drfsf", FilterOperator.EQ, sDefaultStatus)
                   );
                 }
               );
@@ -951,6 +951,7 @@ sap.ui.define(
         },
 
         _updateFilterCounts: function (oModel) {
+          debugger;
           var oViewModel = this.getModel("requestListView");
           var aFilters = [];
           var oThis = this;
@@ -958,14 +959,14 @@ sap.ui.define(
           $.each(this.statusFilters, function (sIndex, oFilter) {
             if (oThis.callerRole === "MANAGER") {
               aFilters = [
-                new Filter("Erfap", FilterOperator.EQ, "MY_REQUESTS"),
-                new Filter("Erfsf", FilterOperator.EQ, oFilter.Status),
+                new Filter("Drfap", FilterOperator.EQ, "MY_REQUESTS"),
+                new Filter("Drfsf", FilterOperator.EQ, oFilter.Status),
               ];
             } else if (oThis.callerRole === "RECRUITER") {
               aFilters = [
-                new Filter("Erfap", FilterOperator.EQ, "REQUESTS_APPROVED"),
+                new Filter("Drfap", FilterOperator.EQ, "REQUESTS_APPROVED"),
                 //new Filter("Erfsf", FilterOperator.EQ, "APP"),
-                new Filter("Erfrf", FilterOperator.EQ, oFilter.Status),
+                new Filter("Drfrf", FilterOperator.EQ, oFilter.Status),
               ];
               var aStatusFilters = _.filter(
                 oViewModel.getProperty("/statusFilters"),
@@ -975,7 +976,7 @@ sap.ui.define(
               if (aStatusFilters.length > 0) {
                 $.each(aStatusFilters, function (sFilterIndex, oStatusFilter) {
                   aFilters.push(
-                    new Filter("Erfsf", FilterOperator.EQ, oStatusFilter.Erfsf)
+                    new Filter("Drfsf", FilterOperator.EQ, oStatusFilter.Drfsf)
                   );
                 });
               } else {
@@ -987,14 +988,14 @@ sap.ui.define(
                   oDefaultFilters.DefaultStatus,
                   function (sStatusIndex, sDefaultStatus) {
                     aFilters.push(
-                      new Filter("Erfsf", FilterOperator.EQ, sDefaultStatus)
+                      new Filter("Drfsf", FilterOperator.EQ, sDefaultStatus)
                     );
                   }
                 );
               }
             }
 
-            oModel.read("/EmployeeRequestFormSet/$count", {
+            oModel.read("/DocumentRequestEmployeeSet/$count", {
               // oModel.read("/EmployeeRequestFormSet", {
               filters: aFilters,
               success: function (oData, oResponse) {
@@ -1122,7 +1123,6 @@ sap.ui.define(
           });
         },
         onAvailableRequestActions: function (oEvent) {
-          debugger;
           var oSource = oEvent.getSource();
           var oData = this.getModel().getProperty(
             oSource.getParent().getBindingContextPath()

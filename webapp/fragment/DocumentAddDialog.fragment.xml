@@ -3,17 +3,19 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:u="sap.ui.unified">
 
-	<Dialog title="Doküman Ekle" contentWidth="70%" resizable="true">
-		<f:Form id="idUploadAttachmentForm" editable="true">
+	<Dialog title="Doküman Yükleme/Listeleme" contentWidth="60%" contentHeight="80%" resizable="true">
+		<MessageStrip class="sapUiSmallMargin" text="Maksimum 5 MB boyutunda dosya yükleyebilirsiniz." type="Information" showCloseButton="true" showIcon="true"/>
+		<f:Form id="idUploadAttachmentForm" class="candidateFileUploader" editable="true">
 			<f:layout>
-				<f:ResponsiveGridLayout labelSpanXL="2" labelSpanL="2" labelSpanM="2" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="true"/>
+				<f:ResponsiveGridLayout labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="true"/>
 			</f:layout>
+
 			<f:formContainers>
 				<f:FormContainer>
 					<f:formElements>
-						<f:FormElement >
+						<f:FormElement label="Doküman Yükle">
 							<f:fields>
-								<u:FileUploader id="idAttachmentFileUploader" name="candidateFileUploader" uploadUrl="" uploadComplete="onAttachmentUploadComplete" change="onAttachmentFileChange" typeMissmatch="onFileTypeMissmatch" style="Emphasized" fileType="pdf,xls,xlsx,doc,docx,tiff,jpg,png,zip,rar,msg,eml" maximumFileSize="5" fileSizeExceed="onFileSizeExceed" placeholder="{i18n>LABEL_UPLOAD_PLACEHOLDER}" sendXHR="true" useMultipart="false" class="candidateFileUploader"></u:FileUploader>
+								<u:FileUploader id="idAttachmentFileUploader" name="candidateFileUploader" uploadUrl="" uploadComplete="onAttachmentUploadComplete" change="onAttachmentFileChange" typeMissmatch="onFileTypeMissmatch" style="Emphasized" fileType="pdf,xls,xlsx,doc,docx,tiff,jpg,png,zip,rar,msg,eml" maximumFileSize="5" fileSizeExceed="onFileSizeExceed" placeholder="{i18n>LABEL_UPLOAD_PLACEHOLDER}" sendXHR="true" useMultipart="false" class="candidateFileUploader" width="95%"></u:FileUploader>
 							</f:fields>
 						</f:FormElement>
 					</f:formElements>
@@ -22,18 +24,17 @@
 		</f:Form>
 		<buttons>
 			<Button text="{i18n>LABEL_CANCEL}" icon="sap-icon://sys-cancel-2" press="onCloseUploadFormDialog"/>
-			<Button text="{i18n>LABEL_UPLOAD_FILE}" icon="sap-icon://upload-to-cloud" type="Accept" press="onAttachmentUploadPress"
-				id="idUploadCandidateInterviewForm"/>
+			<Button text="{i18n>LABEL_UPLOAD_FILE}" icon="sap-icon://upload-to-cloud" type="Accept" press="onAttachmentUploadPress" id="idUploadCandidateInterviewForm"/>
 		</buttons>
-		<Table id="idCandidateAttachmentList" busy="{candidateModel>/busy}" busyIndicatorDelay="0" inset="true" 
-			items="{path: '/EmployeeAttachmentSet'}">
-
+		<Table id="idCandidateAttachmentList" busy="{candidateModel>/busy}" busyIndicatorDelay="0" inset="true" items="{path: '/EmployeeAttachmentSet'}" class="erfTable">
+			<infoToolbar>
+				<Toolbar>
+					<Title id="tableHeader" text="Döküman Listesi"/>
+				</Toolbar>
+			</infoToolbar>
 			<columns>
 				<Column >
 					<Text text="{i18n>ATTACHMENT_FILE_NAME}"/>
-				</Column>
-				<Column >
-					<Text text="{i18n>ATTACHMENT_FILE_TYPE}"/>
 				</Column>
 				<Column hAlign="Center">
 					<Text text="{i18n>CREATION_DATE}"/>

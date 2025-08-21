@@ -172,7 +172,21 @@
           "target": [
               "employeerequestedit"
           ]
-        }
+        },
+        {
+          "pattern": "documentlist",
+          "name": "documentlist",
+          "target": [
+              "documentlist"
+          ]
+        },
+        {
+          "pattern": "recruitmentadmin",
+          "name": "recruitmentadmin",
+          "target": [
+              "recruitmentadmin"
+          ]
+      }
       ],
       "targets": {
         "appdispatcher": {
@@ -210,7 +224,19 @@
           "viewId": "employeerequestedit",
           "viewLevel": 3,
           "title": "{i18n>EMPLOYEE_REQUEST_FORM_DETAIL}"
-        }
+        },
+        "documentlist": {
+          "viewName": "DocumentList",
+          "viewId": "documentlist",
+          "viewLevel": 3,
+          "title": "{i18n>DOCUMENT_LIST}"
+        }, 
+        "recruitmentadmin": {
+        "viewName": "RecruitmentAdmin",
+        "viewId": "recruitmentadmin",
+        "viewLevel": 2,
+        "title": "{i18n>RECRUITMENT_ADMIN_PAGE}"
+      }
       }
     },
     "config": {

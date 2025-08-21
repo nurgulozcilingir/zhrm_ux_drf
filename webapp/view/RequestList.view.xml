@@ -1,6 +1,6 @@
 <mvc:View controllerName="com.bmc.hcm.drf.zhcmuxdrf.controller.RequestList" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:semantic="sap.f.semantic"
 	xmlns:footerbar="sap.ushell.ui.footerbar" xmlns:cd="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
-	busy="{requestListView>/busy}" busyIndicatorDelay="100">
+	busyIndicatorDelay="100">
 	<Page showFooter="true" showHeader="true" floatingFooter="true" showNavButton="true" navButtonPress="onNavBack"
 		title="{i18n>EMPLOYEE_REQUEST_FORM_LIST}" class="erfListPage">
 		<IconTabBar id="idIconTabBar" select="onIconFilterSelect" stretchContentHeight="true" selectedKey="{requestListView>/selectedKey}">
@@ -46,9 +46,6 @@
 						<Column id="idRequiredQualificationColumn" minScreenWidth="Desktop">
 							<Text text="Belge Adı"/>
 						</Column>
-						<!-- <Column id="idRequiredQualificationColumn2" minScreenWidth="Desktop">
-							<Text text="Belge Tarihi"/>
-						</Column> -->
 						<Column id="idRequiredQualificationColumn3" minScreenWidth="Desktop">
 							<Text text="Talep Tarihi"/>
 						</Column>

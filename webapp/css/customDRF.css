@@ -44,7 +44,14 @@
     transition: all .3s ease;
     border-radius: 50%
 }
-
+.erfPageBackButtonBlue{
+    display: flex;
+    align-content: center;
+    width: 40px;
+    height: 40px;
+    transition: all .3s ease;
+    border-radius: 50%
+}
 .erfPageBackButton {
     align-items: center;
     justify-content: center
@@ -61,8 +68,15 @@
 .erfPageBackButtonLight:before {
     color: #f1f1f1!important
 }
+.erfPageBackButtonBlue:hover {
+    background-color: #ececec!important
+}
 
 .erfPageBackButtonLight {
+    align-items: center;
+    justify-content: center
+}
+.erfPageBackButtonBlue {
     align-items: center;
     justify-content: center
 }
@@ -128,9 +142,12 @@ html.sap-phone .erfDisplayOnlyCheckBox {
 }
 
 .erfTable .sapMTB-Info-CTX.sapMTB {
-    background: #697988!important;
-    color: #fff!important;
-    border-left: 5px solid #e9910f
+    background: #b7cbdf;
+    color: #346187 !important;
+    border-left: 5px solid #2c5282  /* Açık mavi - eski turuncu yerine */
+}
+.erfTable .sapMTB-Info-CTX.sapMTB > div{
+    color: #346187 !important;
 }
 
 .erfBtnEmphasized,
@@ -647,13 +664,25 @@ html.sap-phone .erfDisplayOnlyCheckBox {
     padding: 0!important
 }
 
-.cmnCandidateListPage .sapFDynamicPageTitle {
+/* .cmnCandidateListPage .sapFDynamicPageTitle {
     background: #434f5a!important;
     padding: .5rem 1rem!important
+} */
+.cmnCandidateListPage .sapFDynamicPageTitle {
+    background: #1e3a5f !important;  /* Kurumsal lacivert */
+    padding: .5rem 1rem !important;
 }
-
+.cmnCandidateListPageNew .sapFDynamicPageTitle {
+    background: linear-gradient(141deg, #bdcfe0 0, #a0beda 51%, #8cadca 75%) !important;
+    padding: .5rem 1rem !important;
+}
 .cmnCandidateListPage .sapFDynamicPageTitle .sapMTitle {
     color: #f1f1f1!important;
+    text-shadow: none!important
+}
+
+.cmnCandidateListPageNew .sapFDynamicPageTitle .sapMTitle {
+    color: #346187!important;
     text-shadow: none!important
 }
 
@@ -770,4 +799,32 @@ html.sap-phone .erfDisplayOnlyCheckBox {
     color: #346187 !important;
     text-align: center !important;
     flex: 1;
+}
+/* .erfRecruitmentTable tbody tr:nth-child(even) td {
+    background-color: #e8f0f7 !important;
+} */
+.erfRecruitmentTable .sapMListTblCell,
+.erfRecruitmentTable td {
+    padding: 0.25rem 0.5rem !important;
+    border-right: 1px solid #e0e0e0 !important;
+    vertical-align: middle !important;
+}
+
+.sapMMsgStrip.sapMMsgStripInformation .sapMMsgStripMessage {
+    color: #0a4a8c !important;
+    font-size: 0.875rem !important;
+}
+
+/* Tablo alternatif satır renkleri ve hover efekti */
+.sapMListTbl .sapMListTblRow:nth-child(even) {
+    background-color: #f9fafb;
+}
+
+.sapMListTbl .sapMListTblRow:hover {
+    background-color: #e8f4fd !important;
+    transition: background-color 0.2s ease;
+}
+.myInputPadding {
+    padding: 0.5rem !important;
+    margin: 0.3rem 0 !important;
 }

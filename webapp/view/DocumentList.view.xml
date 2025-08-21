@@ -1,0 +1,78 @@
+<mvc:View controllerName="com.bmc.hcm.drf.zhcmuxdrf.controller.DocumentList"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+    xmlns:c="sap.ui.core" displayBlock="true" height="100%" busyIndicatorDelay="0">
+    <f:DynamicPage id="idDocumentListPage" class="cmnCandidateListPage sapUiNoContentPadding" busy="{DocumentListRequestView>/busy}" busyIndicatorDelay="0" showFooter="true">
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <FlexBox direction="Row" alignItems="Center">
+                        <core:Icon src="sap-icon://nav-back" press="onNavBack" color="#346187" class="erfPageBackButtonLight sapUiSmallMarginEnd"/>
+                        <Title text="{i18n>DOCUMENT_LIST}"></Title>
+                    </FlexBox>
+                </f:heading>
+            </f:DynamicPageTitle>
+        </f:title>
+        <f:content>
+            <IconTabBar id="idIconTabBar" select="onFilterSelect" class="sapUiResponsiveContentPadding">
+                <items>
+                    <IconTabFilter id="allDocuments" text="Tüm Belgeler" key="all" icon="sap-icon://documents" count="{= ${DocumentListRequestView>/DocumentCollection}.length }">
+                        <Table id="idDocumentsTable" inset="false" 
+                            items="{/DocumentListSet}" 
+                            noDataText="{i18n>NO_DATA}" class="erfTable">
+                            <headerToolbar>
+                                <Toolbar>
+                                    <ToolbarSpacer/>
+                                    <SearchField placeholder="Ara..." width="300px" search="onSearch"/>
+                                </Toolbar>
+                            </headerToolbar>
+                            <infoToolbar>
+                                <Toolbar>
+                                    <Title id="tableHeader" text="Personel Belge Listesi"/>
+                                </Toolbar>
+                            </infoToolbar>
+                            <columns>
+                                <Column minScreenWidth="Tablet" demandPopin="true">
+                                    <Text text="Personel No" />
+                                </Column>
+                                <!-- <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
+                                    <Text text="Ad Soyad" />
+                                </Column> -->
+                                <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                                    <Text text="Belge Türü" />
+                                </Column>
+                                <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                                    <Text text="Kurum Adı" />
+                                </Column>
+                                <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                                    <Text text="Sertifika/Bölüm" />
+                                </Column>
+                                <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                                    <Text text="Belge Tarihi" />
+                                </Column>
+                                <Column hAlign="End">
+                                    <Text text="Geçerlilik Tarihi" />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem vAlign="Middle" type="Navigation" press="onItemPress">
+                                    <cells>
+                                        <Text text="{Pernr}" />
+                                        <!-- <ObjectIdentifier title="{DocumentListRequestView>AdSoyad}"/> -->
+                                        <Text text="{Zbelg}" />
+                                        <Text text="{Zkurm}" />
+                                        <Text text="{Zbolm}" />
+                                        <Text text="{ path: 'Ztarh', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }" />
+                                        <Text  text="{path: 'Zgecr', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

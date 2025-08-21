@@ -35,8 +35,8 @@ sap.ui.define([], function () {
 		getDateTime: function (sDate, sTime) {
 			return sDate.getTime() + sTime.ms;
 		},
-		getStatusText: function (sErfsx, sErfsy) {
-			return sErfsy === '' ? sErfsx : sErfsx + '-' + sErfsy;
+		getStatusText: function (sDrfsx, sDrfsy) {
+			return sDrfsy === '' ? sDrfsx : sDrfsx + '-' + sDrfsy;
 		},
 		getObjectIcon: function (sOtype, sEmpid, sIsmng) {
 			var sIcon = null;

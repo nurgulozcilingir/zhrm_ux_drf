@@ -18,7 +18,7 @@
 									<f:FormElement label="{i18n>REQUEST_STATUS}">
 										<f:fields>
 											<Text class="erfStatusText"
-												text="{ parts: [ {path: 'employeeRequestView>ErfsxOld' }, {path: 'employeeRequestView>ErfsyOld' }], formatter: '.formatter.getStatusText' }"/>
+												text="{ parts: [ {path: 'employeeRequestView>DrfsxOld' }, {path: 'employeeRequestView>DrfsyOld' }], formatter: '.formatter.getStatusText' }"/>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement label="{i18n>ACTION_DATE}">

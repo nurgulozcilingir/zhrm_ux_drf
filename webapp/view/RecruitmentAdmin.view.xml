@@ -1,0 +1,88 @@
+<mvc:View controllerName="com.bmc.hcm.drf.zhcmuxdrf.controller.RecruitmentAdmin"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:smod="smod.ui5.controls.src.controls"
+    xmlns:f="sap.f">
+    <f:DynamicPage id="idRecruitmentAdminPage" class="erfListPage cmnCandidateListPage sapUiNoContentPadding" showFooter="true" showHeader="true" floatingFooter="true" showNavButton="true" navButtonPress="onNavBack" title="{i18n>RECRUITMENT_ADMIN_PAGE}" busy="{recruitmentAdminModel>/busy}" busyIndicatorDelay="100">
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <FlexBox direction="Row" alignItems="Center">
+                        <core:Icon src="sap-icon://nav-back" press="onNavBack" color="#346187" class="erfPageBackButtonLight sapUiSmallMarginEnd"/>
+                        <Title text="{i18n>RECRUITMENT_ADMIN_PAGE}"></Title>
+                    </FlexBox>
+                </f:heading>
+                <f:actions>
+                    <ToolbarSpacer/>
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+        <f:content>
+            <IconTabBar id="idRecAdmIconTab" class="erfWideIconTab">
+                <items>
+                    <IconTabFilter icon="sap-icon://form" iconColor="Critical" count="{recruitmentAdminModel>/searchResults/DRF}" text="{i18n>EMPLOYEE_REQUEST_FORM_LIST}" key="ERF" design="Horizontal">
+                        <Table id="idRecAdmEmployeeRequestTable" width="auto" alternateRowColors="true" items="{ path: '/DocumentRequestFormSet' , events: { dataRequested: '.onDataRequested', dataReceived: '.onDataReceived' }  ,filters : [ { path : 'Drfap', operator : 'EQ', value1 : 'REQUEST_LIST_ADMIN'}, { path : 'Drfsf', operator : 'EQ', value1 : 'ALL'}] }" noDataText="{recruitmentAdminModel>/tableNoDataText}" busyIndicatorDelay="0" growing="true" growingScrollToLoad="true" growingThreshold="10" updateFinished="onRequestUpdateFinished" updateStarted="onRequestUpdateStarted" class="erfTable erfRecruitmentTable" busy="{recruitmentAdminModel>/busyRequest}">
+                            <headerToolbar>
+                                <Toolbar>
+                                    <ToolbarSpacer/>
+                                    <ComboBox items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfst_f' } ] }" selectedKey="{recruitmentAdminModel>/search/Drfst}" placeholder="{i18n>ERFST}" change="onChangeErfst">
+                                        <core:ListItem key="{Fldky}" text="{Fldvl}"/>
+                                    </ComboBox>
+                                    <ComboBox items="{ path:'recruitmentAdminModel>/erfssList'}" placeholder="{i18n>ERFSS}" selectedKey="{recruitmentAdminModel>/search/Erfss}" change="onRequestSearch">
+                                        <core:ListItem key="{recruitmentAdminModel>Fldky}" text="{recruitmentAdminModel>Fldvl}"/>
+                                    </ComboBox>
+                                    <SearchField id="idRequestSearchField" placeholder="{i18n>REQUEST_SEARCH_TOOLTIP}" value="{recruitmentAdminModel>/search/Plans}" width="{= ${device>/system/phone} ? '30%' : '15%' }" search="onRequestSearch"></SearchField>
+                                    <Button type="Emphasized" icon="sap-icon://refresh" text="{i18n>SEARCH_ACTION}" press="onRequestSearch"/>
+                                </Toolbar>
+                            </headerToolbar>
+                            <infoToolbar>
+                                <Toolbar>
+                                    <Title id="tableHeader" text="Belge Talep Formlarım"/>
+                                </Toolbar>
+                            </infoToolbar>
+                            <columns>
+                                <Column id="idRequestStatusColumn" minScreenWidth="Desktop" demandPopin="true">
+                                    <Text text="{i18n>REQUEST_STATUS}"/>
+                                </Column>
+                                <Column id="idRequestNumberColumn10">
+                                    <Text text="Form Numarası"/>
+                                </Column>
+                                <Column id="idPositionColumn9">
+                                    <Text text="Belge Talep Türü"/>
+                                </Column>
+                                <Column id="idRequestReasonColumns8">
+                                    <Text text="Belge Türü"/>
+                                </Column>
+                                <Column id="idRequiredQualificationColumn7" minScreenWidth="Desktop">
+                                    <Text text="Belge Adı"/>
+                                </Column>
+                                <Column id="idRequiredQualificationColumn6" minScreenWidth="Desktop">
+                                    <Text text="Talep Tarihi"/>
+                                </Column>
+                                <Column id="idRequiredQualificationColumn5" minScreenWidth="Desktop">
+                                    <Text text="Talep Sahibi"/>
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem type="Navigation" press="onRequestPress">
+                                    <cells>
+                                        <Text text="{ parts: [ {path: 'Drfsx' }, {path: 'Drfsy' }], formatter: '.formatter.getStatusText' }"/>
+                                        <Text text="{Drfno}"/>
+                                        <Text text="{Drrtx}"/>
+                                        <Text text="{Drfbx}"/>
+                                        <Text text="{Drfbn}"/>
+                                        <Text text="{ path: 'Rqdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }"/>
+                                        <Text text="{Rqown}"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </IconTabFilter>
+                  
+
+                </items>
+            </IconTabBar>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

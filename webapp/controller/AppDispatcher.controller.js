@@ -15,6 +15,7 @@ function (BaseController, JSONModel, History, formatter, Filter, FilterOperator,
 		formatter: formatter,
         
 		onInit: function () {
+			debugger;
 			var oViewModel;
 			// Model used to manipulate control states
 			oViewModel = new JSONModel({
@@ -22,46 +23,59 @@ function (BaseController, JSONModel, History, formatter, Filter, FilterOperator,
 				requestCounts: {},
 				appList: [{
 					"appName": "DrfcrApp",
-					"visible": true,
+					"visible": false,
 					"count": 0,
-					// "entitySet": "EmployeeRequestFormSet",
-					// "filters": [
-					// 	new Filter("Erfap", FilterOperator.EQ, "MY_REQUESTS"),
-					// 	new Filter("Erfsf", FilterOperator.EQ, "ALL")
-					// ],
+					"entitySet": "DocumentRequestFormSet",
+					"filters": [
+						new Filter("Drfap", FilterOperator.EQ, "MY_REQUESTS"),
+						new Filter("Drfsf", FilterOperator.EQ, "ALL")
+					],
 					"title": this.getText("MY_EMPLOYEE_REQUEST_FORM"),
 					"pressed": "onMyEmployeeRequestPage",
 					"icon": "sap-icon://employee-lookup"
 				}, {
 					"appName": "DrfapApp",
-					"visible": true,
+					"visible": false,
 					"count": 0,
-					// "entitySet": "EmployeeRequestFormSet",
-					// "filters": [
-					// 	new Filter("Erfap", FilterOperator.EQ, "REQUESTS_ON_ME"),
-					// 	new Filter("Erfsf", FilterOperator.EQ, "ALL")
-					// ],
+					"entitySet": "DocumentRequestFormSet",
+					"filters": [
+						new Filter("Drfap", FilterOperator.EQ, "REQUESTS_ON_ME"),
+						new Filter("Drfsf", FilterOperator.EQ, "ALL")
+					],
 					"title": this.getText("EMPLOYEE_REQUEST_APPROVALS"),
 					"pressed": "onEmployeeRequestApprovalPage",
 					"icon": "sap-icon://validate"
 				}, 
-				// {
-				// 	"appName": "DrfrcApp",
-				// 	"visible": false,
-				// 	"count": 0,
-				// 	"entitySet": "CandidateProcessApprovalSet",
-				// 	"filters": [new Filter("Appst", FilterOperator.EQ, "2")],
-				// 	"title": this.getText("EMPLOYEE_REQUEST_FORM_LIST_CLOSED"),
-				// 	"pressed": "onCandidateProcessClosedSet",
-				// 	"icon": "sap-icon://validate"
-				// }, {
+				{
+					"appName": "DrfblApp",
+					"visible": false,
+					"count": 0,
+					"entitySet": "DocumentListSet",
+					"title": this.getText("DOCUMENT_LIST"),
+					"pressed": "onCandidateProcessClosedSet",
+					"icon": "sap-icon://validate"
+				},
+				{
+					"appName": "DrfraApp",
+					"visible": false,
+					"entitySet": "DocumentRequestFormSet",
+					"count": 0,
+					"filters": [
+						new Filter("Drfap", FilterOperator.EQ, "REQUEST_LIST_ADMIN"),
+						new Filter("Drfsf", FilterOperator.EQ, "ALL")
+					],
+					"title": this.getText("RECRUITMENT_ADMIN_PAGE"),
+					"pressed": "onRecruitmentAdminPage",
+					"icon": "sap-icon://key-user-settings"
+				},
+				//  {
 				// 	"appName": "DrfraApp",
 				// 	"visible": true,
 				// 	"entitySet": "EmployeeRequestFormSet",
 				// 	"count": 0,
 				// 	"filters": [
-				// 		new Filter("Erfap", FilterOperator.EQ, "REQUESTS_APPROVED"),
-				// 		new Filter("Erfsf", FilterOperator.EQ, "APP"),
+				// 		new Filter("Drfap", FilterOperator.EQ, "REQUESTS_APPROVED"),
+				// 		new Filter("Drfsf", FilterOperator.EQ, "APP"),
 				// 		new Filter("Erfrf", FilterOperator.EQ, "APM")
 				// 	],
 				// 	"title": this.getText("RECRUITMENT_SPECIALIST_REQUESTS"),
@@ -79,9 +93,10 @@ function (BaseController, JSONModel, History, formatter, Filter, FilterOperator,
 				// }
 			],
 				appAuthorization: {
-					DrfcrApp: true,
-					DrfapApp: true
-					// DrfrcApp: true,
+					DrfcrApp: false,
+					DrfapApp: false,
+					DrfblApp: false,
+					DrfraApp: false,
 					// DrfrcApp: true,
 					// DrfclApp: true
 				}
@@ -146,9 +161,9 @@ function (BaseController, JSONModel, History, formatter, Filter, FilterOperator,
 			this.getRouter().navTo("approvallist");
 
 		},
-		// onCandidateProcessClosedSet: function () {
-		// 	this.getRouter().navTo("closedlist");
-		// },
+		onCandidateProcessClosedSet: function () {
+			this.getRouter().navTo("documentlist");
+		},
 		onRecruiterEmployeeRequestPage: function () {
 			this.getRouter().navTo("recrequestlist");
 		},
@@ -158,9 +173,10 @@ function (BaseController, JSONModel, History, formatter, Filter, FilterOperator,
 		// onCandidateProcessApprovalPage: function () {
 		// 	this.getRouter().navTo("candidateprocessapproval");
 		// },
-		// onRecruitmentAdminPage: function () {
-		// 	this.getRouter().navTo("recruitmentadmin");
-		// },
+		onRecruitmentAdminPage: function () {
+			this.getRouter().navTo("recruitmentadmin");
+		},
+		
 		onRefreshRequestCounts: function () {
 			var oModel = this.getModel();
 			var oViewModel = this.getModel("appDispatcherView");
@@ -182,6 +198,13 @@ function (BaseController, JSONModel, History, formatter, Filter, FilterOperator,
 					oApp.count = 0;
 				}
 			});
+		},
+		onMyEmployeeRequestPage: function () {
+			this.getRouter().navTo("mngrequestlist");
+		},
+		onEmployeeRequestApprovalPage: function () {
+			this.getRouter().navTo("approvallist");
+
 		},
 		_onAppDispatcherMatched: function (oEvent) {
 			debugger;

@@ -7,7 +7,7 @@
 				<IconTabFilter icon="sap-icon://pending" iconColor="Negative" text="{i18n>REQUESTS_PENDING}" key="info">
 					<content>
 						<Table id="idApprovalListTable" width="auto" class="erfTable"
-							items="{ path: '/EmployeeRequestFormSet',filters : [ { path : 'Erfap', operator : 'EQ', value1 : 'REQUESTS_ON_ME'}, { path : 'Erfsf', operator : 'EQ', value1 : 'ALL'} ] }"
+							items="{ path: '/DocumentRequestFormSet',filters : [ { path : 'Drfap', operator : 'EQ', value1 : 'REQUESTS_ON_ME'}, { path : 'Drfsf', operator : 'EQ', value1 : 'ALL'} ] }"
 							noDataText="{approvalListView>/tableNoDataText}" busyIndicatorDelay="{approvalListView>/tableBusyDelay}" growing="true"
 							growingScrollToLoad="true" updateFinished="onUpdateFinished" updateStarted="onUpdateStarted" inset="false">
 							<headerToolbar>
@@ -26,15 +26,18 @@
 								<Column id="idRequestNumberColumn">
 									<Text text="{i18n>ERF_NUMBER}"/>
 								</Column>
-								<Column id="idPositionColumn1">
-									<Text text="Pozisyon"/>
+								<Column id="idPositionColumn">
+									<Text text="Belge Talep Türü"/>
 								</Column>
-								<Column id="idRequestKapsam2">
-									<Text text="Kadro kapsamı"/>
+								<Column id="idRequestReasonColumns">
+									<Text text="Belge Türü"/>
 								</Column>
-								<Column id="idRequestReasonColumn">
+								<Column id="idRequiredQualificationColumn" minScreenWidth="Desktop">
+									<Text text="Belge Adı"/>
+								</Column>
+								<!-- <Column id="idRequestReasonColumn">
 									<Text text="{i18n>REQUEST_REASON}"/>
-								</Column>
+								</Column> -->
 								<Column id="idRequestOwnerColumn" demandPopin="true">
 									<Text text="{i18n>REQUEST_OWNER}"/>
 								</Column>
@@ -48,14 +51,17 @@
 							<items>
 								<ColumnListItem type="Navigation" press="onRequestDetail">
 									<cells>
-										<ObjectIdentifier title="{Erfno}"/>
-										<Text text="{= ${Nopln} ? ${Plaft} : ${Plstx} }"/>
-										<Text text="{Stasx}"/>
-										<Text text="{Erfrx}"/>
+										<ObjectIdentifier title="{Drfno}"/>
+										<!-- <Text text="{= ${Nopln} ? ${Plaft} : ${Plstx} }"/> -->
+										<!-- <Text text="{Stasx}"/> -->
+										<Text text="{Drrtx}"/>
+										<Text text="{Drfbx}"/>
+										<Text text="{Drfbn}"/>
+										<!-- <Text text="{Drfrx}"/> -->
 										<Text text="{Rqowe}" wrapping="true"/>
 										<Text
 											text="{ path: 'Rqdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} } - { path: 'Rqtim', type: 'sap.ui.model.odata.type.Time', formatOptions: { pattern:'HH:mm'} }"/>
-										<Text text="{ parts: [ {path: 'Erfsx' }, {path: 'Erfsy' }], formatter: '.formatter.getStatusText' }"/>
+										<Text text="{ parts: [ {path: 'Drfsx' }, {path: 'Drfsy' }], formatter: '.formatter.getStatusText' }"/>
 									</cells>
 								</ColumnListItem>
 							</items>
@@ -65,7 +71,7 @@
 				<IconTabFilter icon="sap-icon://accept" key="attachments" iconColor="Positive" text="{i18n>REQUESTS_OPERATION}">
 					<content>
 						<Table id="idApprovalListTableAPP" width="auto" class="erfTable"
-							items="{ path: '/EmployeeRequestFormSet',filters : [ { path : 'Erfap', operator : 'EQ', value1 : 'REQUESTS_ON_ME'}, { path : 'Erfsf', operator : 'EQ', value1 : 'APP'} ] }"
+							items="{ path: '/DocumentRequestFormSet',filters : [ { path : 'Drfap', operator : 'EQ', value1 : 'REQUESTS_ON_ME'}, { path : 'Drfsf', operator : 'EQ', value1 : 'APP'} ] }"
 							noDataText="{approvalListView>/tableNoDataText}" busyIndicatorDelay="{approvalListView>/tableBusyDelay}" growing="true"
 							growingScrollToLoad="true" inset="false">
 							<headerToolbar>
@@ -83,18 +89,21 @@
 								</Toolbar>
 							</infoToolbar>
 							<columns>
-								<Column >
+								<Column>
 									<Text text="{i18n>ERF_NUMBER}"/>
 								</Column>
-								<Column >
-									<Text text="Pozisyon"/>
+								<Column>
+									<Text text="Belge Talep Türü"/>
 								</Column>
-								<Column id="idRequestKapsam3">
-									<Text text="Kadro kapsamı"/>
+								<Column>
+									<Text text="Belge Türü"/>
 								</Column>
-								<Column >
+								<Column minScreenWidth="Desktop">
+									<Text text="Belge Adı"/>
+								</Column>
+								<!-- <Column>
 									<Text text="{i18n>REQUEST_REASON}"/>
-								</Column>
+								</Column> -->
 								<Column demandPopin="true">
 									<Text text="{i18n>REQUEST_OWNER}"/>
 								</Column>
@@ -108,14 +117,17 @@
 							<items>
 								<ColumnListItem type="Navigation" press="onRequestDetailApp">
 									<cells>
-										<ObjectIdentifier title="{Erfno}"/>
-										<Text text="{= ${Nopln} ? ${Plaft} : ${Plstx} }"/>
-										<Text text="{Stasx}"/>
-										<Text text="{Erfrx}"/>
+										<ObjectIdentifier title="{Drfno}"/>
+										<!-- <Text text="{= ${Nopln} ? ${Plaft} : ${Plstx} }"/> -->
+										<!-- <Text text="{Stasx}"/> -->
+										<Text text="{Drrtx}"/>
+										<Text text="{Drfbx}"/>
+										<Text text="{Drfbn}"/>
+										<!-- <Text text="{Drfrx}"/> -->
 										<Text text="{Rqowe}" wrapping="true"/>
 										<Text
 											text="{ path: 'Rqdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} } - { path: 'Rqtim', type: 'sap.ui.model.odata.type.Time', formatOptions: { pattern:'HH:mm'} }"/>
-										<Text text="{ parts: [ {path: 'Erfsx' }, {path: 'Erfsy' }], formatter: '.formatter.getStatusText' }"/>
+										<Text text="{ parts: [ {path: 'Drfsx' }, {path: 'Drfsy' }], formatter: '.formatter.getStatusText' }"/>
 									</cells>
 								</ColumnListItem>
 							</items>

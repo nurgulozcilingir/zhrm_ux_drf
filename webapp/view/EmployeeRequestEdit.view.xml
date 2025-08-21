@@ -73,5 +73,12 @@
 			</IconTabBar>
 		
 		</f:content>
+		<f:footer>
+			<OverflowToolbar visible="false">
+				<ToolbarSpacer/>
+				<Button id="idFormActionsButton" busyIndicatorDelay="0" icon="sap-icon://list" type="Accept" tooltip="{i18n>ACTION_LIST}"
+					press="onOpenFormActions" text="{i18n>ACTION_LIST}" visible="false"/>
+			</OverflowToolbar>
+		</f:footer>
 	</f:DynamicPage>
 </mvc:View>

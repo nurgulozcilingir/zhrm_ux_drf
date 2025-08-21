@@ -2,278 +2,239 @@
 /*global _*/
 sap.ui.define([
 	"com/bmc/hcm/drf/zhcmuxdrf/controller/BaseController",
+	"com/bmc/hcm/drf/zhcmuxdrf/controller/SharedData",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/routing/History",
 	"com/bmc/hcm/drf/zhcmuxdrf/model/formatter",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	"com/bmc/hcm/drf/zhcmuxdrf/controller/SharedData"
-], function (BaseController, JSONModel, History, formatter, Filter, FilterOperator, SharedData) {
+	"sap/ui/model/FilterOperator"
+
+], function (BaseController, SharedData, JSONModel, History, formatter, Filter, FilterOperator) {
 	"use strict";
 
 	return BaseController.extend("com.bmc.hcm.drf.zhcmuxdrf.controller.ApprovalList", {
 
 		formatter: formatter,
+
+		/* =========================================================== */
+		/* lifecycle methods                                           */
+		/* =========================================================== */
+
+		/**
+		 * Called when the requestlist controller is instantiated.
+		 * @public
+		 */
 		onInit: function () {
-			var oViewModel;
 			debugger;
+			var oViewModel,
+				iOriginalBusyDelay,
+				oTable = this.byId("idApprovalListTable");
+
+			// Put down requestList table's original value for busy indicator delay,
+			// so it can be restored later on. Busy handling on the table is
+			// taken care of by the table itself.
+			iOriginalBusyDelay = oTable.getBusyIndicatorDelay();
+
+			// keeps the search state
+			this._aTableSearchState = [];
+
 			// Model used to manipulate control states
 			oViewModel = new JSONModel({
+				requestListTableTitle: this.getText("REQUESTS_WAITING_APPROVAL"),
+				tableNoDataText: this.getText("EMPTY_REQUEST_LIST"),
+				tableBusyDelay: 0,
 				busy: false,
-				requestCounts: {},
-				appList: [{
-					"appName": "ErfcrApp",
-					"visible": false,
-					"count": 0,
-					"entitySet": "EmployeeRequestFormSet",
-					"filters": [
-						new Filter("Erfap", FilterOperator.EQ, "MY_REQUESTS"),
-						new Filter("Erfsf", FilterOperator.EQ, "ALL")
-					],
-					"title": this.getText("MY_EMPLOYEE_REQUEST_FORM"),
-					"pressed": "onMyEmployeeRequestPage",
-					"icon": "sap-icon://employee-lookup"
-				}, {
-					"appName": "ErfapApp",
-					"visible": false,
-					"count": 0,
-					"entitySet": "EmployeeRequestFormSet",
-					"filters": [
-						new Filter("Erfap", FilterOperator.EQ, "REQUESTS_ON_ME"),
-						new Filter("Erfsf", FilterOperator.EQ, "ALL")
-					],
-					"title": this.getText("EMPLOYEE_REQUEST_APPROVALS"),
-					"pressed": "onEmployeeRequestApprovalPage",
-					"icon": "sap-icon://validate"
-				}, {
-					"appName": "ErfclApp",
-					"visible": false,
-					"count": 0,
-					"entitySet": "CandidateProcessApprovalSet",
-					"filters": [new Filter("Appst", FilterOperator.EQ, "2")],
-					"title": this.getText("EMPLOYEE_REQUEST_FORM_LIST_CLOSED"),
-					"pressed": "onCandidateProcessClosedSet",
-					"icon": "sap-icon://validate"
-				}, {
-					"appName": "ErfrcApp",
-					"visible": true,
-					"entitySet": "EmployeeRequestFormSet",
-					"count": 0,
-					"filters": [
-						new Filter("Erfap", FilterOperator.EQ, "REQUESTS_APPROVED"),
-						new Filter("Erfsf", FilterOperator.EQ, "APP"),
-						new Filter("Erfrf", FilterOperator.EQ, "APM")
-					],
-					"title": this.getText("RECRUITMENT_SPECIALIST_REQUESTS"),
-					"pressed": "onRecruiterEmployeeRequestPage",
-					"icon": "sap-icon://employee-approvals"
-				}, {
-					"appName": "CanprApp",
-					"visible": false,
-					"entitySet": "CandidatePoolSet",
-					"count": 0,
-					"filters": [new Filter("Cplty", FilterOperator.EQ, "C")],
-					"title": this.getText("CANDIDATE_LIST_APP"),
-					"pressed": "onCandidateProfilePage",
-					"icon": "sap-icon://employee-pane"
-				}, {
-					"appName": "CanapApp",
-					"visible": false,
-					"entitySet": "CandidateProcessApprovalSet",
-					"count": 0,
-					// "filters": [new Filter("Appst", FilterOperator.EQ, "1")],
-					"filters": [],
-					"title": this.getText("CANDIDATE_PROCESS_APPROVALS"),
-					"pressed": "onCandidateProcessApprovalPage",
-					"icon": "sap-icon://approvals"
-				}, {
-					"appName": "ErfraApp",
-					"visible": false,
-					"entitySet": "EmployeeRequestFormSet",
-					"count": 0,
-					"filters": [
-						new Filter("Erfap", FilterOperator.EQ, "REQUEST_LIST_ADMIN"),
-						new Filter("Erfsf", FilterOperator.EQ, "ALL")
-					],
-					"title": this.getText("RECRUITMENT_ADMIN_PAGE"),
-					"pressed": "onRecruitmentAdminPage",
-					"icon": "sap-icon://key-user-settings"
-				}],
-				appAuthorization: {
-					ErfcrApp: false,
-					ErfapApp: false,
-					ErfrcApp: false,
-					ErfraApp: false,
-					ErfclApp: false,
-					CanprApp: false,
-					CanapApp: false
-				}
+				FBegda: null,
+				FEndda: null,
+				FSearch: ""
 			});
-			this.setModel(oViewModel, "appDispatcherView");
+			this.setModel(oViewModel, "approvalListView");
 
-			// Add the requestList page to the flp routing history
-			this.addHistoryEntry({
-				title: this.getText("RECRUITMENT_APPLICATIONS"),
-				icon: "sap-icon://employee-lookup",
-				intent: "#RecruitmentApp-display"
-			}, true);
-
-			var oModel = this.getOwnerComponent().getModel();
-			oModel.metadataLoaded().then(function () {
-				SharedData.setRootLoaded();
+			// Make sure, busy indication is showing immediately so there is no
+			// break after the busy indication for loading the view's meta data is
+			// ended (see promise 'oWhenMetadataIsLoaded' in AppController)
+			oTable.attachEventOnce("updateFinished", function () {
+				// Restore original busy indicator delay for requestList's table
+				oViewModel.setProperty("/tableBusyDelay", iOriginalBusyDelay);
 			});
 
-			this.getRouter().getRoute("appdispatcher").attachPatternMatched(this._onAppDispatcherMatched, this);
+			this.getRouter().getRoute("approvallist").attachPatternMatched(this._onApprovalListMatched, this);
+
+			this.initOperations();
 
 		},
-		onAfterRendering: function () {
-			var oRenderer = sap.ushell.Container.getRenderer("fiori2");
-			oRenderer.setHeaderVisibility(false, false, ["app"]);
-		},
-		onNavHome: function () {
-			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
-			var oRenderer = sap.ushell.Container.getRenderer("fiori2");
-			oRenderer.setHeaderVisibility(true, true, ["app"]);
-
-			oCrossAppNavigator.toExternal({
-				target: {
-					semanticObject: "#"
-				}
-			});
-		},
-
 		/* =========================================================== */
 		/* event handlers                                              */
 		/* =========================================================== */
-		onAppClickHandler: function (oEvent) {
-			var sApp = oEvent.getSource().data("targetApp");
-			var oThis = this;
-			try {
-				if (sApp) {
-					var oViewModel = this.getModel("appDispatcherView");
-					var aAppList = oViewModel.getProperty("/appList");
-					var aTargetApp = _.filter(aAppList, ['appName', sApp]);
-					if (aTargetApp[0]) {
-						var oFunc = jQuery.proxy(oThis, aTargetApp[0].pressed);
-						oFunc.call();
-					}
-				}
-			} catch (oEx) {
-				jQuery.sap.log.error("App click handler failed");
+		onNavBack: function () {
+			this.statusFilters = [];
+			this.callerRole = null;
+			this.goBack(History);
+		},
+		/**
+		 * Triggered by the table's 'updateFinished' event: after new table
+		 * data is available, this handler method updates the table counter.
+		 * This should only happen if the update was successful, which is
+		 * why this handler is attached to 'updateFinished' and not to the
+		 * table's list binding's 'dataReceived' method.
+		 * @param {sap.ui.base.Event} oEvent the update finished event
+		 * @public
+		 */
+		onUpdateFinished: function (oEvent) {
+			// update the requestList's object counter after the table update
+			var sTitle,
+				oViewModel = this.getModel("approvalListView");
+
+			oViewModel.setProperty("/busy", false);
+
+			sTitle = this.getText("REQUESTS_WAITING_APPROVAL");
+			oViewModel.setProperty("/requestListTableTitle", sTitle);
+
+		},
+		/**
+		 * Triggered by the table's 'updateStarted' event: after new table
+		 * data is available, this handler method updates the table counter.
+		 * This should only happen if the update was successful, which is
+		 * why this handler is attached to 'updateFinished' and not to the
+		 * table's list binding's 'dataReceived' method.
+		 * @param {sap.ui.base.Event} oEvent the update finished event
+		 * @public
+		 */
+		onUpdateStarted: function (oEvent) {
+			// update the requestList's object counter after the table update
+			var oViewModel = this.getModel("approvalListView");
+
+			oViewModel.setProperty("/busy", true);
+		},
+
+		/**
+		 * Event handler when a table item gets pressed
+		 * @param {sap.ui.base.Event} oEvent the table selectionChange event
+		 * @public
+		 */
+		onRequestDetail: function (oEvent) {
+			// The source is the list item that got pressed
+			var oSource = oEvent.getSource();
+			var oData = this.getModel().getProperty(oSource.getBindingContextPath());
+			var oApplicationSettings = {};
+			var oViewModel = this.getModel("approvalListView");
+
+			oApplicationSettings.Edit = false;
+			oApplicationSettings.CallerRole = "APPROVER";
+			SharedData.setApplicationSettings(oApplicationSettings);
+			SharedData.setCurrentRequest(oData);
+			oViewModel.setProperty("/busy", true);
+			this.getRouter().navTo("employeerequestedit", {
+				Drfid: oData.Drfid
+			});
+		},
+		onRequestDetailApp: function (oEvent) {
+			// The source is the list item that got pressed
+			var oSource = oEvent.getSource();
+			var oData = this.getModel().getProperty(oSource.getBindingContextPath());
+			var oApplicationSettings = {};
+			var oViewModel = this.getModel("approvalListView");
+
+			oApplicationSettings.Edit = false;
+			oApplicationSettings.CallerRole = "PNDAPP";
+			SharedData.setApplicationSettings(oApplicationSettings);
+			SharedData.setCurrentRequest(oData);
+			oViewModel.setProperty("/busy", true);
+			this.getRouter().navTo("employeerequestedit", {
+				Drfid: oData.Drfid
+			});
+		},
+
+		onSearch: function (oEvent) {
+			var aTableSearchState = [];
+			var sQuery = oEvent.getParameter("query");
+
+			if (sQuery && sQuery.length > 0) {
+				aTableSearchState = [new Filter("Drfsd", FilterOperator.Contains, sQuery)];
+			}
+			this._applySearch(aTableSearchState);
+		},
+		onSearchApp: function (oEvent) {
+			var aTableSearchState = [];
+			var sQuery = oEvent.getParameter("query");
+			var oBegda = this.getModel("approvalListView").getProperty("/FBegda");
+			var oEndda = this.getModel("approvalListView").getProperty("/FEndda");
+			if (sQuery && sQuery.length > 0) {
+				aTableSearchState = [new Filter("Drfsd", FilterOperator.Contains, sQuery),
+					new Filter("Rqdat", FilterOperator.BT, oBegda, oEndda)
+				];
+			}
+			this._applySearchApp(aTableSearchState);
+		},
+		onFilterDateChange: function () {
+			var aTableSearchState = [];
+			var sQuery = this.getModel("approvalListView").getProperty("/FSearch");
+			var oBegda = this.getModel("approvalListView").getProperty("/FBegda");
+			var oEndda = this.getModel("approvalListView").getProperty("/FEndda");
+
+			aTableSearchState = [new Filter("Drfsd", FilterOperator.Contains, sQuery),
+				new Filter("Rqdat", FilterOperator.BT, oBegda, oEndda)
+			];
+
+			this._applySearchApp(aTableSearchState);
+		},
+
+		/**
+		 * Event handler for refresh event. Keeps filter, sort
+		 * and group settings and refreshes the list binding.
+		 * @public
+		 */
+		onRefresh: function () {
+			var oTable = this.byId("idApprovalListTable");
+			oTable.getBinding("items").refresh();
+			var oTableApp = this.byId("idApprovalListTableAPP");
+			oTableApp.getBinding("items").refresh();
+		},
+
+		/* =========================================================== */
+		/* internal methods                                            */
+		/* =========================================================== */
+
+		_onApprovalListMatched: function (oEvent) {
+			this.onRefresh();
+		},
+
+		_getDefaultFilters: function () {
+			var aFilters = [
+				new Filter("Drfap", FilterOperator.EQ, "REQUESTS_ON_ME"),
+				new Filter("Drfsf", FilterOperator.EQ, "ALL")
+			];
+
+			return aFilters;
+		},
+
+		/**
+		 * Internal helper method to apply both filter and search state together on the list binding
+		 * @param {sap.ui.model.Filter[]} aTableSearchState An array of filters for the search
+		 * @private
+		 */
+		_applySearch: function (aTableSearchState) {
+			var oTable = this.byId("idApprovalListTable"),
+				oViewModel = this.getModel("approvalListView");
+
+			var aFilters = _.concat(aTableSearchState, this._getDefaultFilters());
+
+			oTable.getBinding("items").filter(aFilters, "Application");
+
+			// changes the noDataText of the list in case there are no filter results
+			if (aTableSearchState.length !== 0) {
+				oViewModel.setProperty("/tableNoDataText", this.getText("EMPTY_REQUEST_LIST_SEARCH"));
 			}
 		},
-		onMyEmployeeRequestPage: function () {
-			this.getRouter().navTo("mngrequestlist");
-		},
-		onEmployeeRequestApprovalPage: function () {
-			this.getRouter().navTo("approvallist");
+		_applySearchApp: function (aTableSearchState) {
+			var oTable = this.byId("idApprovalListTableAPP");
 
-		},
-		onCandidateProcessClosedSet: function () {
-			this.getRouter().navTo("closedlist");
-		},
-		onRecruiterEmployeeRequestPage: function () {
-			this.getRouter().navTo("recrequestlist");
-		},
-		onCandidateProfilePage: function () {
-			this.getRouter().navTo("candidatelist");
-		},
-		onCandidateProcessApprovalPage: function () {
-			this.getRouter().navTo("candidateprocessapproval");
-		},
-		onRecruitmentAdminPage: function () {
-			this.getRouter().navTo("recruitmentadmin");
-		},
-		onRefreshRequestCounts: function () {
-			var oModel = this.getModel();
-			var oViewModel = this.getModel("appDispatcherView");
-			var aAppList = oViewModel.getProperty("/appList");
-			$.each(aAppList, function (sIndex, oApp) {
-				if (oApp.visible) {
-					oModel.read("/" + oApp.entitySet + "/$count", {
-						filters: oApp.filters,
-						success: function (oData, oResponse) {
-							oApp.count = oResponse.body;
-							oViewModel.setProperty("/appList/" + sIndex, oApp);
-						},
-						error: function (oError) {
-							oApp.count = 0;
-							oViewModel.setProperty("/appList/" + sIndex, oApp);
-						}
-					});
-				} else {
-					oApp.count = 0;
-				}
-			});
-		},
-		_onAppDispatcherMatched: function (oEvent) {
-			var oModel = this.getModel();
-			var oViewModel = this.getModel("appDispatcherView");
-			var aAppList = oViewModel.getProperty("/appList");
-			var oThis = this;
-			var oPage = this.byId("idAppDispatcherPage");
+			aTableSearchState.push(new Filter("Drfap", FilterOperator.EQ, "REQUESTS_ON_ME"));
+			aTableSearchState.push(new Filter("Drfsf", FilterOperator.EQ, "APP"));
 
-			oPage.removeContent();
-			oViewModel.setProperty("/busy", true);
-			SharedData.setApplicationAuth(null);
-			oModel.metadataLoaded().then(function () {
-				SharedData.setCurrentUser({});
-				oModel.read("/UserSet('ME')", {
-					success: function (oData, oResponse) {
-						SharedData.setCurrentUser(oData);
-					},
-					error: function (oError) {}
-				});
-
-				var sPath = oModel.createKey("/ApplicationAuthorizationSet", {
-					Uname: "ME"
-				});
-
-				oModel.read(sPath, {
-					success: function (oData) {
-						SharedData.setApplicationAuth(oData);
-						$.each(aAppList, function (sIndex, oApp) {
-							oApp.visible = oData.hasOwnProperty(oApp.appName) ? oData[oApp.appName] : false;
-						});
-
-						oViewModel.setProperty("/appList", aAppList);
-
-						//Get authorization for new request
-						oThis.onRefreshRequestCounts();
-
-						var oTileTemplate = new sap.m.GenericTile({
-							header: "{appDispatcherView>title}",
-							press: oThis.onAppClickHandler.bind(oThis),
-							tileContent: [
-								new sap.m.TileContent({
-									content: new sap.m.NumericContent({
-										value: "{appDispatcherView>count}",
-										icon: "{appDispatcherView>icon}"
-									})
-								})
-							],
-							visible: "{appDispatcherView>visible}"
-						}).addStyleClass("sapUiSmallMargin");
-						var oDataTemplate = new sap.ui.core.CustomData({
-							key: "targetApp"
-						});
-						oDataTemplate.bindProperty("value", "appDispatcherView>appName");
-						oTileTemplate.addCustomData(oDataTemplate);
-
-						oPage.bindAggregation("content", {
-							path: "appDispatcherView>/appList",
-							template: oTileTemplate
-						});
-
-						oViewModel.setProperty("/busy", false);
-					},
-					error: function () {
-
-					}
-				});
-
-			});
+			oTable.getBinding("items").filter(aTableSearchState, "Application");
 
 		}
+
 	});
 });
