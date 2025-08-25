@@ -1,19 +1,19 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-    <Dialog title="Yenileme Gerekçesi" contentWidth="500px" contentHeight="300px">
+    <Dialog title="{i18n>RENEWAL_REASON_TITLE}" contentWidth="500px" contentHeight="300px">
         <content>
             <VBox class="sapUiMediumMargin">
-                <Label text="Lütfen yenileme gerekçesini belirtiniz:" class="sapUiSmallMarginBottom"/>
+                <Label text="{i18n>RENEWAL_REASON_LABEL}" class="sapUiSmallMarginBottom"/>
                 <TextArea id="renewalReasonTextArea" 
                          value="{employeeRequestView>/currentEmployee/Rendc}" 
                          rows="6" 
                          width="100%" 
-                         placeholder="Gerekçenizi buraya yazınız..."
+                         placeholder="{i18n>RENEWAL_REASON_PLACEHOLDER}"
                          required="true"/>
             </VBox>
         </content>
         <buttons>
-            <Button text="Tamam" press="onRenewalReasonConfirm" type="Emphasized"/>
-            <Button text="İptal" press="onRenewalReasonCancel"/>
+            <Button text="{i18n>OK_BUTTON}" press="onRenewalReasonConfirm" type="Emphasized"/>
+            <Button text="{i18n>CANCEL}" press="onRenewalReasonCancel"/>
         </buttons>
     </Dialog>
 </core:FragmentDefinition>

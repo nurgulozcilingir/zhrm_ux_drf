@@ -18,42 +18,45 @@
         <f:content>
             <IconTabBar id="idIconTabBar" select="onFilterSelect" class="sapUiResponsiveContentPadding">
                 <items>
-                    <IconTabFilter id="allDocuments" text="Tüm Belgeler" key="all" icon="sap-icon://documents" count="{= ${DocumentListRequestView>/DocumentCollection}.length }">
+                    <IconTabFilter id="allDocuments" text="{i18n>ALL_DOCUMENTS}" key="all" icon="sap-icon://documents" count="{= ${DocumentListRequestView>/DocumentCollection}.length }">
                         <Table id="idDocumentsTable" inset="false" 
                             items="{/DocumentListSet}" 
                             noDataText="{i18n>NO_DATA}" class="erfTable">
                             <headerToolbar>
                                 <Toolbar>
                                     <ToolbarSpacer/>
-                                    <SearchField placeholder="Ara..." width="300px" search="onSearch"/>
+                                    <SearchField placeholder="{i18n>SEARCH_PLACEHOLDER}" width="300px" search="onSearch"/>
                                 </Toolbar>
                             </headerToolbar>
                             <infoToolbar>
                                 <Toolbar>
-                                    <Title id="tableHeader" text="Personel Belge Listesi"/>
+                                    <Title id="tableHeader" text="{i18n>PERSONNEL_DOCUMENT_LIST}"/>
                                 </Toolbar>
                             </infoToolbar>
                             <columns>
                                 <Column minScreenWidth="Tablet" demandPopin="true">
-                                    <Text text="Personel No" />
+                                    <Text text="{i18n>PERSONNEL_NO}" />
                                 </Column>
                                 <!-- <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
                                     <Text text="Ad Soyad" />
                                 </Column> -->
                                 <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
-                                    <Text text="Belge Türü" />
+                                    <Text text="{i18n>DOCUMENT_TYPE}" />
                                 </Column>
                                 <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
-                                    <Text text="Kurum Adı" />
+                                    <Text text="{i18n>DOCUMENT_NAME}" />
                                 </Column>
                                 <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
-                                    <Text text="Sertifika/Bölüm" />
+                                    <Text text="{i18n>INSTITUTE_NAME}" />
                                 </Column>
+                                <!-- <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                                    <Text text="{i18n>CERTIFICATE_DEPARTMENT}" />
+                                </Column> -->
                                 <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
-                                    <Text text="Belge Tarihi" />
+                                    <Text text="{i18n>DOCUMENT_DATE}" />
                                 </Column>
                                 <Column hAlign="End">
-                                    <Text text="Geçerlilik Tarihi" />
+                                    <Text text="{i18n>EXPIRY_DATE}" />
                                 </Column>
                             </columns>
                             <items>
@@ -61,9 +64,10 @@
                                     <cells>
                                         <Text text="{Pernr}" />
                                         <!-- <ObjectIdentifier title="{DocumentListRequestView>AdSoyad}"/> -->
-                                        <Text text="{Zbelg}" />
+                                        <Text text="{Zblnx}" />
+                                        <Text text="{Zbltx}" />
                                         <Text text="{Zkurm}" />
-                                        <Text text="{Zbolm}" />
+                                        <!-- <Text text="{Zbolm}" /> -->
                                         <Text text="{ path: 'Ztarh', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }" />
                                         <Text  text="{path: 'Zgecr', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }" />
                                     </cells>

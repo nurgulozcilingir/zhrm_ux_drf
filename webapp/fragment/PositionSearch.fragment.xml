@@ -9,7 +9,7 @@
         <content>
             <IconTabBar applyContentPadding="false" expandable="false" select="onPositionTreeToggled">
                 <items>
-                    <IconTabFilter text="Asıl">
+                    <IconTabFilter text="{i18n>ORIGINAL_TAB}">
                         <table:TreeTable rows="{path:'employeeRequestView>/positionList', parameters: {arrayNames:['children'],numberOfExpandedLevels:1}}" selectionMode="MultiToggle" enableSelectAll="false" rowSelectionChange="onPositionRowSelected" visibleRowCount="{= ${device>/system/phone} ? 10 : 15 }" id="idPositionTreeOriginal">
                             <table:extension>
                                 <Toolbar>
@@ -21,7 +21,7 @@
                                     <Label text="{i18n>STAFF_PLAN}"/>
                                     <table:template>
                                         <FlexBox alignContent="Center" justifyContent="Center" direction="Row">
-                                            <core:Icon width="30px" size="17px" src="{ parts: [{path: 'employeeRequestView>Otype'},{path: 'employeeRequestView>ObjidR1'},{path: 'employeeRequestView>Ismng'}], formatter: '.formatter.getObjectIcon'}" tooltip="Nesne İkonu" class="sapUiSmallMarginEnd" color="{ parts: [{path: 'employeeRequestView>Otype'},{path: 'employeeRequestView>ObjidR1'},{path: 'employeeRequestView>Ismng'}], formatter: '.formatter.getObjectIconColor'}"></core:Icon>
+                                            <core:Icon width="30px" size="17px" src="{ parts: [{path: 'employeeRequestView>Otype'},{path: 'employeeRequestView>ObjidR1'},{path: 'employeeRequestView>Ismng'}], formatter: '.formatter.getObjectIcon'}" tooltip="{i18n>OBJECT_ICON_TOOLTIP}" class="sapUiSmallMarginEnd" color="{ parts: [{path: 'employeeRequestView>Otype'},{path: 'employeeRequestView>ObjidR1'},{path: 'employeeRequestView>Ismng'}], formatter: '.formatter.getObjectIconColor'}"></core:Icon>
                                             <Text text=" {employeeRequestView>Stext}" wrapping="false" tooltip="{employeeRequestView>Otype} {employeeRequestView>Objid}"/>
                                         </FlexBox>
                                     </table:template>
@@ -53,7 +53,7 @@
                             </table:columns>
                         </table:TreeTable>
                     </IconTabFilter>
-                    <IconTabFilter text="Vekil" visible="{path: 'employeeRequestView>/positionListProxy/', formatter: '.formatter.isArrayHasData'}">
+                    <IconTabFilter text="{i18n>SUBSTITUTE_TAB}" visible="{path: 'employeeRequestView>/positionListProxy/', formatter: '.formatter.isArrayHasData'}">
                         <table:TreeTable rows="{path:'employeeRequestView>/positionListProxy', parameters: {arrayNames:['children'], numberOfExpandedLevels:1}}" selectionMode="MultiToggle" enableSelectAll="false" rowSelectionChange="onPositionRowSelected" visibleRowCount="{= ${device>/system/phone} ? 10 : 15 }" id="idPositionTreeProxy">
                             <table:extension>
                                 <Toolbar>
@@ -65,7 +65,7 @@
                                     <Label text="{i18n>STAFF_PLAN}"/>
                                     <table:template>
                                         <FlexBox alignContent="Center" justifyContent="Center" direction="Row">
-                                            <core:Icon width="30px" size="17px" src="{ parts: [{path: 'employeeRequestView>Otype'},{path: 'employeeRequestView>ObjidR1'},{path: 'employeeRequestView>Ismng'}], formatter: '.formatter.getObjectIcon'}" tooltip="Nesne İkonu" class="sapUiSmallMarginEnd" color="{ parts: [{path: 'employeeRequestView>Otype'},{path: 'employeeRequestView>ObjidR1'},{path: 'employeeRequestView>Ismng'}], formatter: '.formatter.getObjectIconColor'}"></core:Icon>
+                                            <core:Icon width="30px" size="17px" src="{ parts: [{path: 'employeeRequestView>Otype'},{path: 'employeeRequestView>ObjidR1'},{path: 'employeeRequestView>Ismng'}], formatter: '.formatter.getObjectIcon'}" tooltip="{i18n>OBJECT_ICON_TOOLTIP}" class="sapUiSmallMarginEnd" color="{ parts: [{path: 'employeeRequestView>Otype'},{path: 'employeeRequestView>ObjidR1'},{path: 'employeeRequestView>Ismng'}], formatter: '.formatter.getObjectIconColor'}"></core:Icon>
                                             <Text text=" {employeeRequestView>Stext}" wrapping="false" tooltip="{employeeRequestView>Otype} {employeeRequestView>Objid}"/>
                                         </FlexBox>
                                     </table:template>

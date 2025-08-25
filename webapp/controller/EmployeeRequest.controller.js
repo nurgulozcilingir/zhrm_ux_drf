@@ -2501,11 +2501,16 @@ sap.ui.define(
                   sap.ui.model.FilterOperator.EQ,
                   oRowData.Pernr
                 ),
-                new sap.ui.model.Filter(
-                  "Drfid",
-                  sap.ui.model.FilterOperator.EQ,
-                  oRowData.Drfid
-                ),
+                  new sap.ui.model.Filter(
+                    "Drfid",
+                    sap.ui.model.FilterOperator.EQ,
+                    oRowData.Drfid
+                  ),
+                  new sap.ui.model.Filter(
+                    "Attyp",
+                    sap.ui.model.FilterOperator.EQ,
+                    '1'
+                  ),
               ];
 
               var oBinding = oTable.getBinding("items");
@@ -2540,6 +2545,7 @@ sap.ui.define(
         
         onViewDocument: function(oEvent) {
           debugger;
+          var oModel = this.getModel();
           var oRowData = this._selectedRowData;
           var that = this;
           
@@ -2550,31 +2556,25 @@ sap.ui.define(
             );
             this.getView().addDependent(this._viewDocumentDialog);
           }
-          
-          // Seçili personel belgelerini yükle
-          var oModel = this.getModel();
-          var aFilters = [
-            new sap.ui.model.Filter(
-              "Pernr",
-              sap.ui.model.FilterOperator.EQ,
-              oRowData.Pernr
-            ),
-            new sap.ui.model.Filter(
-              "Drfid",
-              sap.ui.model.FilterOperator.EQ,
-              oRowData.Drfid
-            )
-          ];
+
+          var sPath = oModel.createKey("/DocumentListSet", {
+            Drfid: oRowData.Drfid,
+            Pernr: oRowData.Pernr,
+            Attyp: '2'
+          });
           
           var oViewModel = this.getModel("employeeRequestView");
-          oViewModel.setProperty("/documentList", []);
-          oViewModel.setProperty("/viewFilters/Ename", oRowData.Ename);
+          // oViewModel.setProperty("/documentList", []);
+
           
           // Belgeleri yükle
-          oModel.read("/EmployeeAttachmentSet", {
-            filters: aFilters,
+          oModel.read(sPath, {
+            // filters: aFilters,
             success: function(oData) {
-              oViewModel.setProperty("/documentList", oData.results);
+              oViewModel.setProperty("/documentList", oData);
+              // oViewModel.setProperty("/viewFilters/Pernr", oData.Pernr),
+              // oViewModel.setProperty("/viewFilters/Drfid", oData.Drfid);
+              // oViewModel.setProperty("/viewFilters/Attid", oData.Attid);
               that._viewDocumentDialog.open();
             },
             error: function(oError) {
@@ -2592,9 +2592,10 @@ sap.ui.define(
           var oRequestDoc = {
             Drfid: oRowData.Drfid,
             Pernr: oRowData.Pernr,
-            Zbelg: oRequestDocument.Zbelg,
+            Zbelt: oRequestDocument.Zbelt,
+            Zbeln: oRequestDocument.Zbeln,
             Zkurm: oRequestDocument.Zkurm,
-            Zbolm: oRequestDocument.Zbolm,
+            // Zbolm: oRequestDocument.Zbolm,
             Ztarh: oRequestDocument.Ztarh,
             Zgecr: oRequestDocument.Zgecr,
             Zznot: oRequestDocument.Zznot,
@@ -2767,13 +2768,33 @@ sap.ui.define(
             "W"
           );
         },
-        onValueHelpSetComboBoxChange:function(oEvent){
+        onValueHelpSetNameComboBoxChange:function(oEvent){
           debugger;
           var oComboBox = oEvent.getSource();
           var sSelectedKey = oComboBox.getSelectedKey();
-          // if(sSelectedKey == "02"){
-          //   MessageBox.warning("Bulundu");
-          // }
+          var oCityComboBox = this.byId("idDocumentNameComboBox");
+
+          if (oCityComboBox) {
+            var aFilters = [];
+            aFilters.push(new Filter("Selky", FilterOperator.EQ, sSelectedKey));
+
+            var oBinding = oCityComboBox.getBinding("items");
+            oBinding.filter(aFilters);
+        }
+        },
+        onValueHelpSetName2ComboBoxChange:function(oEvent){
+          debugger;
+          var oName2 = oEvent.getSource();
+          var sSelectedKeys = oName2.getSelectedKey();
+          var oName2ComboBox = this.byId("idDocumentName2ComboBox") ? this.byId("idDocumentName2ComboBox") : sap.ui.getCore().byId("idDocumentName2ComboBox");
+
+          if (oName2ComboBox) {
+            var aFilters = [];
+            aFilters.push(new Filter("Selky", FilterOperator.EQ, sSelectedKeys));
+
+            var oBinding = oName2ComboBox.getBinding("items");
+            oBinding.filter(aFilters);
+        }
         },
         
         onDrfrsComboBoxChange: function(oEvent) {
@@ -2900,6 +2921,22 @@ sap.ui.define(
             "E"
           );
         },
+
+        // onAttachDownloadLink: function(oEvent){
+        //   var oModel = this.getModel();
+        //   var Attid = oEvent
+        //     .getSource()
+        //     .getBindingContext()
+        //     .getProperty("Attid");
+        //   var oUrlPath = 
+        //     oModel.sServiceUrl +
+        //     var oUrlPath =  oModel.sServiceUrl +
+        //     "/DocumentListSet(Attid=guid'" +
+        //     Attid +
+        //     "')/$value";
+        //   window.open(oUrlPath);
+        // },
+
         onAttachDownload: function (oEvent) {
           debugger;
           var oModel = this.getModel();
@@ -2914,10 +2951,32 @@ sap.ui.define(
             "')/$value";
           window.open(oUrlPath);
         },
+        onAttachDownloadLink: function (oEvent) {
+          debugger;
+          var oModel = this.getModel();
+          var oSource = oEvent.getSource();
+
+          var oBindingContext = oSource
+            .getBindingContext("employeeRequestView");
+
+          if (oBindingContext) {
+            var oRowData = oBindingContext.getObject();
+            this._selectedAttidData = oRowData;
+          }
+          var Attid = oEvent
+            .getSource()
+            .getBindingContext()
+            .getProperty("Attid");
+          var oUrlPath =
+            oModel.sServiceUrl +
+            "/EmployeeAttachmentSet(Attid=guid'" +
+            Attid +
+            "')/$value";
+          window.open(oUrlPath);
+        },
         onCloseUploadFormDialog: function () {
           this._documentAddDialog.close();
-        },
-        
+        },        
         onUploadFileChange: function(oEvent) {
           var sFileName = oEvent.getParameter("newValue");
           this._callMessageToast("Seçilen dosya: " + sFileName, "I");
@@ -3040,6 +3099,20 @@ sap.ui.define(
               return "Seçiniz";
           }
         },
+        // formatDrfrsText: function(sDrfrs) {
+        //   switch(sDrfrs) {
+        //     case "1":
+        //       return "Görev Değişikliği";
+        //     case "2":
+        //       return "Mevzuat Değişikliği";
+        //     case "3":
+        //       return "Ekipman araç değişikliği";
+        //     case "4":
+        //       return "İşten ayrılan Çalışan Yerine";
+        //     default:
+        //       return "Seçiniz";
+        //   }
+        // },
       }
     );
   }

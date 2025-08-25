@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" 	xmlns:f="sap.ui.layout.form" xmlns:u="sap.ui.unified" xmlns:core="sap.ui.core">
-    <Dialog title="Belge Yükleme - {employeeRequestView>/uploadFilters/Ename}" contentWidth="50%" contentHeight="500px">
+    <Dialog title="{i18n>DOCUMENT_UPLOAD_TITLE} - {employeeRequestView>/uploadFilters/Ename}" contentWidth="50%" contentHeight="500px">
         <content>
             <f:Form id="idUploadAttachmentForm" editable="true">
                 <f:layout>
@@ -9,24 +9,31 @@
                 <f:formContainers>
                     <f:FormContainer>
                         <f:formElements>
-                            <f:FormElement label="Belge Türü">
+                            <f:FormElement label="{i18n>DOCUMENT_TYPE}">
                                 <f:fields>
-                                    <ComboBox selectedKey="{path: 'employeeRequestView>/requestDocument/Zbelg'}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfbl' } ] }" >
-                                        <core:Item key="{Fldky}" text="{Fldvl}"/>
+                                    <ComboBox selectedKey="{path: 'employeeRequestView>/requestDocument/Zbelt'}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfbl' } ] }" change="onValueHelpSetName2ComboBoxChange">
+                                        <core:ListItem additionalText="{Selky}" key="{Fldky}" text="{Fldvl}"/>
                                     </ComboBox>
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement label="Kurum Adı">
+                            <f:FormElement label="{i18n>DOCUMENT_NAME}">
+                                <f:fields>
+                                    <ComboBox id="idDocumentName2ComboBox" selectedKey="{path: 'employeeRequestView>/requestDocument/Zbeln'}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfbn' } ] }" >
+                                        <core:ListItem additionalText="{Selky}" key="{Fldky}" text="{Fldvl}"/>
+                                    </ComboBox>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement label="{i18n>INSTITUTE_NAME_LABEL}">
                                 <f:fields>
                                     <Input value="{employeeRequestView>/requestDocument/Zkurm}" required="true" />
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement label="Setifika/Bölüm">
+                            <!-- <f:FormElement label="{i18n>CERTIFICATE_DEPARTMENT_LABEL}">
                                 <f:fields>
                                     <Input value="{employeeRequestView>/requestDocument/Zbolm}" required="true" />
                                 </f:fields>
-                            </f:FormElement>
-                            <f:FormElement label="Belge Tarihi">
+                            </f:FormElement> -->
+                            <f:FormElement label="{i18n>DOCUMENT_DATE}">
                                 <f:fields>
                                     <DatePicker value="{path:'employeeRequestView>/requestDocument/Ztarh', 
                                         type: 'sap.ui.model.type.Date', 
@@ -34,7 +41,7 @@
                                     </DatePicker>
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement label="Geçerlilik Tarihi">
+                            <f:FormElement label="{i18n>EXPIRY_DATE}">
                                 <f:fields>
                                     <DatePicker value="{path:'employeeRequestView>/requestDocument/Zgecr', 
                                         type: 'sap.ui.model.type.Date',
@@ -42,12 +49,12 @@
                                     </DatePicker>
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement label="Not">
+                            <f:FormElement label="{i18n>NOTE_LABEL}">
                                 <f:fields>
                                     <TextArea value="{employeeRequestView>/requestDocument/Zznot}" required="true" maxLength="255" />
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement label="Belge Yükle">
+                            <f:FormElement label="{i18n>DOCUMENT_UPLOAD}">
                                 <f:fields>
                                     <u:FileUploader id="idAttachmentFileUploaderDocument" name="candidateFileUploader" uploadUrl="" uploadComplete="onAttachmentDocumentUploadComplete" change="onAttachmentDocumentFileChange" typeMissmatch="onAttachmentDocumentFileTypeMissmatch" style="Emphasized" fileType="pdf,xls,xlsx,doc,docx,tiff,jpg,png,zip,rar,msg,eml" maximumFileSize="5" fileSizeExceed="onAttachmentDocumentFileSizeExceed" placeholder="{i18n>LABEL_UPLOAD_PLACEHOLDER}" sendXHR="true" useMultipart="false" class="candidateFileUploader" width="95%"></u:FileUploader>
                                 </f:fields>
@@ -58,8 +65,8 @@
             </f:Form>
         </content>
         <buttons>
-            <Button text="Yükle" press="onDocumentUploadPress" type="Emphasized" icon="sap-icon://upload"/>
-            <Button text="İptal" press="onCancelUpload"/>
+            <Button text="{i18n>UPLOAD_BUTTON}" press="onDocumentUploadPress" type="Emphasized" icon="sap-icon://upload"/>
+            <Button text="{i18n>CANCEL}" press="onCancelUpload"/>
         </buttons>
     </Dialog>
 </core:FragmentDefinition>
