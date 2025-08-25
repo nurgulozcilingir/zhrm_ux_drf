@@ -2546,6 +2546,7 @@ sap.ui.define(
         onViewDocument: function(oEvent) {
           debugger;
           var oModel = this.getModel();
+          var oViewModel = this.getModel("employeeRequestView");
           var oRowData = this._selectedRowData;
           var that = this;
           
@@ -2563,7 +2564,7 @@ sap.ui.define(
             Attyp: '2'
           });
           
-          var oViewModel = this.getModel("employeeRequestView");
+          oViewModel.setProperty("/viewFilters/Ename", oRowData.Ename);
           // oViewModel.setProperty("/documentList", []);
 
           
@@ -2571,8 +2572,8 @@ sap.ui.define(
           oModel.read(sPath, {
             // filters: aFilters,
             success: function(oData) {
-              oViewModel.setProperty("/documentList", oData);
-              // oViewModel.setProperty("/viewFilters/Pernr", oData.Pernr),
+              var aData = Array.isArray(oData) ? oData : [oData]; // array değilse sar
+              oViewModel.setProperty("/documentList", aData);
               // oViewModel.setProperty("/viewFilters/Drfid", oData.Drfid);
               // oViewModel.setProperty("/viewFilters/Attid", oData.Attid);
               that._viewDocumentDialog.open();
@@ -2953,27 +2954,23 @@ sap.ui.define(
         },
         onAttachDownloadLink: function (oEvent) {
           debugger;
-          var oModel = this.getModel();
           var oSource = oEvent.getSource();
 
-          var oBindingContext = oSource
-            .getBindingContext("employeeRequestView");
-
+          var oBindingContext = oSource.getBindingContext("employeeRequestView");
+      
           if (oBindingContext) {
-            var oRowData = oBindingContext.getObject();
-            this._selectedAttidData = oRowData;
+
+              var oRowData = oBindingContext.getObject();  
+              this._selectedAttidData = oRowData;
+      
+              var Attid = oRowData.Attid;
+
+              var oModel = this.getModel();
+              var oUrlPath = oModel.sServiceUrl + "/EmployeeAttachmentSet(Attid=guid'" + Attid + "')/$value";
+      
+              window.open(oUrlPath);
           }
-          var Attid = oEvent
-            .getSource()
-            .getBindingContext()
-            .getProperty("Attid");
-          var oUrlPath =
-            oModel.sServiceUrl +
-            "/EmployeeAttachmentSet(Attid=guid'" +
-            Attid +
-            "')/$value";
-          window.open(oUrlPath);
-        },
+      },
         onCloseUploadFormDialog: function () {
           this._documentAddDialog.close();
         },        

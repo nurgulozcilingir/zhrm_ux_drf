@@ -3,7 +3,9 @@
     <Dialog title="{i18n>DOCUMENT_VIEW_TITLE} - {employeeRequestView>/viewFilters/Ename}" contentWidth="70%" contentHeight="60%">
         <content>
             <VBox class="sapUiMediumMargin">
-                <Table id="idViewDocumentTable" noDataText="{i18n>NO_DOCUMENT_UPLOADED}" class="sapUiSmallMarginBottom">
+                <Table id="idViewDocumentTable" items="{
+                    path: 'employeeRequestView>/documentList'
+                }" noDataText="{i18n>NO_DOCUMENT_UPLOADED}" class="sapUiSmallMarginBottom">
                     <columns>
                         <Column>
                             <Text text="{i18n>DOCUMENT_LINK}"/>
@@ -33,14 +35,14 @@
                     <items>
                         <ColumnListItem>
                             <cells>
-                                <Link press="onAttachDownloadLink" text="{employeeRequestView>/documentList/Aname}"/>
-                                <Text text="{employeeRequestView>/documentList/Zblnx}"/>
-                                <Text text="{employeeRequestView>/documentList/Zbltx}"/>
-                                <Text text="{employeeRequestView>/documentList/Zkurm}"/>
+                                <Link press="onAttachDownloadLink" text="{employeeRequestView>Aname}"/>
+                                <Text text="{employeeRequestView>Zblnx}"/>
+                                <Text text="{employeeRequestView>Zbltx}"/>
+                                <Text text="{employeeRequestView>Zkurm}"/>
                                 <!-- <Text text="{employeeRequestView>/documentList/Zbolm}"/> -->
-                                <Text text="{ path: 'employeeRequestView>/documentList/Ztarh', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }" />
-                                <Text text="{ path: 'employeeRequestView>/documentList/Zgecr', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }" />
-                                <Text text="{employeeRequestView>/documentList/Zznot}"/>
+                                <Text text="{ path: 'employeeRequestView>Ztarh', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }" />
+                                <Text text="{ path: 'employeeRequestView>Zgecr', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }" />
+                                <Text text="{employeeRequestView>Zznot}"/>
                             </cells>
                         </ColumnListItem>
                     </items>
