@@ -1,52 +1,54 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-    <Dialog title="Belge Görüntüle - {employeeRequestView>/viewFilters/Ename}" contentWidth="700px" contentHeight="500px">
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog title="{i18n>DOCUMENT_VIEW_TITLE} - {employeeRequestView>/viewFilters/Ename}" contentWidth="70%" contentHeight="60%">
         <content>
             <VBox class="sapUiMediumMargin">
-                <Table id="idViewDocumentTable" 
-                       items="{employeeRequestView>/documentListRequest}" 
-                       noDataText="Henüz belge yüklenmemiş"
-                       class="sapUiSmallMarginBottom">
+                <Table id="idViewDocumentTable" noDataText="{i18n>NO_DOCUMENT_UPLOADED}" class="sapUiSmallMarginBottom">
                     <columns>
                         <Column>
-                            <Text text="Dosya Adı"/>
+                            <Text text="{i18n>DOCUMENT_LINK}"/>
                         </Column>
                         <Column>
-                            <Text text="Yükleme Tarihi"/>
+                            <Text text="{i18n>DOCUMENT_TYPE}"/>
                         </Column>
                         <Column>
-                            <Text text="Dosya Boyutu"/>
+                            <Text text="{i18n>DOCUMENT_NAME}"/>
                         </Column>
                         <Column>
-                            <Text text="İşlemler"/>
+                            <Text text="{i18n>INSTITUTE_NAME_LABEL}"/>
+                        </Column>
+                        <!-- <Column>
+                            <Text text="{i18n>CERTIFICATE_DEPARTMENT_LABEL}"/>
+                        </Column> -->
+                        <Column>
+                            <Text text="{i18n>DOCUMENT_DATE}"/>
+                        </Column>
+                        <Column>
+                            <Text text="{i18n>EXPIRY_DATE}"/>
+                        </Column>
+                        <Column>
+                            <Text text="{i18n>NOTE_LABEL}"/>
                         </Column>
                     </columns>
                     <items>
                         <ColumnListItem>
                             <cells>
-                                <Text text="{employeeRequestView>Filename}"/>
-                                <Text text="{ path: 'employeeRequestView>Crdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern: 'dd.MM.yyyy' } }"/>
-                                <Text text="{employeeRequestView>Filesize}"/>
-                                <HBox>
-                                    <Button 
-                                        text="İndir" 
-                                        icon="sap-icon://download" 
-                                        type="Transparent" 
-                                        press="onDownloadDocument"
-                                        class="sapUiTinyMarginEnd"/>
-                                    <Button 
-                                        text="Görüntüle" 
-                                        icon="sap-icon://show" 
-                                        type="Transparent" 
-                                        press="onDisplayDocument"/>
-                                </HBox>
+                                <Link press="onAttachDownloadLink" text="{employeeRequestView>/documentList/Aname}"/>
+                                <Text text="{employeeRequestView>/documentList/Zblnx}"/>
+                                <Text text="{employeeRequestView>/documentList/Zbltx}"/>
+                                <Text text="{employeeRequestView>/documentList/Zkurm}"/>
+                                <!-- <Text text="{employeeRequestView>/documentList/Zbolm}"/> -->
+                                <Text text="{ path: 'employeeRequestView>/documentList/Ztarh', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }" />
+                                <Text text="{ path: 'employeeRequestView>/documentList/Zgecr', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }" />
+                                <Text text="{employeeRequestView>/documentList/Zznot}"/>
                             </cells>
                         </ColumnListItem>
                     </items>
-                </Table>
+                </Table>  
             </VBox>
         </content>
         <buttons>
-            <Button text="Kapat" press="onCloseViewDialog"/>
+            <Button text="{i18n>CLOSE_BUTTON}" press="onCloseViewDialog"/>
         </buttons>
     </Dialog>
 </core:FragmentDefinition>

@@ -35,22 +35,22 @@
 					</infoToolbar>
 					<columns>
 						<Column id="idRequestNumberColumn">
-							<Text text="Form Numarası"/>
+							<Text text="{i18n>FORM_NUMBER}"/>
 						</Column>
 						<Column id="idPositionColumn">
-							<Text text="Belge Talep Türü"/>
+							<Text text="{i18n>DOCUMENT_REQUEST_TYPE}"/>
 						</Column>
 						<Column id="idRequestReasonColumns">
-							<Text text="Belge Türü"/>
+							<Text text="{i18n>DOCUMENT_TYPE_COL}"/>
 						</Column>
 						<Column id="idRequiredQualificationColumn" minScreenWidth="Desktop">
-							<Text text="Belge Adı"/>
+							<Text text="{i18n>DOCUMENT_NAME_COL}"/>
 						</Column>
 						<Column id="idRequiredQualificationColumn3" minScreenWidth="Desktop">
-							<Text text="Talep Tarihi"/>
+							<Text text="{i18n>REQUEST_DATE}"/>
 						</Column>
 						<Column id="idRequiredQualificationColumn4" minScreenWidth="Desktop">
-							<Text text="Talep Sahibi"/>
+							<Text text="{i18n>REQUEST_OWNER}"/>
 						</Column>
 						<Column id="idActionsColumn" minScreenWidth="Tablet" width="5rem" hAlign="Center">
 							<Text text="{i18n>ACTION_LIST}"/>
@@ -62,7 +62,7 @@
 								<Text text="{Drfno}"/>
 								<Text text="{Drrtx}"/>
 								<Text text="{Drfbx}"/>
-								<Text text="{Drfbn}"/>
+								<Text text="{Drfnx}"/>
 								<!-- <Text
 								text="{ path: 'Drfdt', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }"/> -->
 								<Text

@@ -3,8 +3,8 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:u="sap.ui.unified">
 
-	<Dialog title="Doküman Yükleme/Listeleme" contentWidth="60%" contentHeight="80%" resizable="true">
-		<MessageStrip class="sapUiSmallMargin" text="Maksimum 5 MB boyutunda dosya yükleyebilirsiniz." type="Information" showCloseButton="true" showIcon="true"/>
+	<Dialog title="{i18n>DOCUMENT_UPLOAD_LISTING}" contentWidth="60%" contentHeight="80%" resizable="true">
+		<MessageStrip class="sapUiSmallMargin" text="{i18n>MAX_FILE_SIZE_INFO}" type="Information" showCloseButton="true" showIcon="true"/>
 		<f:Form id="idUploadAttachmentForm" class="candidateFileUploader" editable="true">
 			<f:layout>
 				<f:ResponsiveGridLayout labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="true"/>
@@ -13,7 +13,7 @@
 			<f:formContainers>
 				<f:FormContainer>
 					<f:formElements>
-						<f:FormElement label="Doküman Yükle">
+						<f:FormElement label="{i18n>DOCUMENT_UPLOAD}">
 							<f:fields>
 								<u:FileUploader id="idAttachmentFileUploader" name="candidateFileUploader" uploadUrl="" uploadComplete="onAttachmentUploadComplete" change="onAttachmentFileChange" typeMissmatch="onFileTypeMissmatch" style="Emphasized" fileType="pdf,xls,xlsx,doc,docx,tiff,jpg,png,zip,rar,msg,eml" maximumFileSize="5" fileSizeExceed="onFileSizeExceed" placeholder="{i18n>LABEL_UPLOAD_PLACEHOLDER}" sendXHR="true" useMultipart="false" class="candidateFileUploader" width="95%"></u:FileUploader>
 							</f:fields>
@@ -29,7 +29,7 @@
 		<Table id="idCandidateAttachmentList" busy="{candidateModel>/busy}" busyIndicatorDelay="0" inset="true" items="{path: '/EmployeeAttachmentSet'}" class="erfTable">
 			<infoToolbar>
 				<Toolbar>
-					<Title id="tableHeader" text="Döküman Listesi"/>
+					<Title id="tableHeader" text="{i18n>DOCUMENT_LIST}"/>
 				</Toolbar>
 			</infoToolbar>
 			<columns>

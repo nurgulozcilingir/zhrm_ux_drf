@@ -20,20 +20,21 @@
                         </f:FormElement>
                         <f:FormElement label="{i18n>DOCUMENT_TYPE}">
                             <f:fields>
-                                <ComboBox selectedKey="{employeeRequestView>/request/Drfbl}" required="true" items="{ path:'/ValueHelpSet', filters : [ { path : 'Drfvh', operator : 'EQ', value1 : 'Drfbl'} ] }">
-                                    <core:Item key="{Fldky}" text="{Fldvl}"/>
+                                <ComboBox selectedKey="{employeeRequestView>/request/Drfbl}" required="true" items="{ path:'/ValueHelpSet', filters : [ { path : 'Drfvh', operator : 'EQ', value1 : 'Drfbl'} ] }" change="onValueHelpSetNameComboBoxChange">
+                                    <core:ListItem additionalText="{Selky}" key="{Fldky}" text="{Fldvl}"/>
                                 </ComboBox>
                             </f:fields>
                         </f:FormElement>
                         <f:FormElement label="{i18n>DOCUMENT_NAME}">
                             <f:fields>
-                                <Input value="{employeeRequestView>/request/Drfbn}" required="true">
-                                </Input>
+                               <ComboBox id="idDocumentNameComboBox" selectedKey="{employeeRequestView>/request/Drfbn}" required="true" items="{ path:'/ValueHelpSet', filters : [ { path : 'Drfvh', operator : 'EQ', value1 : 'Drfbn'} ] }">
+                                    <core:ListItem additionalText="{Selky}" key="{Fldky}" text="{Fldvl}"/>
+                                </ComboBox>
                             </f:fields>
                         </f:FormElement>
                         <f:FormElement label="{i18n>EMPLOYEE_NAME}">
                             <f:fields>
-                                <Input value="{employeeRequestView>/request/Drfvh}" showValueHelp="true" valueHelpRequest="onEmployeeSearchValueHelpRequest" placeholder="Personel seçiniz..." />
+                                <Input value="{employeeRequestView>/request/Drfvh}" showValueHelp="true" valueHelpRequest="onEmployeeSearchValueHelpRequest" placeholder="{i18n>SELECT_PERSONNEL}" />
                             </f:fields>
                         </f:FormElement>
                     </f:formElements>
@@ -42,11 +43,11 @@
         </f:Form>
 
         <!-- Seçilen Personeller Tablosu -->
-        <Panel headerText="Seçilen Personeller ({employeeRequestView>/selectedEmployees/length})" class="sapUiResponsiveMargin" expandable="true" expanded="true" width="95%">
-            <Table id="idEmployeeRequestTableChanges" class="erfTable centeredTable" items="{employeeRequestView>/selectedEmployees}" noDataText="Henüz personel seçilmedi" busyIndicatorDelay="0" growing="true" growingScrollToLoad="true" inset="false">
+        <Panel headerText="{i18n>SELECTED_PERSONNEL} ({employeeRequestView>/selectedEmployees/length})" class="sapUiResponsiveMargin" expandable="true" expanded="true" width="95%">
+            <Table id="idEmployeeRequestTableChanges" class="erfTable centeredTable" items="{employeeRequestView>/selectedEmployees}" noDataText="{i18n>NO_PERSONNEL_SELECTED}" busyIndicatorDelay="0" growing="true" growingScrollToLoad="true" inset="false">
                 <infoToolbar>
                     <Toolbar>
-                        <Title id="tableHeader" text="Seçilen Personel Listesi"/>
+                        <Title id="tableHeader" text="{i18n>SELECTED_PERSONNEL_LIST}"/>
                     </Toolbar>
                 </infoToolbar>
                 <columns>
@@ -54,19 +55,19 @@
                         <Text text="Personel"/>
                     </Column> -->
                     <Column>
-                        <Text text="Personel No"/>
+                        <Text text="{i18n>PERSONNEL_NO}"/>
                     </Column>
                     <Column>
-                        <Text text="Personel Adı"/>
+                        <Text text="{i18n>PERSONNEL_NAME_COL}"/>
                     </Column>
                     <Column visible="{= ${employeeRequestView>/request/Drfrt} === '02'}">
-                        <Text text="Yenileme Talebi"/>
+                        <Text text="{i18n>RENEWAL_REQUEST}"/>
                     </Column>
                     <Column visible="{= ${employeeRequestView>/request/Drfrt} === '01'}">
-                        <Text text="Talep Gerekçesi"/>
+                        <Text text="{i18n>REQUEST_REASON_COL}"/>
                     </Column>
                     <Column width="100px">
-                        <Text text="İşlemler"/>
+                        <Text text="{i18n>ACTIONS_COL}"/>
                     </Column>
                 </columns>
                 <items>
@@ -79,15 +80,15 @@
                                 <MenuButton text="{ path: 'employeeRequestView>Renwl', formatter: '.formatRenewalText' }">
                                     <menu>
                                         <Menu itemSelected="onMenuAction">
-                                            <MenuItem text="Evet" icon="sap-icon://accept" press="onYesMenuItemPress"/>
-                                            <MenuItem text="Hayır" icon="sap-icon://decline" press="onNopeMenuItemPress" />
+                                            <MenuItem text="{i18n>YES_OPTION}" icon="sap-icon://accept" press="onYesMenuItemPress"/>
+                                            <MenuItem text="{i18n>NO_OPTION}" icon="sap-icon://decline" press="onNopeMenuItemPress" />
                                         </Menu>
                                     </menu>
                                 </MenuButton>
                                 <ComboBox selectedKey="{employeeRequestView>Drfrs}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrs' } ] }" change="onDrfrsComboBoxChange">
                                     <core:Item key="{Fldky}" text="{Fldvl}"/>
                                 </ComboBox>
-                            <Button icon="sap-icon://delete" type="Reject" press="onRemoveSelectedEmployee" tooltip="Personeli Kaldır" cd:employeeId="{employeeRequestView>Pernr}" cd:employeeName="{employeeRequestView>Ename}"/>
+                            <Button icon="sap-icon://delete" type="Reject" press="onRemoveSelectedEmployee" tooltip="{i18n>REMOVE_PERSONNEL}" cd:employeeId="{employeeRequestView>Pernr}" cd:employeeName="{employeeRequestView>Ename}"/>
                         </cells>
                     </ColumnListItem>
                 </items>

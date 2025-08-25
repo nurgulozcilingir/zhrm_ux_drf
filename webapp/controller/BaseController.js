@@ -295,14 +295,39 @@ sap.ui.define([
 		_updateRequest: function (oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack) {
 			debugger;
 			var oModel = this.getModel();
+			var oViewModel = this.getModel("employeeRequestView");
 			var oThis = this;
-
+			// var oRequestData = oViewModel.getProperty("/request");
+			var aEmployeeIds = [];
+			// var aEmployeeIds = oRequestData.DocumentRequestEmployeeSet.map(function (oEmployee) {
+			// 	return {
+			// 	  Pernr: oEmployee.Pernr
+			// 	};
+			//   });
+			if (oFormData.DocumentRequestEmployeeSet) {
+				var aEmployees = Array.isArray(oFormData.DocumentRequestEmployeeSet)
+					? oFormData.DocumentRequestEmployeeSet
+					: oFormData.DocumentRequestEmployeeSet.results || [];
+			
+				aEmployeeIds = aEmployees.map(function (oEmployee) {
+					return { 
+						Pernr: oEmployee.Pernr,
+						Renwl: oEmployee.Renwl || "", // Yenileme talebi (1=Evet, 2=Hayır)
+						Rendc: oEmployee.Rendc || "", // Yenileme gerekçesi
+						Drfrs: oEmployee.Drfrs || ""  // Talep gerekçesi
+					 };
+				});
+			}
+			oFormData.DocumentRequestEmployeeSet = aEmployeeIds;
 			if (oFormData.DocumentRequestHistorySet) {
 				delete oFormData.DocumentRequestHistorySet;
 			}
 			if (oFormData.DocumentRequestPrintOut) {
 				delete oFormData.DocumentRequestPrintOut;
 			}
+			// if(oFormData.DocumentRequestEmployeeSet){
+			// 	delete oFormData.DocumentRequestEmployeeSet;
+			// }
 
 			if (sStatusChange) {
 				oThis._openBusyFragment("FORM_STATUS_BEING_CHANGED");
@@ -334,11 +359,11 @@ sap.ui.define([
 				});
 			} else {
 				// var sPath = oModel.create("/DocumentRequestFormSet", oFormData, {
-					var sPath = oModel.createKey("/DocumentRequestFormSet", {
-						Drfid: oFormData.Drfid
-					});
+					// var sPath = oModel.createKey("/DocumentRequestFormSet", {
+					// 	Drfid: oFormData.Drfid
+					// });
 
-					oModel.update(sPath, oFormData, {
+					oModel.create("/DocumentRequestFormSet", oFormData, {
 						success: function (oData, oResponse) {
 							oThis._closeBusyFragment();
 							if (sStatusChange) {

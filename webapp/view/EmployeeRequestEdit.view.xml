@@ -15,17 +15,16 @@
 								width="50px"/>
 							<FlexBox direction="Column" class="sapUiSmallMarginBegin">
 								<Title text="{employeeRequestView>/request/Rqowe}" class="erfHeaderTitle"/>
-								<Label text="{employeeRequestView>/request/Drrtx}" class="erfHeaderSubTitle"/>
-								<Label text="{employeeRequestView>/request/Drfbx}" class="erfHeaderSubTitle"/>
+								<Label text="{employeeRequestView>/request/Plstx}" class="erfHeaderText erfHeaderSubTitle"/>
 							</FlexBox>
 							<FlexBox direction="Row" class="sapUiMediumMarginBegin sapUiVisibleOnlyOnDesktop" visible="{= !${device>/system/phone} }">
 								<FlexBox direction="Column">
 									<Text text="{i18n>REQUEST_REASON}" class="erfHeaderLabel erfHeaderLabelOrange"/>
-									<Text text="Pozisyon" class="erfHeaderLabel erfHeaderLabelOrange"/>
+									<Text text="Belge Türü" class="erfHeaderLabel erfHeaderLabelOrange"/>
 								</FlexBox>
 								<FlexBox direction="Column" class="sapUiTinyMarginBegin">
-									<Text text="{employeeRequestView>/request/Rqown}" class="erfHeaderText"/>
-									<Text text="{employeeRequestView>/request/Drfsf}"
+									<Text text="{employeeRequestView>/request/Drfbx}" class="erfHeaderText"/>
+									<Text text="{employeeRequestView>/request/Drfnx}"
 										class="erfHeaderText"/>
 								</FlexBox>
 							</FlexBox>
@@ -36,8 +35,8 @@
 								</FlexBox>
 								<FlexBox direction="Column" class="sapUiTinyMarginBegin">
 									<Text
-										text="{'employeeRequestView>/request/Drfsf'}"
-										class="erfHeaderText"/>
+									text="{ parts: [ {path: 'employeeRequestView>/request/Drfsx' }, {path: 'employeeRequestView>/request/Drfsy' }], formatter: '.formatter.getStatusText' }"
+									class="erfHeaderText"/>
 									<Text text="{path: 'employeeRequestView>/request/Lscdt', type:'sap.ui.model.type.Date', formatOptions: { pattern: 'dd.MM.yyyy'}}"
 										class="erfHeaderText"/>
 								</FlexBox>

@@ -18,61 +18,75 @@
                                 </ComboBox>
                             </f:fields>
                         </f:FormElement>
-                        <f:FormElement label="{i18n>DOCUMENT_TYPE}">
+                        <!-- <f:FormElement label="{i18n>DOCUMENT_TYPE}">
                             <f:fields>
                                 <ComboBox selectedKey="{employeeRequestView>/request/Drfbl}" required="true" items="{ path:'/ValueHelpSet', filters : [ { path : 'Drfvh', operator : 'EQ', value1 : 'Drfbl'} ] }">
                                     <core:Item key="{Fldky}" text="{Fldvl}"/>
                                 </ComboBox>
                             </f:fields>
+                        </f:FormElement> -->
+                        <f:FormElement label="{i18n>DOCUMENT_TYPE}">
+                            <f:fields>
+                                <ComboBox selectedKey="{employeeRequestView>/request/Drfbl}" required="true" items="{ path:'/ValueHelpSet', filters : [ { path : 'Drfvh', operator : 'EQ', value1 : 'Drfbl'} ] }" change="onValueHelpSetNameComboBoxChange">
+                                    <core:ListItem additionalText="{Selky}" key="{Fldky}" text="{Fldvl}"/>
+                                </ComboBox>
+                            </f:fields>
                         </f:FormElement>
-                        <f:FormElement label="{i18n>DOCUMENT_NAME}">
+                        <!-- <f:FormElement label="{i18n>DOCUMENT_NAME}">
                             <f:fields>
                                 <Input value="{employeeRequestView>/request/Drfbn}" required="true">
                                 </Input>
                             </f:fields>
+                        </f:FormElement> -->
+                         <f:FormElement label="{i18n>DOCUMENT_NAME}">
+                            <f:fields>
+                               <ComboBox id="idDocumentNameComboBox" selectedKey="{employeeRequestView>/request/Drfbn}" required="true" items="{ path:'/ValueHelpSet', filters : [ { path : 'Drfvh', operator : 'EQ', value1 : 'Drfbn'} ] }">
+                                    <core:ListItem additionalText="{Selky}" key="{Fldky}" text="{Fldvl}"/>
+                                </ComboBox>
+                            </f:fields>
                         </f:FormElement>
                         <f:FormElement label="{i18n>EMPLOYEE_NAME}">
                             <f:fields>
-                                <Input value="{employeeRequestView>/request/Drfvh}" showValueHelp="true" valueHelpRequest="onDrfvhInputValueHelpRequest" placeholder="Seçiniz..." />
+                                <Input value="{employeeRequestView>/request/Drfvh}" showValueHelp="true" valueHelpRequest="onDrfvhInputValueHelpRequest" placeholder="{i18n>SELECT_OPTION}" />
                             </f:fields>
                         </f:FormElement>
                     </f:formElements>
                 </f:FormContainer>
             </f:formContainers>
         </f:Form>
-        <Table id="idEmployeeRequestChangeTable" class="erfTable centeredTable" items="{employeeRequestView>/dataList/DocumentRequestEmployeeSet}" noDataText="Veri bulunamadı" busyIndicatorDelay="0" growing="true" growingScrollToLoad="true" inset="false" width="95%">
+        <Table id="idEmployeeRequestChangeTable" class="erfTable centeredTable" items="{employeeRequestView>/dataList/DocumentRequestEmployeeSet}" noDataText="{i18n>NO_DATA_FOUND}" busyIndicatorDelay="0" growing="true" growingScrollToLoad="true" inset="false" width="95%">
             <headerToolbar>
                 <Toolbar>
                     <ToolbarSpacer/>
-                    <SearchField id="employeeSearchField" tooltip="Arama" search="onSearch" width="{= ${device>/system/phone} ? '100%' : '50%' }"></SearchField>
+                    <SearchField id="employeeSearchField" tooltip="{i18n>SEARCH_ACTION_TOOLTIP}" search="onSearch" width="{= ${device>/system/phone} ? '100%' : '50%' }"></SearchField>
                 </Toolbar>
             </headerToolbar>
             <infoToolbar>
                 <Toolbar>
-                    <Title id="idEmployeeRequestTableHeader" text="Personel Listesi"/>
+                    <Title id="idEmployeeRequestTableHeader" text="{i18n>PERSONNEL_LIST}"/>
                 </Toolbar>
             </infoToolbar>
             <columns>
                 <Column id="idEmployeeNameColumn">
-                    <Text text="Personel"/>
+                    <Text text="{i18n>PERSONNEL_COLUMN}"/>
                 </Column>
                 <Column id="idEmployeePositionColumn">
-                    <Text text="Personel No"/>
+                    <Text text="{i18n>PERSONNEL_NO}"/>
                 </Column>
                 <Column id="idEmployeePositionColumn2">
-                    <Text text="Personel Adı"/>
+                    <Text text="{i18n>PERSONNEL_NAME_COL}"/>
                 </Column>
                 <Column visible="{= ${employeeRequestView>/request/Drfrt} === '02'}">
-                    <Text text="Yenileme Talebi"/>
+                    <Text text="{i18n>RENEWAL_REQUEST}"/>
                 </Column>
                  <Column visible="{= ${employeeRequestView>/request/Drfrt} === '02'}">
-                    <Text text="Yenileme Gerekçesi"/>
+                    <Text text="{i18n>RENEWAL_REASON_COLUMN}"/>
                 </Column>
                 <Column visible="{= ${employeeRequestView>/request/Drfrt} === '01'}">
-                    <Text text="Talep Gerekçesi"/>
+                    <Text text="{i18n>REQUEST_REASON_COL}"/>
                 </Column>
                 <Column id="idEmployeeActionColumn">
-                    <Text text="İşlemler"/>
+                    <Text text="{i18n>ACTIONS_COL}"/>
                 </Column>
 
             </columns>
@@ -87,7 +101,7 @@
                         <Text text="{employeeRequestView>Ename}"/>
                         <Text text="{ path: 'employeeRequestView>Renwl', formatter: '.formatRenewalText' }"/>
                         <Text text="{employeeRequestView>Rendc}"/>
-                        <Text text="{employeeRequestView>Drfrs}"/>
+                        <Text text="{employeeRequestView>Drfrx}"/>
                         <Button icon="sap-icon://menu" type="Accept" press="onShowRequestActions" tooltip="{i18n>ACTION_LIST}" visible="{ path:'Drfsf', formatter: '.onCheckActionAvailable'}" class="erfActionButton"></Button>
                     </cells>
                 </ColumnListItem>

@@ -29,7 +29,7 @@
                                     <ComboBox items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfst_f' } ] }" selectedKey="{recruitmentAdminModel>/search/Drfst}" placeholder="{i18n>ERFST}" change="onChangeErfst">
                                         <core:ListItem key="{Fldky}" text="{Fldvl}"/>
                                     </ComboBox>
-                                    <ComboBox items="{ path:'recruitmentAdminModel>/erfssList'}" placeholder="{i18n>ERFSS}" selectedKey="{recruitmentAdminModel>/search/Erfss}" change="onRequestSearch">
+                                    <ComboBox items="{ path:'recruitmentAdminModel>/erfssList'}" placeholder="{i18n>ERFSS}" selectedKey="{recruitmentAdminModel>/search/Drfss}" change="onRequestSearch">
                                         <core:ListItem key="{recruitmentAdminModel>Fldky}" text="{recruitmentAdminModel>Fldvl}"/>
                                     </ComboBox>
                                     <SearchField id="idRequestSearchField" placeholder="{i18n>REQUEST_SEARCH_TOOLTIP}" value="{recruitmentAdminModel>/search/Plans}" width="{= ${device>/system/phone} ? '30%' : '15%' }" search="onRequestSearch"></SearchField>
@@ -38,7 +38,7 @@
                             </headerToolbar>
                             <infoToolbar>
                                 <Toolbar>
-                                    <Title id="tableHeader" text="Belge Talep Formlarım"/>
+                                    <Title id="tableHeader" text="{i18n>DOCUMENT_REQUEST_FORMS}"/>
                                 </Toolbar>
                             </infoToolbar>
                             <columns>
@@ -46,22 +46,22 @@
                                     <Text text="{i18n>REQUEST_STATUS}"/>
                                 </Column>
                                 <Column id="idRequestNumberColumn10">
-                                    <Text text="Form Numarası"/>
+                                    <Text text="{i18n>FORM_NUMBER}"/>
                                 </Column>
                                 <Column id="idPositionColumn9">
-                                    <Text text="Belge Talep Türü"/>
+                                    <Text text="{i18n>DOCUMENT_REQUEST_TYPE}"/>
                                 </Column>
                                 <Column id="idRequestReasonColumns8">
-                                    <Text text="Belge Türü"/>
+                                    <Text text="{i18n>DOCUMENT_TYPE_COL}"/>
                                 </Column>
                                 <Column id="idRequiredQualificationColumn7" minScreenWidth="Desktop">
-                                    <Text text="Belge Adı"/>
+                                    <Text text="{i18n>DOCUMENT_NAME_COL}"/>
                                 </Column>
                                 <Column id="idRequiredQualificationColumn6" minScreenWidth="Desktop">
-                                    <Text text="Talep Tarihi"/>
+                                    <Text text="{i18n>REQUEST_DATE}"/>
                                 </Column>
                                 <Column id="idRequiredQualificationColumn5" minScreenWidth="Desktop">
-                                    <Text text="Talep Sahibi"/>
+                                    <Text text="{i18n>REQUEST_OWNER}"/>
                                 </Column>
                             </columns>
                             <items>
@@ -71,7 +71,7 @@
                                         <Text text="{Drfno}"/>
                                         <Text text="{Drrtx}"/>
                                         <Text text="{Drfbx}"/>
-                                        <Text text="{Drfbn}"/>
+                                        <Text text="{Drfnx}"/>
                                         <Text text="{ path: 'Rqdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }"/>
                                         <Text text="{Rqown}"/>
                                     </cells>

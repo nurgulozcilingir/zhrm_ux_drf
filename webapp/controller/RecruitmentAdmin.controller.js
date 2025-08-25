@@ -93,12 +93,14 @@ sap.ui.define([
 				Icon: "sap-icon://shortcut",
 				Action: "ChangeStatus",
 				Type: "Accept"
-			}, {
-				Text: "CHANGE_APPROVER_ACTION",
-				Icon: "sap-icon://switch-classes",
-				Action: "ChangeApprover",
-				Type: "Accept"
-			}, {
+			},
+			//  {
+			// 	Text: "CHANGE_APPROVER_ACTION",
+			// 	Icon: "sap-icon://switch-classes",
+			// 	Action: "ChangeApprover",
+			// 	Type: "Accept"
+			// },
+			 {
 				Text: "DISPLAY_ACTION",
 				Icon: "sap-icon://display",
 				Action: "Display",
@@ -116,27 +118,32 @@ sap.ui.define([
 			}]
 		}, {
 			Status: "APP",
-			AvailableActions: [{
+			AvailableActions: [
+				{
 				Text: "CHANGE_STATUS_ACTION",
 				Icon: "sap-icon://shortcut",
 				Action: "ChangeStatus",
 				Type: "Accept"
-			}, {
-				Text: "ASSIGN_TO_RECRUITER",
-				Icon: "sap-icon://activity-assigned-to-goal",
-				Action: "AssignTo",
-				Type: "Accept"
-			}, {
-				Text: "DISPLAY_ACTION",
-				Icon: "sap-icon://display",
+			},
+			//  {
+			// 	Text: "ASSIGN_TO_RECRUITER",
+			// 	Icon: "sap-icon://activity-assigned-to-goal",
+			// 	Action: "AssignTo",
+			// 	Type: "Accept"
+			// },
+			{
+				Text: "UPDATES_ACTION",
+				Icon: "sap-icon://edit",
 				Action: "Display",
 				Type: "Default"
-			}, {
-				Text: "PRINT_OUT_ACTION",
-				Icon: "sap-icon://pdf-attachment",
-				Action: "PrintOut",
-				Type: "Default"
-			}]
+			}
+			// , {
+			// 	Text: "PRINT_OUT_ACTION",
+			// 	Icon: "sap-icon://pdf-attachment",
+			// 	Action: "PrintOut",
+			// 	Type: "Default"
+			// }
+		]
 		}, {
 			Status: "REJ",
 			AvailableActions: [{
@@ -925,6 +932,7 @@ sap.ui.define([
 			this.onRequestSearch();
 		},
 		_getChangeErfst:function(){
+			debugger;
 			var oModel = this.getModel();
 			var oViewModel = this.getModel("recruitmentAdminModel"),
 				oSearch = oViewModel.getProperty("/search");

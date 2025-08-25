@@ -12,7 +12,7 @@
                     <FlexBox direction="Row" alignItems="Center">
                         <core:Icon src="sap-icon://nav-back" press="onNavBack" color="#346187" class="erfPageBackButtonBlue sapUiSmallMarginEnd"/>
                         <core:Icon src="sap-icon://clinical-order" size="1.5rem" class="sapUiSmallMarginEnd" color="#346187"/>
-                        <Title text="Yeni Belge Talebi" level="H3"/>
+                        <Title text="{i18n>NEW_DOCUMENT_REQUEST}" level="H3"/>
                     </FlexBox>
                 </f:heading>
             </f:DynamicPageTitle>
@@ -23,7 +23,7 @@
         <f:footer>
             <OverflowToolbar visible="true">
                 <ToolbarSpacer/>
-                <Button text="Kaydet" icon="sap-icon://save" type="Accept" press="onSaveEmployeeRequest"/>
+                <Button text="{i18n>SAVE_BUTTON}" icon="sap-icon://save" type="Accept" press="onSaveEmployeeRequest"/>
             </OverflowToolbar>
         </f:footer>
     </f:DynamicPage>
