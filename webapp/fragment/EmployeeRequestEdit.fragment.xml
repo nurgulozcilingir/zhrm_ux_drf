@@ -53,17 +53,23 @@
                 </Toolbar>
             </infoToolbar>
             <columns>
-                <!-- <Column id="idEmployeeNameColumn">
-                    <Text text="Drfid"/>
-                </Column> -->
+                <Column id="idEmployeeNameColumn">
+                    <Text text="Personel"/>
+                </Column>
                 <Column id="idEmployeePositionColumn">
                     <Text text="Personel No"/>
                 </Column>
                 <Column id="idEmployeePositionColumn2">
                     <Text text="Personel Adı"/>
                 </Column>
-                <Column>
+                <Column visible="{= ${employeeRequestView>/request/Drfrt} === '02'}">
                     <Text text="Yenileme Talebi"/>
+                </Column>
+                 <Column visible="{= ${employeeRequestView>/request/Drfrt} === '02'}">
+                    <Text text="Yenileme Gerekçesi"/>
+                </Column>
+                <Column visible="{= ${employeeRequestView>/request/Drfrt} === '01'}">
+                    <Text text="Talep Gerekçesi"/>
                 </Column>
                 <Column id="idEmployeeActionColumn">
                     <Text text="İşlemler"/>
@@ -74,19 +80,14 @@
                 <ColumnListItem type="Navigation" press="onRequestDetail">
                     <cells>
                         <!-- <Text text="{employeeRequestView>Drfid}"/> -->
+                        <Image src="/sap/opu/odata/sap/ZHCM_GENERIC_SRV/EmployeeSearchSet('{employeeRequestView>Rqowp}')/$value" class="erfProfileImage"
+                            width="50px"/>
                         <Text text="{employeeRequestView>Pernr}"/>
 
                         <Text text="{employeeRequestView>Ename}"/>
-                        <MenuButton text="{i18n>CHOOSE_AN_ACTION}">
-                            <menu>
-                                <Menu>
-                                    <items>
-                                        <MenuItem text="Evet" icon="sap-icon://accept" press="onYesMenuItemPress"/>
-                                        <MenuItem text="Hayır" icon="sap-icon://decline" press="onNopeMenuItemPress" />
-                                    </items>
-                                </Menu>
-                            </menu>
-                        </MenuButton>
+                        <Text text="{ path: 'employeeRequestView>Renwl', formatter: '.formatRenewalText' }"/>
+                        <Text text="{employeeRequestView>Rendc}"/>
+                        <Text text="{employeeRequestView>Drfrs}"/>
                         <Button icon="sap-icon://menu" type="Accept" press="onShowRequestActions" tooltip="{i18n>ACTION_LIST}" visible="{ path:'Drfsf', formatter: '.onCheckActionAvailable'}" class="erfActionButton"></Button>
                     </cells>
                 </ColumnListItem>

@@ -1,0 +1,65 @@
+<core:FragmentDefinition xmlns="sap.m" 	xmlns:f="sap.ui.layout.form" xmlns:u="sap.ui.unified" xmlns:core="sap.ui.core">
+    <Dialog title="Belge Yükleme - {employeeRequestView>/uploadFilters/Ename}" contentWidth="50%" contentHeight="500px">
+        <content>
+            <f:Form id="idUploadAttachmentForm" editable="true">
+                <f:layout>
+                    <f:ResponsiveGridLayout labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="true"/>
+                </f:layout>
+    
+                <f:formContainers>
+                    <f:FormContainer>
+                        <f:formElements>
+                            <f:FormElement label="Belge Türü">
+                                <f:fields>
+                                    <ComboBox selectedKey="{path: 'employeeRequestView>/requestDocument/Zbelg'}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfbl' } ] }" >
+                                        <core:Item key="{Fldky}" text="{Fldvl}"/>
+                                    </ComboBox>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement label="Kurum Adı">
+                                <f:fields>
+                                    <Input value="{employeeRequestView>/requestDocument/Zkurm}" required="true" />
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement label="Setifika/Bölüm">
+                                <f:fields>
+                                    <Input value="{employeeRequestView>/requestDocument/Zbolm}" required="true" />
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement label="Belge Tarihi">
+                                <f:fields>
+                                    <DatePicker value="{path:'employeeRequestView>/requestDocument/Ztarh', 
+                                        type: 'sap.ui.model.type.Date', 
+                                        formatOptions: {UTC:true , pattern: 'dd.MM.yyyy'}}" required="true">
+                                    </DatePicker>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement label="Geçerlilik Tarihi">
+                                <f:fields>
+                                    <DatePicker value="{path:'employeeRequestView>/requestDocument/Zgecr', 
+                                        type: 'sap.ui.model.type.Date',
+                                        formatOptions: {UTC:true , pattern: 'dd.MM.yyyy'}}" required="true">
+                                    </DatePicker>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement label="Not">
+                                <f:fields>
+                                    <TextArea value="{employeeRequestView>/requestDocument/Zznot}" required="true" maxLength="255" />
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement label="Belge Yükle">
+                                <f:fields>
+                                    <u:FileUploader id="idAttachmentFileUploaderDocument" name="candidateFileUploader" uploadUrl="" uploadComplete="onAttachmentDocumentUploadComplete" change="onAttachmentDocumentFileChange" typeMissmatch="onAttachmentDocumentFileTypeMissmatch" style="Emphasized" fileType="pdf,xls,xlsx,doc,docx,tiff,jpg,png,zip,rar,msg,eml" maximumFileSize="5" fileSizeExceed="onAttachmentDocumentFileSizeExceed" placeholder="{i18n>LABEL_UPLOAD_PLACEHOLDER}" sendXHR="true" useMultipart="false" class="candidateFileUploader" width="95%"></u:FileUploader>
+                                </f:fields>
+                            </f:FormElement>
+                        </f:formElements>
+                    </f:FormContainer>
+                </f:formContainers>
+            </f:Form>
+        </content>
+        <buttons>
+            <Button text="Yükle" press="onDocumentUploadPress" type="Emphasized" icon="sap-icon://upload"/>
+            <Button text="İptal" press="onCancelUpload"/>
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>

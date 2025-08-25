@@ -67,6 +67,7 @@ sap.ui.define(
               positionHelp: {
                 enableAdd: false,
               },
+              requestDocument:{},
 
               organizationHelp: {
                 enableAdd: false,
@@ -75,6 +76,9 @@ sap.ui.define(
                 DocumentRequestEmployeeSet: [],
               },
               attachmentFilters: {},
+              uploadFilters: {},
+              viewFilters: {},
+              documentList: [],
               request: {},
               formActions: [],
               formHistory: [],
@@ -2354,8 +2358,8 @@ sap.ui.define(
         },
 
         onCloseButtonEmployeePress: function (oEvent) {
-          if (this._oEmployeeSearchDialog) {
-            this._oEmployeeSearchDialog.close();
+          if (this._employeeValueHelpDialog) {
+            this._employeeValueHelpDialog.close();
           }
         },
 
@@ -2414,10 +2418,13 @@ sap.ui.define(
             return;
           }
 
-          // Seçilen personelleri hazırla
+          // Seçilen personelleri hazırla - Renwl, Rendc ve Drfrs alanlarını da dahil et
           var aEmployeeIds = aSelectedEmployees.map(function (oEmployee) {
             return {
               Pernr: oEmployee.Pernr,
+              Renwl: oEmployee.Renwl || "", // Yenileme talebi (1=Evet, 2=Hayır)
+              Rendc: oEmployee.Rendc || "", // Yenileme gerekçesi
+              Drfrs: oEmployee.Drfrs || ""  // Talep gerekçesi
             };
           });
 
@@ -2508,6 +2515,157 @@ sap.ui.define(
             }
           }, 300);
         },
+        
+        onUploadDocument: function(oEvent) {
+          debugger;
+          var oRowData = this._selectedRowData;
+          var that = this;
+          
+          if (!this._uploadDocumentDialog) {
+            this._uploadDocumentDialog = sap.ui.xmlfragment(
+              "com.bmc.hcm.drf.zhcmuxdrf.fragment.UploadDocumentDialog",
+              this
+            );
+            this.getView().addDependent(this._uploadDocumentDialog);
+          }
+          
+          // Seçili personel bilgilerini dialog'a aktar
+          var oViewModel = this.getModel("employeeRequestView");
+          oViewModel.setProperty("/uploadFilters/Pernr", oRowData.Pernr);
+          oViewModel.setProperty("/uploadFilters/Drfid", oRowData.Drfid);
+          oViewModel.setProperty("/uploadFilters/Ename", oRowData.Ename);
+          
+          this._uploadDocumentDialog.open();
+        },
+        
+        onViewDocument: function(oEvent) {
+          debugger;
+          var oRowData = this._selectedRowData;
+          var that = this;
+          
+          if (!this._viewDocumentDialog) {
+            this._viewDocumentDialog = sap.ui.xmlfragment(
+              "com.bmc.hcm.drf.zhcmuxdrf.fragment.ViewDocumentDialog",
+              this
+            );
+            this.getView().addDependent(this._viewDocumentDialog);
+          }
+          
+          // Seçili personel belgelerini yükle
+          var oModel = this.getModel();
+          var aFilters = [
+            new sap.ui.model.Filter(
+              "Pernr",
+              sap.ui.model.FilterOperator.EQ,
+              oRowData.Pernr
+            ),
+            new sap.ui.model.Filter(
+              "Drfid",
+              sap.ui.model.FilterOperator.EQ,
+              oRowData.Drfid
+            )
+          ];
+          
+          var oViewModel = this.getModel("employeeRequestView");
+          oViewModel.setProperty("/documentList", []);
+          oViewModel.setProperty("/viewFilters/Ename", oRowData.Ename);
+          
+          // Belgeleri yükle
+          oModel.read("/EmployeeAttachmentSet", {
+            filters: aFilters,
+            success: function(oData) {
+              oViewModel.setProperty("/documentList", oData.results);
+              that._viewDocumentDialog.open();
+            },
+            error: function(oError) {
+              that._callMessageToast("Belgeler yüklenirken hata oluştu", "E");
+            }
+          });
+        },
+
+        onDocumentUploadPress: function(){
+          var that = this;
+          var oRowData = this._selectedRowData;
+          var oModel = this.getView().getModel();
+          var oEmployeeModel = this.getView().getModel("employeeRequestView");
+          var oRequestDocument = oEmployeeModel.getProperty("/requestDocument");
+          var oRequestDoc = {
+            Drfid: oRowData.Drfid,
+            Pernr: oRowData.Pernr,
+            Zbelg: oRequestDocument.Zbelg,
+            Zkurm: oRequestDocument.Zkurm,
+            Zbolm: oRequestDocument.Zbolm,
+            Ztarh: oRequestDocument.Ztarh,
+            Zgecr: oRequestDocument.Zgecr,
+            Zznot: oRequestDocument.Zznot,
+          }
+          oModel.create("/DocumentListSet", oRequestDoc, {
+            success: function (oData, oResponse) {
+              that._closeBusyFragment();
+              that._callMessageToast(that.getText("CANDIDATE_ADDED"), "S");
+              that.onAttachmentDocumentUploadPress();
+            },
+            error: function () {
+              oThis._closeBusyFragment();
+            },
+          });
+        },
+        onAttachmentDocumentUploadPress:function(oEvent){
+          debugger;
+          var oFileUploader = sap.ui.getCore().byId("idAttachmentFileUploaderDocument");
+          var oModel = this.getModel();
+          var oProcess = SharedData.getCandidateProcess();
+          var oRowData = this._selectedRowData;
+          // requestDocument verilerini al
+
+          if (!oFileUploader.getValue()) {
+            this._callMessageToast(
+              this.getText("FILE_SELECTION_REQUIRED"),
+              "W"
+            );
+            return;
+          }
+
+          /*Destroy header parameters*/
+          oFileUploader.destroyHeaderParameters();
+
+          /*Set security token*/
+          oModel.refreshSecurityToken();
+          oFileUploader.addHeaderParameter(
+            new sap.ui.unified.FileUploaderParameter({
+              name: "x-csrf-token",
+              value: oModel.getSecurityToken(),
+            })
+          );
+
+          /*Set filename*/
+          var sFileName = oFileUploader.getValue();
+          sFileName = encodeURIComponent(sFileName);
+          oFileUploader.addHeaderParameter(
+            new sap.ui.unified.FileUploaderParameter({
+              name: "content-disposition",
+              value: "inline; filename='" + sFileName + "'",
+            })
+          );
+
+          /*Set upload path*/
+          var sPath = "";
+          sPath =
+            oModel.sServiceUrl +
+            "/EmployeeAttachmentOperationSet(Pernr='" +
+            oRowData.Pernr +
+            "',Drfid='" +
+            oRowData.Drfid +
+            "',Attyp='" +
+            '2' +
+            "')/EmployeeAttachmentSet";
+
+          oFileUploader.setUploadUrl(sPath);
+
+          /*Upload file*/
+
+          oFileUploader.upload();
+        },
         onAttachmentUploadPress: function (oEvent) {
           debugger;
           var oFileUploader = sap.ui.getCore().byId("idAttachmentFileUploader");
@@ -2553,6 +2711,8 @@ sap.ui.define(
             oRowData.Pernr +
             "',Drfid='" +
             oRowData.Drfid +
+            "',Attyp='" +
+            '1' +
             "')/EmployeeAttachmentSet";
 
           oFileUploader.setUploadUrl(sPath);
@@ -2560,6 +2720,25 @@ sap.ui.define(
           /*Upload file*/
 
           oFileUploader.upload();
+        },
+        onAttachmentDocumentUploadComplete:function(oEvent){
+          var oFileUploader = sap.ui.getCore().byId("idAttachmentFileUploaderDocument");
+          oFileUploader.destroyHeaderParameters();
+          oFileUploader.clear();
+
+          var sStatus = oEvent.getParameter("status");
+          var sResponse = oEvent.getParameter("response");
+          this._closeBusyFragment();
+          if (sStatus == "201" || sStatus == "200") {
+            this._callMessageToast(this.getText("FILE_UPLOAD_SUCCESS"), "S");
+            // this._oUploadAttachmentDialog.close();
+          } else {
+            this._callMessageToast(
+              this.getText("FILE_UPLOAD_ERROR", [sResponse]),
+              "E"
+            );
+          }
+          this.getModel().refresh(true);
         },
         onAttachmentUploadComplete: function (oEvent) {
           var oFileUploader = sap.ui.getCore().byId("idAttachmentFileUploader");
@@ -2592,8 +2771,29 @@ sap.ui.define(
           debugger;
           var oComboBox = oEvent.getSource();
           var sSelectedKey = oComboBox.getSelectedKey();
-          if(sSelectedKey == "02"){
-            MessageBox.warning("Bulundu");
+          // if(sSelectedKey == "02"){
+          //   MessageBox.warning("Bulundu");
+          // }
+        },
+        
+        onDrfrsComboBoxChange: function(oEvent) {
+          debugger;
+          var oComboBox = oEvent.getSource();
+          var sSelectedKey = oComboBox.getSelectedKey();
+          
+          // Hangi satırın ComboBox'ı değiştirildiğini bul
+          var oBindingContext = this._getCurrentEmployeeBindingContext(oEvent);
+          if (oBindingContext) {
+            var oModel = this.getModel("employeeRequestView");
+            var aSelectedEmployees = oModel.getProperty("/selectedEmployees") || [];
+            var sPath = oBindingContext.getPath();
+            var iIndex = parseInt(sPath.split("/")[2]);
+            
+            // İlgili personelin Drfrs değerini güncelle
+            aSelectedEmployees[iIndex].Drfrs = sSelectedKey;
+            oModel.setProperty("/selectedEmployees", aSelectedEmployees);
+            
+            this._callMessageToast("Talep gerekçesi güncellendi", "S");
           }
         },
         onFileTypeMissmatch: function (oEvent) {
@@ -2610,19 +2810,87 @@ sap.ui.define(
             ])
           );
         },
-        onNopeMenuItemPress:function(oEvent){
+        onNopeMenuItemPress: function(oEvent) {
           debugger;
-          if (!this._renewalRequestDialog) {
-            this._renewalRequestDialog = sap.ui.xmlfragment(
-              "com.bmc.hcm.drf.zhcmuxdrf.fragment.RenewalRequestDialog",
-              this
-            );
-            this.getView().addDependent(this._renewalRequestDialog);
+          // Hayır seçildiğinde Renwl = "2" set et ve dialog aç
+          var oBindingContext = this._getCurrentEmployeeBindingContext(oEvent);
+          if (oBindingContext) {
+            var oModel = this.getModel("employeeRequestView");
+            var aSelectedEmployees = oModel.getProperty("/selectedEmployees") || [];
+            var sPath = oBindingContext.getPath();
+            var iIndex = parseInt(sPath.split("/")[2]);
+            
+            aSelectedEmployees[iIndex].Renwl = "2";
+            oModel.setProperty("/selectedEmployees", aSelectedEmployees);
+            
+            // Geçici olarak mevcut çalışan verisini sakla
+            this._currentEmployeeIndex = iIndex;
+            oModel.setProperty("/currentEmployee", aSelectedEmployees[iIndex]);
+            
+            // Dialog'u aç
+            if (!this._renewalRequestDialog) {
+              this._renewalRequestDialog = sap.ui.xmlfragment(
+                "com.bmc.hcm.drf.zhcmuxdrf.fragment.RenewalRequestDialog",
+                this
+              );
+              this.getView().addDependent(this._renewalRequestDialog);
+            }
+            this._renewalRequestDialog.open();
           }
-          this._renewalRequestDialog.open();
         },
-        onYesMenuItemPress:function(oEvent){
+        
+        onRenewalReasonConfirm: function(oEvent) {
           debugger;
+          var oModel = this.getModel("employeeRequestView");
+          var sReason = sap.ui.getCore().byId("renewalReasonTextArea").getValue();
+          
+          if (!sReason || sReason.trim() === "") {
+            this._callMessageToast("Lütfen gerekçe giriniz", "E");
+            return;
+          }
+          
+          // Gerekçeyi ilgili çalışana set et
+          if (this._currentEmployeeIndex !== undefined) {
+            var aSelectedEmployees = oModel.getProperty("/selectedEmployees") || [];
+            aSelectedEmployees[this._currentEmployeeIndex].Rendc = sReason.trim();
+            oModel.setProperty("/selectedEmployees", aSelectedEmployees);
+            
+            this._callMessageToast("Yenileme gerekçesi kaydedildi", "S");
+          }
+          
+          this._renewalRequestDialog.close();
+          this._currentEmployeeIndex = undefined;
+        },
+        
+        onRenewalReasonCancel: function(oEvent) {
+          debugger;
+          // İptal edildiğinde Renwl değerini sıfırla
+          if (this._currentEmployeeIndex !== undefined) {
+            var oModel = this.getModel("employeeRequestView");
+            var aSelectedEmployees = oModel.getProperty("/selectedEmployees") || [];
+            aSelectedEmployees[this._currentEmployeeIndex].Renwl = "";
+            aSelectedEmployees[this._currentEmployeeIndex].Rendc = "";
+            oModel.setProperty("/selectedEmployees", aSelectedEmployees);
+          }
+          
+          this._renewalRequestDialog.close();
+          this._currentEmployeeIndex = undefined;
+        },
+        onYesMenuItemPress: function(oEvent) {
+          debugger;
+          // Evet seçildiğinde Renwl = "1" set et
+          var oBindingContext = this._getCurrentEmployeeBindingContext(oEvent);
+          if (oBindingContext) {
+            var oModel = this.getModel("employeeRequestView");
+            var aSelectedEmployees = oModel.getProperty("/selectedEmployees") || [];
+            var sPath = oBindingContext.getPath();
+            var iIndex = parseInt(sPath.split("/")[2]);
+            
+            aSelectedEmployees[iIndex].Renwl = "1";
+            oModel.setProperty("/selectedEmployees", aSelectedEmployees);
+            
+            this._callMessageToast("Yenileme talebi 'Evet' olarak işaretlendi", "S");
+          }
         },
         onFileSizeExceed: function (oEvent) {
           this._callMessageToast(
@@ -2648,6 +2916,129 @@ sap.ui.define(
         },
         onCloseUploadFormDialog: function () {
           this._documentAddDialog.close();
+        },
+        
+        onUploadFileChange: function(oEvent) {
+          var sFileName = oEvent.getParameter("newValue");
+          this._callMessageToast("Seçilen dosya: " + sFileName, "I");
+        },
+        
+        // onConfirmUpload: function(oEvent) {
+        //   debugger;
+        //   var oFileUploader = sap.ui.getCore().byId("idUploadFileUploader");
+        //   var oModel = this.getModel();
+        //   var oViewModel = this.getModel("employeeRequestView");
+        //   var oUploadFilters = oViewModel.getProperty("/uploadFilters");
+          
+        //   if (!oFileUploader.getValue()) {
+        //     this._callMessageToast("Lütfen bir dosya seçiniz", "W");
+        //     return;
+        //   }
+          
+        //   // Security token ayarla
+        //   oModel.refreshSecurityToken();
+        //   oFileUploader.destroyHeaderParameters();
+        //   oFileUploader.addHeaderParameter(
+        //     new sap.ui.unified.FileUploaderParameter({
+        //       name: "x-csrf-token",
+        //       value: oModel.getSecurityToken()
+        //     })
+        //   );
+          
+        //   // Dosya adını ayarla
+        //   var sFileName = encodeURIComponent(oFileUploader.getValue());
+        //   oFileUploader.addHeaderParameter(
+        //     new sap.ui.unified.FileUploaderParameter({
+        //       name: "content-disposition",
+        //       value: "inline; filename='" + sFileName + "'"
+        //     })
+        //   );
+          
+        //   // Upload path ayarla
+        //   var sPath = oModel.sServiceUrl + "/EmployeeAttachmentOperationSet(Pernr='" + 
+        //              oUploadFilters.Pernr + "',Drfid='" + oUploadFilters.Drfid + "')/EmployeeAttachmentSet";
+        //   oFileUploader.setUploadUrl(sPath);
+          
+        //   // Yükleme başlat
+        //   this._openBusyFragment("Dosya yükleniyor...");
+        //   oFileUploader.upload();
+        // },
+        
+        onCancelUpload: function(oEvent) {
+          this._uploadDocumentDialog.close();
+        },
+        
+        // onUploadComplete: function(oEvent) {
+        //   var sStatus = oEvent.getParameter("status");
+        //   var sResponse = oEvent.getParameter("response");
+          
+        //   this._closeBusyFragment();
+          
+        //   if (sStatus == "201" || sStatus == "200") {
+        //     this._callMessageToast("Dosya başarıyla yüklendi", "S");
+        //     this._uploadDocumentDialog.close();
+        //     this.getModel().refresh(true);
+        //   } else {
+        //     this._callMessageToast("Dosya yükleme hatası: " + sResponse, "E");
+        //   }
+          
+        //   // FileUploader temizle
+        //   var oFileUploader = sap.ui.getCore().byId("idUploadFileUploader");
+        //   oFileUploader.destroyHeaderParameters();
+        //   oFileUploader.clear();
+        // },
+        
+        onDownloadDocument: function(oEvent) {
+          debugger;
+          var oContext = oEvent.getSource().getBindingContext("employeeRequestView");
+          var oDocument = oContext.getObject();
+          var oModel = this.getModel();
+          
+          var sDownloadUrl = oModel.sServiceUrl + "/EmployeeAttachmentSet(Attid=guid'" + 
+                            oDocument.Attid + "')/$value";
+          window.open(sDownloadUrl, "_blank");
+        },
+        
+        onDisplayDocument: function(oEvent) {
+          debugger;
+          var oContext = oEvent.getSource().getBindingContext("employeeRequestView");
+          var oDocument = oContext.getObject();
+          var oModel = this.getModel();
+          
+          var sDisplayUrl = oModel.sServiceUrl + "/EmployeeAttachmentSet(Attid=guid'" + 
+                           oDocument.Attid + "')/$value";
+          
+          // PDF Viewer ile aç
+          var sTitle = "Belge Görüntüle - " + oDocument.Filename;
+          this._callPDFViewer(sDisplayUrl, sTitle);
+        },
+        
+        onCloseViewDialog: function(oEvent) {
+          this._viewDocumentDialog.close();
+        },
+        
+        _getCurrentEmployeeBindingContext: function(oEvent) {
+          // Event source'undan binding context'i al
+          var oSource = oEvent.getSource();
+          var oListItem = oSource.getParent();
+          
+          // ColumnListItem'ı bul
+          while (oListItem && !oListItem.isA("sap.m.ColumnListItem")) {
+            oListItem = oListItem.getParent();
+          }
+          
+          return oListItem ? oListItem.getBindingContext("employeeRequestView") : null;
+        },
+        
+        formatRenewalText: function(sRenwl) {
+          switch(sRenwl) {
+            case "1":
+              return "Evet";
+            case "2":
+              return "Hayır";
+            default:
+              return "Seçiniz";
+          }
         },
       }
     );

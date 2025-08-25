@@ -1,17 +1,19 @@
-<core:FragmentDefinition xmlns="sap.m"
-    xmlns:core="sap.ui.core"
-    xmlns:l="sap.ui.layout">
-    <Dialog id="yenilemeTalebiDialog" title="Yenileme Talebi Formu" contentWidth="40%" contentHeight="auto" resizable="true" draggable="true">
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+    <Dialog title="Yenileme Gerekçesi" contentWidth="500px" contentHeight="300px">
         <content>
-            <l:VerticalLayout class="sapUiContentPadding" width="100%">
-                <!-- Açıklama -->
-                <Label text="Gerekçe:" required="true" class="sapUiSmallMarginTop"/>
-                <TextArea id="descTextArea" placeholder="Yenileme talebi gerekçesini giriniz..." rows="6" width="100%" maxLength="1000" showExceededText="true" liveChange="onTextAreaLiveChange"/>
-            </l:VerticalLayout>
+            <VBox class="sapUiMediumMargin">
+                <Label text="Lütfen yenileme gerekçesini belirtiniz:" class="sapUiSmallMarginBottom"/>
+                <TextArea id="renewalReasonTextArea" 
+                         value="{employeeRequestView>/currentEmployee/Rendc}" 
+                         rows="6" 
+                         width="100%" 
+                         placeholder="Gerekçenizi buraya yazınız..."
+                         required="true"/>
+            </VBox>
         </content>
         <buttons>
-            <Button text="Kaydet" type="Emphasized" icon="sap-icon://save" press="onRenovationRequestSave"/>
-            <Button text="İptal" icon="sap-icon://cancel" press="onRenovationRequestCancel"/>
+            <Button text="Tamam" press="onRenewalReasonConfirm" type="Emphasized"/>
+            <Button text="İptal" press="onRenewalReasonCancel"/>
         </buttons>
     </Dialog>
 </core:FragmentDefinition>
