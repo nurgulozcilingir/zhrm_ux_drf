@@ -19,7 +19,7 @@ builder:
         app:
           name: ZHCM_UX_DRF
           description: Belge Dijitalleştirme 
-          package: ZHR01
-          transport: BFDK903039
+          package: ZHR13
+          transport: BFDK903099
         exclude:
           - /test/

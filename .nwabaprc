@@ -1,0 +1,10 @@
+{ 
+"base": "./dist", 
+"conn_server": "https://bmcfioridev.bmc.com.tr:44300", 
+"conn_user": "D_SMOD",    
+"conn_password": "Bmc.202020",   
+"abap_package": "ZHR13",   
+"abap_bsp": "ZHCM_UX_DRF",   
+"abap_bsp_text": "Belge Dijitalleştirme",
+"abap_transport": "BFDK903099"
+}

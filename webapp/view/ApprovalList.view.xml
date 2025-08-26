@@ -2,7 +2,7 @@
 	xmlns:footerbar="sap.ushell.ui.footerbar" busy="{approvalListView>/busy}" busyIndicatorDelay="100">
 	<Page showFooter="true" showHeader="true" floatingFooter="true" showNavButton="true" navButtonPress="onNavBack"
 		title="{i18n>EMPLOYEE_REQUEST_FORM_LIST}" class="erfListPage">
-		<IconTabBar class="sapUiResponsiveContentPadding">
+		<IconTabBar>
 			<items>
 				<IconTabFilter icon="sap-icon://pending" iconColor="Negative" text="{i18n>REQUESTS_PENDING}" key="info">
 					<content>
@@ -19,7 +19,8 @@
 							</headerToolbar>
 							<infoToolbar>
 								<Toolbar>
-									<Title id="idApprovalListTableHeader" text="{approvalListView>/requestListTableTitle}"/>
+									<!-- <Title id="idApprovalListTableHeader" text="{approvalListView>/requestListTableTitle}"/> -->
+									<Title id="idApprovalListTableHeader" text="Onayımdaki Belge Talep Formlarım"/>
 								</Toolbar>
 							</infoToolbar>
 							<columns>
@@ -85,7 +86,8 @@
 							</headerToolbar>
 							<infoToolbar>
 								<Toolbar>
-									<Title text="{i18n>REQUESTS_WAITING_OPERATION}"/>
+									<!-- <Title text="{i18n>REQUESTS_WAITING_OPERATION}"/> -->
+									<Title text="İşlem Yaptığım Belge Talep Formlarım"/>
 								</Toolbar>
 							</infoToolbar>
 							<columns>
