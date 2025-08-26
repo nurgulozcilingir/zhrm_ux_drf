@@ -2436,8 +2436,10 @@ sap.ui.define(
 
           oModel.create("/DocumentRequestFormSet", oRequestData, {
             success: function (oData, oResponse) {
-              sap.m.MessageToast.show("Talep başarıyla kaydedildi");
-              that.getRouter().navTo("mngrequestlist");
+              sap.m.MessageToast.show("Talep başarıyla kaydedildi. Personellere evrak eklemek için talep detayına gidiniz.");
+              setTimeout(function() {
+                that.getRouter().navTo("mngrequestlist");
+              }, 3000);
             },
             error: function (oError) {
               console.error("Create error:", oError);
