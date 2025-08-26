@@ -3,7 +3,7 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:u="sap.ui.unified">
 
-	<Dialog title="{i18n>DOCUMENT_UPLOAD_LISTING}" contentWidth="60%" contentHeight="80%" resizable="true">
+	<Dialog title="{i18n>DOCUMENT_UPLOAD_LISTING}" contentWidth="50%" contentHeight="500px" resizable="true">
 		<MessageStrip class="sapUiSmallMargin" text="{i18n>MAX_FILE_SIZE_INFO}" type="Information" showCloseButton="true" showIcon="true"/>
 		<f:Form id="idUploadAttachmentForm" class="candidateFileUploader" editable="true">
 			<f:layout>
@@ -23,39 +23,40 @@
 			</f:formContainers>
 		</f:Form>
 		<buttons>
-			<Button text="{i18n>LABEL_CANCEL}" icon="sap-icon://sys-cancel-2" press="onCloseUploadFormDialog"/>
-			<Button text="{i18n>LABEL_UPLOAD_FILE}" icon="sap-icon://upload-to-cloud" type="Accept" press="onAttachmentUploadPress" id="idUploadCandidateInterviewForm"/>
+			<Button text="{i18n>CANCEL}" icon="sap-icon://cancel" press="onCloseUploadFormDialog"/>
+			<Button text="{i18n>UPLOAD_BUTTON}" icon="sap-icon://upload" type="Accept" press="onAttachmentUploadPress" id="idUploadCandidateInterviewForm"/>
 		</buttons>
-		<Table id="idCandidateAttachmentList" busy="{candidateModel>/busy}" busyIndicatorDelay="0" inset="true" items="{path: '/EmployeeAttachmentSet'}" class="erfTable">
-			<infoToolbar>
-				<Toolbar>
-					<Title id="tableHeader" text="{i18n>DOCUMENT_LIST}"/>
-				</Toolbar>
-			</infoToolbar>
-			<columns>
-				<Column >
-					<Text text="{i18n>ATTACHMENT_FILE_NAME}"/>
-				</Column>
-				<Column hAlign="Center">
-					<Text text="{i18n>CREATION_DATE}"/>
-				</Column>
-				<Column hAlign="Center">
-					<Text text="{i18n>ACTION}"/>
-				</Column>
-			</columns>
-			<items>
-				<ColumnListItem>
-					<cells>
-						<Link press="onAttachDownload" text="{Aname}"/>
-						<!-- <Text text="{parts: [{path:'candidateModel>/helpText/Canat'}, {path:'Attty'}], formatter: '._getValueHelpText' }"/> -->
-						<Text text="{ path: 'Crdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern: 'dd.MM.yyyy'}}"/>
-						<HBox justifyContent="Center">
-							<Button type="Reject" class="sapUiSmallMarginEnd" icon="sap-icon://delete" press="onDeleteAttachment"/>
-						</HBox>
-					</cells>
-				</ColumnListItem>
-			</items>
-		</Table>
-
+		<VBox class="sapUiSmallMargin">
+			<Table id="idCandidateAttachmentList" busy="{candidateModel>/busy}" busyIndicatorDelay="0" items="{path: '/EmployeeAttachmentSet'}" class="erfTable">
+				<!-- <infoToolbar>
+					<Toolbar>
+						<Title id="tableHeader" text="{i18n>DOCUMENT_LIST}"/>
+					</Toolbar>
+				</infoToolbar> -->
+				<columns>
+					<Column >
+						<Text text="{i18n>ATTACHMENT_FILE_NAME}"/>
+					</Column>
+					<Column hAlign="Center">
+						<Text text="{i18n>CREATION_DATE}"/>
+					</Column>
+					<Column hAlign="Center">
+						<Text text="{i18n>ACTION}"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<Link press="onAttachDownload" text="{Aname}"/>
+							<!-- <Text text="{parts: [{path:'candidateModel>/helpText/Canat'}, {path:'Attty'}], formatter: '._getValueHelpText' }"/> -->
+							<Text text="{ path: 'Crdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern: 'dd.MM.yyyy'}}"/>
+							<HBox justifyContent="Center">
+								<Button type="Reject" class="sapUiSmallMarginEnd" icon="sap-icon://delete" press="onDeleteAttachment"/>
+							</HBox>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</VBox>
 	</Dialog>
 </c:FragmentDefinition>

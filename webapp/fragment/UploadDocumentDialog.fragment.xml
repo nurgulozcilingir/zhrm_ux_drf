@@ -1,6 +1,7 @@
 <core:FragmentDefinition xmlns="sap.m" 	xmlns:f="sap.ui.layout.form" xmlns:u="sap.ui.unified" xmlns:core="sap.ui.core">
     <Dialog title="{i18n>DOCUMENT_UPLOAD_TITLE} - {employeeRequestView>/uploadFilters/Ename}" contentWidth="50%" contentHeight="500px">
         <content>
+            <MessageStrip class="sapUiSmallMargin" text="{i18n>MAX_FILE_SIZE_INFO}" type="Information" showCloseButton="true" showIcon="true"/>
             <f:Form id="idUploadAttachmentForm2" editable="true">
                 <f:layout>
                     <f:ResponsiveGridLayout labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="true"/>
@@ -28,11 +29,6 @@
                                     <Input value="{employeeRequestView>/requestDocument/Zkurm}" required="true" />
                                 </f:fields>
                             </f:FormElement>
-                            <!-- <f:FormElement label="{i18n>CERTIFICATE_DEPARTMENT_LABEL}">
-                                <f:fields>
-                                    <Input value="{employeeRequestView>/requestDocument/Zbolm}" required="true" />
-                                </f:fields>
-                            </f:FormElement> -->
                             <f:FormElement label="{i18n>DOCUMENT_DATE}">
                                 <f:fields>
                                     <DatePicker value="{path:'employeeRequestView>/requestDocument/Ztarh', 
@@ -65,8 +61,8 @@
             </f:Form>
         </content>
         <buttons>
-            <Button text="{i18n>UPLOAD_BUTTON}" press="onDocumentUploadPress" type="Emphasized" icon="sap-icon://upload"/>
-            <Button text="{i18n>CANCEL}" press="onCancelUpload"/>
+            <Button text="{i18n>CANCEL}" press="onCancelUpload" icon="sap-icon://cancel"/>
+            <Button text="{i18n>UPLOAD_BUTTON}" press="onDocumentUploadPress" type="Accept" icon="sap-icon://upload"/>
         </buttons>
     </Dialog>
 </core:FragmentDefinition>

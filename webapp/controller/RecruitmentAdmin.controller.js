@@ -67,12 +67,12 @@ sap.ui.define([
 		],
 		requestActionCatalog: [{
 			Status: "DRF",
-			AvailableActions: [{
-				Text: "PRINT_OUT_ACTION",
-				Icon: "sap-icon://pdf-attachment",
-				Action: "PrintOut",
-				Type: "Default"
-			}]
+			// AvailableActions: [{
+			// 	Text: "PRINT_OUT_ACTION",
+			// 	Icon: "sap-icon://pdf-attachment",
+			// 	Action: "PrintOut",
+			// 	Type: "Default"
+			// }]
 		}, {
 			Status: "CMP",
 			AvailableActions: [{
@@ -105,12 +105,14 @@ sap.ui.define([
 				Icon: "sap-icon://display",
 				Action: "Display",
 				Type: "Default"
-			}, {
-				Text: "PRINT_OUT_ACTION",
-				Icon: "sap-icon://pdf-attachment",
-				Action: "PrintOut",
-				Type: "Default"
-			}, {
+			}, 
+			// {
+			// 	Text: "PRINT_OUT_ACTION",
+			// 	Icon: "sap-icon://pdf-attachment",
+			// 	Action: "PrintOut",
+			// 	Type: "Default"
+			// },
+			 {
 				Text: "DELETE_ACTION",
 				Icon: "sap-icon://delete",
 				Action: "Delete",
@@ -156,12 +158,14 @@ sap.ui.define([
 				Icon: "sap-icon://display",
 				Action: "Display",
 				Type: "Default"
-			}, {
-				Text: "PRINT_OUT_ACTION",
-				Icon: "sap-icon://pdf-attachment",
-				Action: "PrintOut",
-				Type: "Default"
-			}]
+			}
+			// , {
+			// 	Text: "PRINT_OUT_ACTION",
+			// 	Icon: "sap-icon://pdf-attachment",
+			// 	Action: "PrintOut",
+			// 	Type: "Default"
+			// }
+		]
 		}],
 		/* =========================================================== */
 		/* lifecycle methods                                           */
@@ -769,7 +773,7 @@ sap.ui.define([
 				this._requestActions.data("formData", oData);
 				this._requestActions.openBy(oSource);
 			} else {
-				this._callMessageToast(this.getText("NO_ACTIONS_DEFINED"), "W");
+				this._sweetToast(this.getText("NO_ACTIONS_DEFINED"), "W");
 			}
 		},
 		_openProcessActions: function (oData, oSource) {
@@ -784,7 +788,7 @@ sap.ui.define([
 				this._processActions.data("formData", oData);
 				this._processActions.openBy(oSource);
 			} else {
-				this._callMessageToast(this.getText("NO_ACTIONS_DEFINED"), "W");
+				this._sweetToast(this.getText("NO_ACTIONS_DEFINED"), "W");
 			}
 		},
 		_openFormChangeStatus: function (oData) {

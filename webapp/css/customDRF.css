@@ -828,3 +828,8 @@ html.sap-phone .erfDisplayOnlyCheckBox {
     padding: 0.5rem !important;
     margin: 0.3rem 0 !important;
 }
+
+/* İsteğe bağlı: Satırlar arası ayırıcı çizgi */
+.erfTable .sapMListTbl .sapMListTblRow {
+    border-bottom: 1px solid #e0e0e0 !important;
+}
