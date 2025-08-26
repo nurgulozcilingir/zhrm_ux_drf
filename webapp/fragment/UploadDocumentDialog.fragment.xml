@@ -1,7 +1,7 @@
 <core:FragmentDefinition xmlns="sap.m" 	xmlns:f="sap.ui.layout.form" xmlns:u="sap.ui.unified" xmlns:core="sap.ui.core">
     <Dialog title="{i18n>DOCUMENT_UPLOAD_TITLE} - {employeeRequestView>/uploadFilters/Ename}" contentWidth="50%" contentHeight="500px">
         <content>
-            <f:Form id="idUploadAttachmentForm" editable="true">
+            <f:Form id="idUploadAttachmentForm2" editable="true">
                 <f:layout>
                     <f:ResponsiveGridLayout labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="true"/>
                 </f:layout>
