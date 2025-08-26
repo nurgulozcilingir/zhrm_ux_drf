@@ -54,12 +54,12 @@ sap.ui.define(
                     Action: "Delete",
                     Type: "Reject",
                   },
-                  {
-                    Text: "PRINT_OUT_ACTION",
-                    Icon: "sap-icon://pdf-attachment",
-                    Action: "PrintOut",
-                    Type: "Default",
-                  },
+                  // {
+                  //   Text: "PRINT_OUT_ACTION",
+                  //   Icon: "sap-icon://pdf-attachment",
+                  //   Action: "PrintOut",
+                  //   Type: "Default",
+                  // },
                 ],
               },
               {
@@ -72,12 +72,12 @@ sap.ui.define(
                     Action: "Display",
                     Type: "Emphasized",
                   },
-                  {
-                    Text: "PRINT_OUT_ACTION",
-                    Icon: "sap-icon://pdf-attachment",
-                    Action: "PrintOut",
-                    Type: "Default",
-                  },
+                  // {
+                  //   Text: "PRINT_OUT_ACTION",
+                  //   Icon: "sap-icon://pdf-attachment",
+                  //   Action: "PrintOut",
+                  //   Type: "Default",
+                  // },
                 ],
               },
               {
@@ -90,12 +90,12 @@ sap.ui.define(
                     Action: "Display",
                     Type: "Emphasized",
                   },
-                  {
-                    Text: "PRINT_OUT_ACTION",
-                    Icon: "sap-icon://pdf-attachment",
-                    Action: "PrintOut",
-                    Type: "Default",
-                  },
+                  // {
+                  //   Text: "PRINT_OUT_ACTION",
+                  //   Icon: "sap-icon://pdf-attachment",
+                  //   Action: "PrintOut",
+                  //   Type: "Default",
+                  // },
                 ],
               },
               {
@@ -108,12 +108,12 @@ sap.ui.define(
                     Action: "Display",
                     Type: "Emphasized",
                   },
-                  {
-                    Text: "PRINT_OUT_ACTION",
-                    Icon: "sap-icon://pdf-attachment",
-                    Action: "PrintOut",
-                    Type: "Default",
-                  },
+                  // {
+                  //   Text: "PRINT_OUT_ACTION",
+                  //   Icon: "sap-icon://pdf-attachment",
+                  //   Action: "PrintOut",
+                  //   Type: "Default",
+                  // },
                 ],
               },
               {
@@ -126,12 +126,12 @@ sap.ui.define(
                     Action: "Display",
                     Type: "Emphasized",
                   },
-                  {
-                    Text: "PRINT_OUT_ACTION",
-                    Icon: "sap-icon://pdf-attachment",
-                    Action: "PrintOut",
-                    Type: "Default",
-                  },
+                  // {
+                  //   Text: "PRINT_OUT_ACTION",
+                  //   Icon: "sap-icon://pdf-attachment",
+                  //   Action: "PrintOut",
+                  //   Type: "Default",
+                  // },
                 ],
               },
               {
@@ -157,12 +157,12 @@ sap.ui.define(
                     Action: "Edit",
                     Type: "Emphasized",
                   },
-                  {
-                    Text: "PRINT_OUT_ACTION",
-                    Icon: "sap-icon://pdf-attachment",
-                    Action: "PrintOut",
-                    Type: "Default",
-                  },
+                  // {
+                  //   Text: "PRINT_OUT_ACTION",
+                  //   Icon: "sap-icon://pdf-attachment",
+                  //   Action: "PrintOut",
+                  //   Type: "Default",
+                  // },
                   {
                     Text: "APPROVED_REQUESTS_ME_CLOESED",
                     Icon: "sap-icon://decline",
@@ -182,12 +182,12 @@ sap.ui.define(
                     Action: "Edit",
                     Type: "Emphasized",
                   },
-                  {
-                    Text: "PRINT_OUT_ACTION",
-                    Icon: "sap-icon://pdf-attachment",
-                    Action: "PrintOut",
-                    Type: "Default",
-                  },
+                  // {
+                  //   Text: "PRINT_OUT_ACTION",
+                  //   Icon: "sap-icon://pdf-attachment",
+                  //   Action: "PrintOut",
+                  //   Type: "Default",
+                  // },
                   {
                     Text: "APPROVED_REQUESTS_ME_OPENED",
                     Icon: "sap-icon://open-command-field",
@@ -213,12 +213,12 @@ sap.ui.define(
                     Action: "Assign",
                     Type: "Accept",
                   },
-                  {
-                    Text: "PRINT_OUT_ACTION",
-                    Icon: "sap-icon://pdf-attachment",
-                    Action: "PrintOut",
-                    Type: "Default",
-                  },
+                  // {
+                  //   Text: "PRINT_OUT_ACTION",
+                  //   Icon: "sap-icon://pdf-attachment",
+                  //   Action: "PrintOut",
+                  //   Type: "Default",
+                  // },
                 ],
               },
               {
@@ -232,12 +232,12 @@ sap.ui.define(
                     Action: "Display",
                     Type: "Emphasized",
                   },
-                  {
-                    Text: "PRINT_OUT_ACTION",
-                    Icon: "sap-icon://pdf-attachment",
-                    Action: "PrintOut",
-                    Type: "Default",
-                  },
+                  // {
+                  //   Text: "PRINT_OUT_ACTION",
+                  //   Icon: "sap-icon://pdf-attachment",
+                  //   Action: "PrintOut",
+                  //   Type: "Default",
+                  // },
                 ],
               },
               {
@@ -251,12 +251,12 @@ sap.ui.define(
                     Action: "Display",
                     Type: "Emphasized",
                   },
-                  {
-                    Text: "PRINT_OUT_ACTION",
-                    Icon: "sap-icon://pdf-attachment",
-                    Action: "PrintOut",
-                    Type: "Default",
-                  },
+                  // {
+                  //   Text: "PRINT_OUT_ACTION",
+                  //   Icon: "sap-icon://pdf-attachment",
+                  //   Action: "PrintOut",
+                  //   Type: "Default",
+                  // },
                 ],
               },
             ],
@@ -566,7 +566,7 @@ sap.ui.define(
               oViewModel.setProperty("/busy", false);
               
               // Show error message
-              that._callMessageToast("Error loading request data", "E");
+              that._sweetToast("Error loading request data", "E");
               
               // Navigate anyway with original data
               that.getRouter().navTo(sRouteName, {
@@ -680,7 +680,7 @@ sap.ui.define(
             this._requestActions.data("formData", oData);
             this._requestActions.openBy(oSource);
           } else {
-            this._callMessageToast(this.getText("NO_ACTIONS_DEFINED"), "W");
+            this._sweetToast(this.getText("NO_ACTIONS_DEFINED"), "W");
           }
         },
         onCheckActionAvailable: function (sErfsf) {
@@ -1057,14 +1057,14 @@ sap.ui.define(
               oViewModel.refresh(true);
               oModel.refresh(true);
               that._closeBusyFragment();
-              that._callMessageToast(
+              that._sweetToast(
                 that.getText("APPROVED_REQUESTS_ME_SUCCES"),
                 "S"
               );
             },
             error: function (oError) {
               that._closeBusyFragment();
-              that._callMessageToast(
+              that._sweetToast(
                 that.getText("APPROVED_REQUESTS_ME_ERROR"),
                 "E"
               );
@@ -1143,7 +1143,7 @@ sap.ui.define(
             this._requestActions.data("formData", oData);
             this._requestActions.openBy(oSource);
           } else {
-            this._callMessageToast(this.getText("NO_ACTIONS_DEFINED"), "W");
+            this._sweetToast(this.getText("NO_ACTIONS_DEFINED"), "W");
           }
         },
         // onRequestActionSelected: function (oEvent) {

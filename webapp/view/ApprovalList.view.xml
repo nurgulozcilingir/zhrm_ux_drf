@@ -6,7 +6,7 @@
 			<items>
 				<IconTabFilter icon="sap-icon://pending" iconColor="Negative" text="{i18n>REQUESTS_PENDING}" key="info">
 					<content>
-						<Table id="idApprovalListTable" width="auto" class="erfTable"
+						<Table id="idApprovalListTable" width="auto" class="erfTable erfRecruitmentTable"
 							items="{ path: '/DocumentRequestFormSet',filters : [ { path : 'Drfap', operator : 'EQ', value1 : 'REQUESTS_ON_ME'}, { path : 'Drfsf', operator : 'EQ', value1 : 'ALL'} ] }"
 							noDataText="{approvalListView>/tableNoDataText}" busyIndicatorDelay="{approvalListView>/tableBusyDelay}" growing="true"
 							growingScrollToLoad="true" updateFinished="onUpdateFinished" updateStarted="onUpdateStarted" inset="false">
@@ -71,7 +71,7 @@
 				</IconTabFilter>
 				<IconTabFilter icon="sap-icon://accept" key="attachments" iconColor="Positive" text="{i18n>REQUESTS_OPERATION}">
 					<content>
-						<Table id="idApprovalListTableAPP" width="auto" class="erfTable"
+						<Table id="idApprovalListTableAPP" width="auto" class="erfTable erfRecruitmentTable"
 							items="{ path: '/DocumentRequestFormSet',filters : [ { path : 'Drfap', operator : 'EQ', value1 : 'REQUESTS_ON_ME'}, { path : 'Drfsf', operator : 'EQ', value1 : 'APP'} ] }"
 							noDataText="{approvalListView>/tableNoDataText}" busyIndicatorDelay="{approvalListView>/tableBusyDelay}" growing="true"
 							growingScrollToLoad="true" inset="false">

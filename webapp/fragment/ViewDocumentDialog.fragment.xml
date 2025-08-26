@@ -1,8 +1,8 @@
 <core:FragmentDefinition xmlns="sap.m"
     xmlns:core="sap.ui.core">
-    <Dialog title="{i18n>DOCUMENT_VIEW_TITLE} - {employeeRequestView>/viewFilters/Ename}" contentWidth="70%" contentHeight="60%">
+    <Dialog title="{i18n>DOCUMENT_VIEW_TITLE} - {employeeRequestView>/viewFilters/Ename}" contentWidth="50%" contentHeight="500px">
         <content>
-            <VBox class="sapUiMediumMargin">
+            <VBox class="sapUiSmallMargin">
                 <Table id="idViewDocumentTable" items="{
                     path: 'employeeRequestView>/documentList'
                 }" noDataText="{i18n>NO_DOCUMENT_UPLOADED}" class="sapUiSmallMarginBottom">
@@ -50,7 +50,7 @@
             </VBox>
         </content>
         <buttons>
-            <Button text="{i18n>CLOSE_BUTTON}" press="onCloseViewDialog"/>
+            <Button text="{i18n>CANCEL}" icon="sap-icon://cancel" press="onCloseViewDialog"/>
         </buttons>
     </Dialog>
 </core:FragmentDefinition>

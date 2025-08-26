@@ -284,7 +284,7 @@ sap.ui.define([
 			oModel.remove(sPath, {
 				success: function () {
 					oThis._closeBusyFragment();
-					oThis._callMessageToast(oThis.getText("FORM_DELETE_SUCCESSFUL"), "S");
+					oThis._sweetToast(oThis.getText("FORM_DELETE_SUCCESSFUL"), "S");
 					oModel.refresh();
 				},
 				error: function () {
@@ -340,9 +340,9 @@ sap.ui.define([
 						oThis._closeBusyFragment();
 
 						if (sStatusChange) {
-							oThis._callMessageToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+							oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
 						} else {
-							oThis._callMessageToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
+							oThis._sweetToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
 						}
 
 						if (sNavBack) {
@@ -367,9 +367,9 @@ sap.ui.define([
 						success: function (oData, oResponse) {
 							oThis._closeBusyFragment();
 							if (sStatusChange) {
-								oThis._callMessageToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+								oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
 							} else {
-								oThis._callMessageToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
+								oThis._sweetToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
 							}
 							if (sNavBack) {
 								oThis.goBack(History);
@@ -413,7 +413,7 @@ sap.ui.define([
 				urlParameters: oUrlParameters,
 				success: function (oData, oResponse) {
 					oThis._closeBusyFragment();
-					oThis._callMessageToast(oThis.getText("FORM_ASSIGN_SUCCESSFUL"), "S");
+					oThis._sweetToast(oThis.getText("FORM_ASSIGN_SUCCESSFUL"), "S");
 					oSuccessCallback.call();
 				},
 				error: function (oError) {
