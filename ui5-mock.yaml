@@ -19,6 +19,7 @@ server:
           - path: /sap
             url: https://bmcfioridev.bmc.com.tr:44300
             client: '100'
+            destination: BMCFIORIDEV
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:

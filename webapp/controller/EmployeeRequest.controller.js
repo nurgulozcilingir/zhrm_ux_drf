@@ -1246,7 +1246,7 @@ sap.ui.define(
         
         _initiateModels: function () {
           var oViewModel = this.getModel("employeeRequestView");
-
+          
           oViewModel.setProperty("/request", null);
           oViewModel.setProperty("/formActions", []);
           oViewModel.setProperty("/formHistory", []);
@@ -1346,7 +1346,6 @@ sap.ui.define(
           var sDrfid = oEvent.getParameter("arguments").Drfid;
           var oApplicationSettings = SharedData.getApplicationSettings();
           var oViewModel = this.getModel("employeeRequestView");
-          
           this._sDrfid = sDrfid;
           this._sNewRequest = false;
           this._setChangeListeners();
@@ -1366,6 +1365,14 @@ sap.ui.define(
           this._getFormHistory(sDrfid);
           this._getManagerHierarchy();
           this._getCandidateList(sDrfid);
+          this.getModel("employeeRequestView")
+          .bindProperty("/request/Drfbn")
+          .attachChange(
+            function (oEvent) {
+              var sDrfbn = oEvent.getSource().getValue();
+              this._handleConryChange(sDrfbn);
+            }.bind(this)
+          );
         },
         _onCandidateListMatched: function (oEvent) {
           var oListModel = this.getModel("candidateListModel");
@@ -1537,7 +1544,17 @@ sap.ui.define(
             },
           });
         },
+        _handleConryChange: function (sDrfbn) {
+          debugger;
+          var oDocComboBox = this.byId("idDocumentNameComboBox");
 
+          if (sDrfbn && oDocComboBox) {
+            var aFilters = [new Filter("Selky", FilterOperator.EQ, sDrfbn)];
+  
+            var oBinding = oDocComboBox.getBinding("items");
+            oBinding.filter(aFilters);
+         }
+        },
         _getManagerHierarchy: function () {
           var oViewModel = this.getModel("employeeRequestView");
           var oPositionList = oViewModel.getProperty("/positionList");
@@ -1748,7 +1765,6 @@ sap.ui.define(
         },
 
         _getFormHistory: function (sDrfid) {
-          debugger;
           var oModel = this.getModel();
           var oViewModel = this.getModel("employeeRequestView");
           var sPath =
