@@ -20,7 +20,7 @@
 				<Table id="idEmployeeRequestTable" width="auto"
 				items="{ path: '/DocumentRequestFormSet',filters : [ { path : 'Drfap', operator : 'EQ', value1 : 'MY_REQUESTS'}, { path : 'Drfsf', operator : 'EQ', value1 : 'DRF'} ] }"
 					noDataText="{requestListView>/tableNoDataText}" growing="true"
-					growingScrollToLoad="true" class="erfTable">
+					growingScrollToLoad="true" updateFinished="onUpdateFinished" updateStarted="onUpdateStarted" class="erfTable">
 					<headerToolbar>
 						<Toolbar>
 							<ToolbarSpacer/>

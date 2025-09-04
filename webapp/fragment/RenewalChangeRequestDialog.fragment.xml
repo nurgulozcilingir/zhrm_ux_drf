@@ -3,8 +3,8 @@
         <content>
             <VBox class="sapUiMediumMargin">
                 <Label text="{i18n>RENEWAL_REASON_LABEL}" class="sapUiSmallMarginBottom"/>
-                <TextArea id="renewalReasonTextArea" 
-                         value="{employeeRequestView>/currentEmployee/Rendc}" 
+                <TextArea id="renewalChangeReasonTextArea" 
+                         value="{employeeRequestView>/currentChangeEmployee/Rendc}" 
                          rows="6" 
                          width="100%" 
                          placeholder="{i18n>RENEWAL_REASON_PLACEHOLDER}"
@@ -12,7 +12,7 @@
             </VBox>
         </content>
         <buttons>
-            <Button text="{i18n>OK_BUTTON}" press="onRenewalChangeReasonConfirm" type="Emphasized"/>
+            <Button text="{i18n>OK_BUTTON}" press="onRenewalReasonConfirm" type="Emphasized"/>
             <Button text="{i18n>CANCEL}" press="onRenewalReasonCancel"/>
         </buttons>
     </Dialog>
