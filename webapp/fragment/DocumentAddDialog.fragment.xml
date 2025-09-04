@@ -1,10 +1,21 @@
 <c:FragmentDefinition xmlns="sap.m"
 	xmlns:c="sap.ui.core"
+	xmlns:core="sap.ui.core"
 	xmlns:f="sap.ui.layout.form"
 	xmlns:u="sap.ui.unified">
 
 	<Dialog title="{i18n>DOCUMENT_UPLOAD_LISTING}" contentWidth="50%" contentHeight="500px" resizable="true">
 		<MessageStrip class="sapUiSmallMargin" text="{i18n>MAX_FILE_SIZE_INFO}" type="Information" showCloseButton="true" showIcon="true"/>
+			<VBox class="sapUiSmallMargin">
+				<Label text="Evrak Türü Seçiniz:" required="true"/>
+				<ComboBox required="true" 
+						  selectedKey="{employeeRequestView>/selectedDocumentType}"
+						  items="{employeeRequestView>/valueHelpList/Drfev}" 
+						  width="300px"
+						  selectionChange="onDocumentTypeSelectionChange">
+					<core:Item key="{employeeRequestView>Fldky}" text="{employeeRequestView>Fldvl}"/>
+				</ComboBox>
+			</VBox>
 		<f:Form id="idUploadAttachmentForm" class="candidateFileUploader" editable="true">
 			<f:layout>
 				<f:ResponsiveGridLayout labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="true"/>
@@ -38,6 +49,12 @@
 						<Text text="{i18n>ATTACHMENT_FILE_NAME}"/>
 					</Column>
 					<Column hAlign="Center">
+						<Text text="Evrak Türü"/>
+					</Column>
+					<Column hAlign="Center">
+						<Text text="Evrak Türü Metni"/>
+					</Column>
+					<Column hAlign="Center">
 						<Text text="{i18n>CREATION_DATE}"/>
 					</Column>
 					<Column hAlign="Center">
@@ -48,6 +65,8 @@
 					<ColumnListItem>
 						<cells>
 							<Link press="onAttachDownload" text="{Aname}"/>
+							<Text text="{Zevrt}"/>
+							<Text text="{Zevtx}"/>
 							<!-- <Text text="{parts: [{path:'candidateModel>/helpText/Canat'}, {path:'Attty'}], formatter: '._getValueHelpText' }"/> -->
 							<Text text="{ path: 'Crdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern: 'dd.MM.yyyy'}}"/>
 							<HBox justifyContent="Center">

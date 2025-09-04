@@ -529,19 +529,21 @@ sap.ui.define(
           var sPath = "/DocumentRequestFormSet('" + sDrfid + "')";
           var sExpand = 
                 "DocumentRequestEmployeeSet" +
+                ",DocumentRequestEmployeeSet/EmployeeAttachmentSet" +
                 ",DocumentRequestHistorySet" +
                 ",DocumentRequestPrintOut";
+                
 
-          // Set editable mode based on bEditMode parameter
+
           oApplicationSettings.Edit = bEditMode;
           oApplicationSettings.CallerRole = this.callerRole;
-          oApplicationSettings.DisplayMode = !bEditMode; // Display mode flag
+          oApplicationSettings.DisplayMode = !bEditMode;
           
           // If RECRUITER role, always set edit to false
-          if (this.callerRole === "RECRUITER") {
-            oApplicationSettings.Edit = false;
-            oApplicationSettings.DisplayMode = true;
-          }
+          // if (this.callerRole === "RECRUITER") {
+          //   oApplicationSettings.Edit = false;
+          //   oApplicationSettings.DisplayMode = true;
+          // }
           
           SharedData.setApplicationSettings(oApplicationSettings);
           
@@ -734,6 +736,14 @@ sap.ui.define(
 
           switch (sAction) {
             case "Edit":
+              oApplicationSettings.Edit = true;
+              oApplicationSettings.CallerRole = this.callerRole;
+              if (this.callerRole === "RECRUITER") {
+                oApplicationSettings.Edit = false;
+              }
+              SharedData.setApplicationSettings(oApplicationSettings);
+              /*Set request data*/
+              SharedData.setCurrentRequest(_.cloneDeep(oFormData));
               oViewModel.setProperty("/busy", true);
               // Load data with expand before navigation - Edit mode
               this._loadRequestDataAndNavigate(oFormData.Drfid, "employeerequestedit", true);
@@ -995,7 +1005,7 @@ sap.ui.define(
               }
             }
 
-            oModel.read("/DocumentRequestEmployeeSet/$count", {
+            oModel.read("/DocumentRequestFormSet/$count", {
               // oModel.read("/EmployeeRequestFormSet", {
               filters: aFilters,
               success: function (oData, oResponse) {

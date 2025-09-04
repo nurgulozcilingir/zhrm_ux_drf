@@ -210,6 +210,23 @@ sap.ui.define([], function () {
 			} else {
 				return "";
 			}
+		},
+
+		/**
+		 * Formats renewal text based on value
+		 * @public
+		 * @param {string} sRenwl renewal value
+		 * @returns {string} formatted renewal text
+		 */
+		formatRenewalText: function(sRenwl) {
+			switch(sRenwl) {
+				case "1":
+					return "Evet";
+				case "2":
+					return "Hayır";
+				default:
+					return "Seçiniz";
+			}
 		}
 
 	};

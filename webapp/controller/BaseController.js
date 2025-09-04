@@ -6,8 +6,10 @@ sap.ui.define([
 	"com/bmc/hcm/drf/zhcmuxdrf/controller/SharedData",
 	"com/bmc/hcm/drf/zhcmuxdrf/utils/FormValidator",
 	"com/bmc/hcm/drf/zhcmuxdrf/utils/confetti",
-	"com/bmc/hcm/drf/zhcmuxdrf/utils/swal"
-], function (Controller, Dialog, MessageToast, SharedData, FormValidator,confetti,swalJs) {
+	"com/bmc/hcm/drf/zhcmuxdrf/utils/swal",
+	"sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator",
+], function (Controller, Dialog, MessageToast, SharedData, FormValidator,confetti,swalJs,Filter, FilterOperator) {
 	"use strict";
 
 	return Controller.extend("com.bmc.hcm.drf.zhcmuxdrf.controller.BaseController", {
@@ -47,6 +49,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.routing.History} History class
 		 */
 		goBack: function (History) {
+			debugger;
 			var oHistory = History.getInstance();
 			var sPreviousHash = oHistory.getPreviousHash();
 
@@ -297,108 +300,36 @@ sap.ui.define([
 			var oModel = this.getModel();
 			var oViewModel = this.getModel("employeeRequestView");
 			var oThis = this;
-			// var oRequestData = oViewModel.getProperty("/request");
+			var oRequestData = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet");
 			var aEmployeeIds = [];
-			// var aEmployeeIds = oRequestData.DocumentRequestEmployeeSet.map(function (oEmployee) {
-			// 	return {
-			// 	  Pernr: oEmployee.Pernr
-			// 	};
-			//   });
-			if (oFormData.DocumentRequestEmployeeSet) {
-				var aEmployees = Array.isArray(oFormData.DocumentRequestEmployeeSet)
-					? oFormData.DocumentRequestEmployeeSet
-					: oFormData.DocumentRequestEmployeeSet.results || [];
-			
-				aEmployeeIds = aEmployees.map(function (oEmployee) {
-					return { 
-						Pernr: oEmployee.Pernr,
-						Renwl: oEmployee.Renwl || "", // Yenileme talebi (1=Evet, 2=Hayır)
-						Rendc: oEmployee.Rendc || "", // Yenileme gerekçesi
-						Drfrs: oEmployee.Drfrs || ""  // Talep gerekçesi
-					 };
-				});
-			}
-			oFormData.DocumentRequestEmployeeSet = aEmployeeIds;
-			if (oFormData.DocumentRequestHistorySet) {
-				delete oFormData.DocumentRequestHistorySet;
-			}
-			if (oFormData.DocumentRequestPrintOut) {
-				delete oFormData.DocumentRequestPrintOut;
-			}
-			// if(oFormData.DocumentRequestEmployeeSet){
-			// 	delete oFormData.DocumentRequestEmployeeSet;
-			// }
 
-			if (sStatusChange) {
-				oThis._openBusyFragment("FORM_STATUS_BEING_CHANGED");
-			} else {
-				oThis._openBusyFragment("FORM_BEING_SAVED");
-			}
-			if (sNewRequest) {
-				oModel.create("/DocumentRequestFormSet", oFormData, {
-					success: function (oData, oResponse) {
-						oThis._closeBusyFragment();
+			var sDrfbl = oViewModel.getProperty("/request/Drfbl");
+			var sDrfbn = oViewModel.getProperty("/request/Drfbn");
 
-						if (sStatusChange) {
-							oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
-						} else {
-							oThis._sweetToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
-						}
+			var aFilters = [
+				new Filter("Selky", FilterOperator.EQ, sDrfbl),
+				new Filter("Selk2", FilterOperator.EQ, sDrfbn),
+				new Filter("Drfvh", FilterOperator.EQ, "Drfev")
+			  ];
 
-						if (sNavBack) {
-							oThis.goBack(History);
-						} else {
-							if (typeof fnCallBack === "function") {
-								fnCallBack();
-							}
-						}
-					},
-					error: function (oError) {
-						oThis._closeBusyFragment();
+			oModel.read("/ValueHelpSet", {
+				filters: aFilters,
+				success: function (oValueHelpData) {
+					oViewModel.setProperty("/valueHelpList/Drfev", oValueHelpData.results);
+		
+					var bAllDocumentsComplete = oThis._checkDocumentCompleteness(oRequestData, oValueHelpData.results);
+					
+					if (!bAllDocumentsComplete) {
+						return;
 					}
-				});
-			} else {
-				// var sPath = oModel.create("/DocumentRequestFormSet", oFormData, {
-					// var sPath = oModel.createKey("/DocumentRequestFormSet", {
-					// 	Drfid: oFormData.Drfid
-					// });
 
-					oModel.create("/DocumentRequestFormSet", oFormData, {
-						success: function (oData, oResponse) {
-							oThis._closeBusyFragment();
-							if (sStatusChange) {
-								oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
-							} else {
-								oThis._sweetToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
-							}
-							if (sNavBack) {
-								oThis.goBack(History);
-							}
-						},
-						error: function (oError) {
-							oThis._closeBusyFragment();
-						}
+					oThis._continueUpdateRequest(oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack, oRequestData);
+					},
+					error: function () {
+					oThis._sweetToast(oThis.getText("VALUE_HELP_SET_ERROR"), "E");
+					}
 					});
-			
-				// oModel.create('/DocumentRequestFormSet', oFormData, {
-				// 	success: function (oData, oResponse) {
-				// 		oThis._closeBusyFragment();
-				// 		if (sStatusChange) {
-				// 			oThis._callMessageToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
-				// 		} else {
-				// 			oThis._callMessageToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
-				// 		}
-				// 		if (sNavBack) {
-				// 			oThis.goBack(History);
-				// 		}
-				// 	},
-				// 	error: function (oError) {
-				// 		oThis._closeBusyFragment();
-				// 	}
-				// });
-			}
-
-		},
+					},
 		_assignRequest: function (sErfid, sPernr, oSuccessCallback) {
 			var oModel = this.getModel();
 			var oThis = this;
@@ -903,6 +834,130 @@ pointer-events: none !important;
 					v = c === "x" ? r : (r & 0x3 | 0x8);
 				return v.toString(16).toUpperCase();
 			});
+		},
+		
+		_checkDocumentCompleteness: function(oRequestData, aRequiredDocuments) {
+			var oThis = this;
+			var aIncompleteEmployees = [];
+
+			oRequestData.forEach(function(oEmployee) {
+				var aEmployeeDocuments = [];
+
+				if (oEmployee.EmployeeAttachmentSet && oEmployee.EmployeeAttachmentSet.results) {
+					aEmployeeDocuments = oEmployee.EmployeeAttachmentSet.results.map(function(oDoc) {
+						return oDoc.Zevrt;
+					});
+				}
+
+				var aMissingDocuments = [];
+				aRequiredDocuments.forEach(function(oRequiredDoc) {
+					var sRequiredDocType = oRequiredDoc.Fldky;
+					var sRequiredDocText = oRequiredDoc.Fldvl;
+	
+					if (aEmployeeDocuments.indexOf(sRequiredDocType) === -1) {
+						aMissingDocuments.push(sRequiredDocText);
+					}
+				});
+				
+				if (aMissingDocuments.length > 0) {
+					aIncompleteEmployees.push({
+						Ename: oEmployee.Ename,
+						Pernr: oEmployee.Pernr,
+						missingDocuments: aMissingDocuments
+					});
+				}
+			});
+	
+			if (aIncompleteEmployees.length > 0) {
+				var sWarningMessage = "Aşağıdaki personellerin evrakları eksik:\n\n";
+				
+				aIncompleteEmployees.forEach(function(oEmployee) {
+					sWarningMessage += "• " + oEmployee.Ename + " (" + oEmployee.Pernr + "):\n";
+					oEmployee.missingDocuments.forEach(function(sDoc) {
+						sWarningMessage += "  - " + sDoc + "\n";
+					});
+					sWarningMessage += "\n";
+				});
+				
+				sWarningMessage += "Lütfen tüm gerekli evrakları ekleyip tekrar deneyin.";
+				
+				sap.m.MessageBox.warning(sWarningMessage, {
+					title: "Eksik Evraklar",
+					actions: [sap.m.MessageBox.Action.OK]
+				});
+				
+				return false;
+			}
+			
+			return true;
+		},
+		
+		_continueUpdateRequest: function(oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack, oRequestData) {
+			var oModel = this.getModel();
+			var oThis = this;
+			
+			var aEmployeeChangeIds = oRequestData.map(function (oEmployee) {
+				return {
+					Pernr: oEmployee.Pernr,
+					Drfid: oEmployee.Drfid,
+					Drfno: oEmployee.Drfno,
+					Renwl: oEmployee.Renwl || "", 
+					Rendc: oEmployee.Rendc || "", 
+					Drfrs: oEmployee.Drfrs || "" 
+				};
+			});
+			oFormData.DocumentRequestEmployeeSet = aEmployeeChangeIds;
+	
+			// if(oFormData.DocumentRequestEmployeeSet){
+			// 	delete oFormData.DocumentRequestEmployeeSet;
+			// }
+
+			if (sStatusChange) {
+				oThis._openBusyFragment("FORM_STATUS_BEING_CHANGED");
+			} else {
+				oThis._openBusyFragment("FORM_BEING_SAVED");
+			}
+			if (sNewRequest) {
+				oModel.create("/DocumentRequestFormSet", oFormData, {
+					success: function (oData, oResponse) {
+						oThis._closeBusyFragment();
+
+						if (sStatusChange) {
+							oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+						} else {
+							oThis._sweetToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
+						}
+
+						if (sNavBack) {
+							oThis.goBack(History);
+						} else {
+							if (typeof fnCallBack === "function") {
+								fnCallBack();
+							}
+						}
+					},
+					error: function (oError) {
+						oThis._closeBusyFragment();
+					}
+				});
+			} else {
+				oModel.create("/DocumentRequestFormSet", oFormData, {
+					success: function (oData, oResponse) {
+						oThis._closeBusyFragment();
+						if (sStatusChange) {
+							oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+						} else {
+							oThis._sweetToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
+						}
+						if (sNavBack) {
+							oThis.goBack(History);
+						}
+					},
+					error: function (oError) {
+						oThis._closeBusyFragment();
+					}
+				});
+			}
 		},
 		/**
 		 * Adds a history entry in the FLP page history
