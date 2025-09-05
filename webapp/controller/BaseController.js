@@ -946,8 +946,14 @@ pointer-events: none !important;
 						oThis._closeBusyFragment();
 						if (sStatusChange) {
 							oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+							setTimeout(function() {
+								that.getRouter().navTo("mngrequestlist");
+							  }, 3000);
 						} else {
 							oThis._sweetToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
+							setTimeout(function() {
+								that.getRouter().navTo("mngrequestlist");
+							  }, 3000);
 						}
 						if (sNavBack) {
 							oThis.goBack(History);

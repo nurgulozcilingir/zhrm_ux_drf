@@ -3,7 +3,7 @@
     xmlns:cd="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
     <Dialog id="idEmployeeSearchDialog" title="{i18n>PERSONNEL_SELECTION}" draggable="true" resizable="true" contentWidth="500px" contentHeight="500px">
         <VBox>
-            <Table id="idListEmployeeChangeTable" items="{employeeRequestView>/changeList}" mode="MultiSelect">
+            <Table id="idListEmployeeChangeTable" items="{employeeRequestView>/changeList}" mode="SingleSelect">
                 <columns>
                     <Column width="12em">
                         <Text text="{i18n>PERSONNEL_NO}" />

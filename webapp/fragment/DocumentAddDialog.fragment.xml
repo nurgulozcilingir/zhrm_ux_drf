@@ -13,8 +13,9 @@
 						  items="{employeeRequestView>/valueHelpList/Drfev}" 
 						  width="300px"
 						  selectionChange="onDocumentTypeSelectionChange">
-					<core:Item key="{employeeRequestView>Fldky}" text="{employeeRequestView>Fldvl}"/>
+					<core:Item key="{employeeRequestView>Fldky}" text="{employeeRequestView>Fldvl}" press="onPdfDowlandPress/>
 				</ComboBox>
+				<Button text="İndir" required="true" icon="sap-icon://download" />
 			</VBox>
 		<f:Form id="idUploadAttachmentForm" class="candidateFileUploader" editable="true">
 			<f:layout>

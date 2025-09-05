@@ -19,8 +19,8 @@
 							</FlexBox>
 							<FlexBox direction="Row" class="sapUiMediumMarginBegin sapUiVisibleOnlyOnDesktop" visible="{= !${device>/system/phone} }">
 								<FlexBox direction="Column">
-									<Text text="{i18n>REQUEST_REASON}" class="erfHeaderLabel erfHeaderLabelOrange"/>
 									<Text text="Belge Türü" class="erfHeaderLabel erfHeaderLabelOrange"/>
+									<Text text="Belge Adı" class="erfHeaderLabel erfHeaderLabelOrange"/>
 								</FlexBox>
 								<FlexBox direction="Column" class="sapUiTinyMarginBegin">
 									<Text text="{employeeRequestView>/request/Drfbx}" class="erfHeaderText"/>
