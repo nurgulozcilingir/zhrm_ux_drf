@@ -98,7 +98,7 @@
                         </MenuButton>
                         <Input value="{employeeRequestView>Rendc}" enabled="{parts: ['employeeRequestView>/applicationSettings/DisplayMode', 'employeeRequestView>Renwl'], formatter: '.formatRendcEnabled'}" width="170px"/>
                         <!-- <Text text="{employeeRequestView>Drfrx}"/> -->
-                        <ComboBox selectedKey="{employeeRequestView>Drfrs}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrs' } ] }" change="onDrfrsComboBoxChange" editable="{= !{employeeRequestView>/applicationSettings/DisplayMode}}">
+                        <ComboBox selectedKey="{employeeRequestView>Drfrs}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrs' } ] }" change="onDrfrsComboBoxChange" editable="{= !${employeeRequestView>/applicationSettings/DisplayMode}}">
                             <core:Item key="{Fldky}" text="{Fldvl}"/>
                         </ComboBox>
                         <!-- <Button icon="sap-icon://delete" type="Reject" press="onRemoveSelectedChangeEmployee" tooltip="{i18n>REMOVE_PERSONNEL}" cd:employeeId="{employeeRequestView>Pernr}" cd:employeeName="{employeeRequestView>Ename}"/> -->
