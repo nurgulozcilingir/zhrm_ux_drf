@@ -301,12 +301,15 @@ sap.ui.define([
 			var oViewModel = this.getModel("employeeRequestView");
 			var oThis = this;
 			var oRequestData = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet");
-			var aEmployeeIds = [];
+			// var oRequestData = oViewModel.getProperty("/request");
 
+			var aEmployeeIds = [];
+            var sDrfrt = oViewModel.getProperty("/request/Drfrt");
 			var sDrfbl = oViewModel.getProperty("/request/Drfbl");
 			var sDrfbn = oViewModel.getProperty("/request/Drfbn");
 
 			var aFilters = [
+				new Filter("Selk3", FilterOperator.EQ, sDrfrt),
 				new Filter("Selky", FilterOperator.EQ, sDrfbl),
 				new Filter("Selk2", FilterOperator.EQ, sDrfbn),
 				new Filter("Drfvh", FilterOperator.EQ, "Drfev")
@@ -351,6 +354,62 @@ sap.ui.define([
 					oThis._closeBusyFragment();
 				}
 			});
+
+		},
+		_updateRequestAdmin: function (oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack) {
+			debugger;
+			var oModel = this.getModel();
+			var oThis = this;
+
+			if (sStatusChange) {
+				oThis._openBusyFragment("FORM_STATUS_BEING_CHANGED");
+			} else {
+				oThis._openBusyFragment("FORM_BEING_SAVED");
+			}
+			if (sNewRequest) {
+				oModel.create("/DocumentRequestFormSet", oFormData, {
+					success: function (oData, oResponse) {
+						oThis._closeBusyFragment();
+
+						if (sStatusChange) {
+							oThis._callMessageToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+						} else {
+							oThis._callMessageToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
+						}
+
+						if (sNavBack) {
+							oThis.goBack(History);
+						} else {
+							if (typeof fnCallBack === "function") {
+								fnCallBack();
+							}
+						}
+					},
+					error: function (oError) {
+						oThis._closeBusyFragment();
+					}
+				});
+			} else {
+				var sPath = oModel.createKey("/DocumentRequestFormSet", {
+					Drfid: oFormData.Drfid
+				});
+				oModel.update(sPath, oFormData, {
+					success: function (oData, oResponse) {
+						oThis._closeBusyFragment();
+						if (sStatusChange) {
+							oThis._callMessageToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+						} else {
+							oThis._callMessageToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
+						}
+						if (sNavBack) {
+							oThis.goBack(History);
+						}
+					},
+					error: function (oError) {
+						oThis._closeBusyFragment();
+					}
+				});
+			}
 
 		},
 		onDownloadFile: function (sUrl) {
@@ -838,6 +897,13 @@ pointer-events: none !important;
 		
 		_checkDocumentCompleteness: function(oRequestData, aRequiredDocuments) {
 			var oThis = this;
+			  if (!oRequestData || oRequestData.length === 0) {
+				sap.m.MessageBox.warning("En az bir personel ekleyiniz!", {
+					title: "Personel Bulunamadı",
+					actions: [sap.m.MessageBox.Action.OK]
+				});
+				return false;
+			}
 			var aIncompleteEmployees = [];
 
 			oRequestData.forEach(function(oEmployee) {
@@ -907,10 +973,6 @@ pointer-events: none !important;
 				};
 			});
 			oFormData.DocumentRequestEmployeeSet = aEmployeeChangeIds;
-	
-			// if(oFormData.DocumentRequestEmployeeSet){
-			// 	delete oFormData.DocumentRequestEmployeeSet;
-			// }
 
 			if (sStatusChange) {
 				oThis._openBusyFragment("FORM_STATUS_BEING_CHANGED");
@@ -924,8 +986,14 @@ pointer-events: none !important;
 
 						if (sStatusChange) {
 							oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+							setTimeout(function() {
+								oThis.getRouter().navTo("mngrequestlist");
+							  }, 3000);
 						} else {
 							oThis._sweetToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
+							setTimeout(function() {
+								oThis.getRouter().navTo("mngrequestlist");
+							  }, 3000);
 						}
 
 						if (sNavBack) {
@@ -946,8 +1014,14 @@ pointer-events: none !important;
 						oThis._closeBusyFragment();
 						if (sStatusChange) {
 							oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+							setTimeout(function() {
+								oThis.getRouter().navTo("mngrequestlist");
+							  }, 3000);
 						} else {
 							oThis._sweetToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
+							setTimeout(function() {
+								oThis.getRouter().navTo("mngrequestlist");
+							  }, 3000);
 						}
 						if (sNavBack) {
 							oThis.goBack(History);

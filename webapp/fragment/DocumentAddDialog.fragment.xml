@@ -15,6 +15,7 @@
 						  selectionChange="onDocumentTypeSelectionChange">
 					<core:Item key="{employeeRequestView>Fldky}" text="{employeeRequestView>Fldvl}"/>
 				</ComboBox>
+				<Button text="Şablon İndir" required="true" icon="sap-icon://download" press="onPdfDowlandPress" visible="{employeeRequestView>/downloadButtonVisible}" />
 			</VBox>
 		<f:Form id="idUploadAttachmentForm" class="candidateFileUploader" editable="true">
 			<f:layout>
@@ -52,9 +53,6 @@
 						<Text text="Evrak Türü"/>
 					</Column>
 					<Column hAlign="Center">
-						<Text text="Evrak Türü Metni"/>
-					</Column>
-					<Column hAlign="Center">
 						<Text text="{i18n>CREATION_DATE}"/>
 					</Column>
 					<Column hAlign="Center">
@@ -65,7 +63,6 @@
 					<ColumnListItem>
 						<cells>
 							<Link press="onAttachDownload" text="{Aname}"/>
-							<Text text="{Zevrt}"/>
 							<Text text="{Zevtx}"/>
 							<!-- <Text text="{parts: [{path:'candidateModel>/helpText/Canat'}, {path:'Attty'}], formatter: '._getValueHelpText' }"/> -->
 							<Text text="{ path: 'Crdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern: 'dd.MM.yyyy'}}"/>

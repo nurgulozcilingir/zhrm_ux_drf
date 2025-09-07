@@ -17,6 +17,9 @@
                             <Text text="{i18n>DOCUMENT_NAME}"/>
                         </Column>
                         <Column>
+                            <Text text="{i18n>DOCUMENT_NO}"/>
+                        </Column>
+                        <Column>
                             <Text text="{i18n>INSTITUTE_NAME_LABEL}"/>
                         </Column>
                         <!-- <Column>
@@ -38,6 +41,7 @@
                                 <Link press="onAttachDownloadLink" text="{employeeRequestView>Aname}"/>
                                 <Text text="{employeeRequestView>Zblnx}"/>
                                 <Text text="{employeeRequestView>Zbltx}"/>
+                                <Text text="{employeeRequestView>Zblno}"/>
                                 <Text text="{employeeRequestView>Zkurm}"/>
                                 <!-- <Text text="{employeeRequestView>/documentList/Zbolm}"/> -->
                                 <Text text="{ path: 'employeeRequestView>Ztarh', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }" />

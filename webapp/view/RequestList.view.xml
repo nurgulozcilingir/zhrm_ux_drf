@@ -62,6 +62,7 @@
 								<Text text="{Drfno}"/>
 								<Text text="{Drrtx}"/>
 								<Text text="{Drfbx}"/>
+								<!-- <Text text="{Drfbn}"/> -->
 								<Text text="{Drfnx}"/>
 								<!-- <Text
 								text="{ path: 'Drfdt', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }"/> -->

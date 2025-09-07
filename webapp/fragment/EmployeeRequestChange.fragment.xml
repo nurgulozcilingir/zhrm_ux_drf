@@ -51,17 +51,18 @@
                     </Toolbar>
                 </infoToolbar>
                 <columns>
-                    <!-- <Column>
-                        <Text text="Personel"/>
-                    </Column> -->
-                    <Column>
-                        <Text text="{i18n>PERSONNEL_NO}"/>
-                    </Column>
                     <Column>
                         <Text text="{i18n>PERSONNEL_NAME_COL}"/>
                     </Column>
+                    <Column>
+                        <Text text="{i18n>PERSONNEL_NO}"/>
+                    </Column>
+                   
                     <Column visible="{= ${employeeRequestView>/request/Drfrt} === '02'}">
                         <Text text="{i18n>RENEWAL_REQUEST}"/>
+                    </Column>
+                    <Column visible="{= ${employeeRequestView>/request/Drfrt} === '02'}">
+                        <Text text="{i18n>RENEWAL_REASON_COLUMN}"/>
                     </Column>
                     <Column visible="{= ${employeeRequestView>/request/Drfrt} === '01'}">
                         <Text text="{i18n>REQUEST_REASON_COL}"/>
@@ -85,6 +86,7 @@
                                         </Menu>
                                     </menu>
                                 </MenuButton>
+                                <Text text="{employeeRequestView>Rendc}"/>
                                 <ComboBox selectedKey="{employeeRequestView>Drfrs}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrs' } ] }" change="onDrfrsComboBoxChange">
                                     <core:Item key="{Fldky}" text="{Fldvl}"/>
                                 </ComboBox>

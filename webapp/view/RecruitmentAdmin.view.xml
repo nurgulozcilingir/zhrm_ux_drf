@@ -26,10 +26,10 @@
                             <headerToolbar>
                                 <Toolbar>
                                     <ToolbarSpacer/>
-                                    <ComboBox items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfst_f' } ] }" selectedKey="{recruitmentAdminModel>/search/Drfst}" placeholder="{i18n>ERFST}" change="onChangeErfst">
+                                    <ComboBox items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfst_f' } ] }" selectedKey="{recruitmentAdminModel>/search/Drfst}" placeholder="{i18n>ERFST}" change="onChangeDrfst">
                                         <core:ListItem key="{Fldky}" text="{Fldvl}"/>
                                     </ComboBox>
-                                    <ComboBox items="{ path:'recruitmentAdminModel>/erfssList'}" placeholder="{i18n>ERFSS}" selectedKey="{recruitmentAdminModel>/search/Drfss}" change="onRequestSearch">
+                                    <ComboBox items="{ path:'recruitmentAdminModel>/drfssList'}" placeholder="{i18n>ERFSS}" selectedKey="{recruitmentAdminModel>/search/Drfss}" change="onRequestSearch">
                                         <core:ListItem key="{recruitmentAdminModel>Fldky}" text="{recruitmentAdminModel>Fldvl}"/>
                                     </ComboBox>
                                     <SearchField id="idRequestSearchField" placeholder="{i18n>REQUEST_SEARCH_TOOLTIP}" value="{recruitmentAdminModel>/search/Plans}" width="{= ${device>/system/phone} ? '30%' : '15%' }" search="onRequestSearch"></SearchField>
