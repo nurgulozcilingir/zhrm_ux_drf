@@ -230,7 +230,7 @@ sap.ui.define([
 				processList: [],
 				requestActions: [],
 				processActions: [],
-				DrfssList: []
+				drfssList: []
 			});
 		},
 
@@ -452,37 +452,6 @@ sap.ui.define([
 
 			}
 		},
-
-		onRequestSearch: function (oEvent) {
-
-			var oIconTabBar = this.byId("idRecAdmIconTab"),
-				oViewModel = this.getModel("recruitmentAdminModel"),
-				oSearch = oViewModel.getProperty("/search"),
-				aFilters = [];
-			if(oSearch.Drfst === ""){
-				oSearch.Drfss = "";
-			}
-			// Aranacak alanlar
-			var aFields = ["Drfap", "Drfsf", "Drfst", "Drfss", "Plans"];
-
-			aFields.forEach(function (sField) {
-				var sValue = oSearch[sField];
-				if (sValue) {
-					aFilters.push(new Filter(sField, FilterOperator.EQ, sValue));
-				}
-			});
-
-			this._applySearch(aFilters);
-		},
-		_applySearch: function (aTableSearchState) {
-			var oTable = this.byId("idRecAdmEmployeeRequestTable"),
-				oViewModel = this.getModel("recruitmentAdminModel");
-			oTable.getBinding("items").filter(aTableSearchState, "Application");
-			// changes the noDataText of the list in case there are no filter results
-			if (aTableSearchState.length !== 0) {
-				oViewModel.setProperty("/tableNoDataText", this.getText("EMPTY_REQUEST_LIST_SEARCH"));
-			}
-		},
 		_getActiveFilters: function (sKey) {
 			var aFilters = [];
 			var oThis = this;
@@ -588,7 +557,7 @@ sap.ui.define([
 
 			this._requestChangeStatus.data("formData", null);
 			this._requestChangeStatus.close();
-			this._updateRequest(oFormData, false, false, true, null, _doStatusChanged);
+			this._updateRequestAdmin(oFormData, false, false, true, null, _doStatusChanged);
 			this._getConfetti(-1);
 		},
 		onChangeFormStatusCancelled: function () {
@@ -831,6 +800,7 @@ sap.ui.define([
 			this.onRequestSearch();
 		},
 		_getChangeDrfst:function(){
+			debugger;
 			var oModel = this.getModel();
 			var oViewModel = this.getModel("recruitmentAdminModel"),
 				oSearch = oViewModel.getProperty("/search");
@@ -843,15 +813,15 @@ sap.ui.define([
 			oModel.read("/ValueHelpSet", {
 				filters: aFilters,
 				success: function (oData, oResponse) {
-					this._sweetToast(this.getText("READ_Drfss_SUCCESS"), "S");
+					this._sweetToast(this.getText("READ_ERFSS_SUCCESS"), "S");
 					let results = oData.results;
 					results = results.filter(item => item.Fldky !== '000');
 					oViewModel.setProperty("/busy", false);
-					oViewModel.setProperty("/DrfssList", results);
+					oViewModel.setProperty("/drfssList", results);
 				}.bind(this),
 				error: function (oError) {
 					oViewModel.setProperty("/busy", false);
-					this._sweetToast(this.getText("READ_Drfss_ERROR"), "E");
+					this._sweetToast(this.getText("READ_ERFSS_ERROR"), "E");
 				}.bind(this)
 			});
 		},
@@ -931,36 +901,7 @@ sap.ui.define([
 			});
 
 		},
-		onChangeErfst: function () {
-			this._getChangeErfst();
-			this.onRequestSearch();
-		},
-		_getChangeErfst:function(){
-			debugger;
-			var oModel = this.getModel();
-			var oViewModel = this.getModel("recruitmentAdminModel"),
-				oSearch = oViewModel.getProperty("/search");
-			oViewModel.setProperty("/ErfssList", []);
-			oViewModel.setProperty("/busy", true);
-			var aFilters = [
-				new Filter("Selky", FilterOperator.EQ, oSearch.Drfst),
-				new Filter("Drfvh", FilterOperator.EQ, "Drfss_f")
-			];
-			oModel.read("/ValueHelpSet", {
-				filters: aFilters,
-				success: function (oData, oResponse) {
-					this._sweetToast(this.getText("READ_ERFSS_SUCCESS"), "S");
-					let results = oData.results;
-					results = results.filter(item => item.Fldky !== '000');
-					oViewModel.setProperty("/busy", false);
-					oViewModel.setProperty("/erfssList", results);
-				}.bind(this),
-				error: function (oError) {
-					oViewModel.setProperty("/busy", false);
-					this._sweetToast(this.getText("READ_ERFSS_ERROR"), "E");
-				}.bind(this)
-			});
-		},
+
 		_adjustProcessActions: function (oData) {
 			var oThis = this;
 			var aActions = [];
@@ -993,7 +934,39 @@ sap.ui.define([
 			} else {
 				return false;
 			}
-		}
+		},
+		onRequestSearch: function (oEvent) {
+			debugger;
+
+			var oIconTabBar = this.byId("idRecAdmIconTab"),
+				oViewModel = this.getModel("recruitmentAdminModel"),
+				oSearch = oViewModel.getProperty("/search"),
+				aFilters = [];
+			if(oSearch.Drfst === ""){
+				oSearch.Drfss = "";
+			}
+			// Aranacak alanlar
+			var aFields = ["Drfap", "Drfsf", "Drfst", "Drfss", "Plans"];
+
+			aFields.forEach(function (sField) {
+				var sValue = oSearch[sField];
+				if (sValue) {
+					aFilters.push(new Filter(sField, FilterOperator.EQ, sValue));
+				}
+			});
+
+			this._applySearch(aFilters);
+		},
+		_applySearch: function (aTableSearchState) {
+			debugger;
+			var oTable = this.byId("idRecAdmEmployeeRequestTable"),
+				oViewModel = this.getModel("recruitmentAdminModel");
+			oTable.getBinding("items").filter(aTableSearchState, "Application");
+			// changes the noDataText of the list in case there are no filter results
+			if (aTableSearchState.length !== 0) {
+				oViewModel.setProperty("/tableNoDataText", this.getText("EMPTY_REQUEST_LIST_SEARCH"));
+			}
+		},
 
 	});
 });

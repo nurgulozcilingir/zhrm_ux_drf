@@ -18,13 +18,6 @@
                                 </ComboBox>
                             </f:fields>
                         </f:FormElement>
-                        <!-- <f:FormElement label="{i18n>DOCUMENT_TYPE}">
-                            <f:fields>
-                                <ComboBox selectedKey="{employeeRequestView>/request/Drfbl}" required="true" items="{ path:'/ValueHelpSet', filters : [ { path : 'Drfvh', operator : 'EQ', value1 : 'Drfbl'} ] }">
-                                    <core:Item key="{Fldky}" text="{Fldvl}"/>
-                                </ComboBox>
-                            </f:fields>
-                        </f:FormElement> -->
                         <f:FormElement label="{i18n>DOCUMENT_TYPE}">
                             <f:fields>
                                 <ComboBox selectedKey="{employeeRequestView>/request/Drfbl}" required="true" items="{ path:'/ValueHelpSet', filters : [ { path : 'Drfvh', operator : 'EQ', value1 : 'Drfbl'} ] }" change="onValueHelpSetNameComboBoxChange">
@@ -32,12 +25,6 @@
                                 </ComboBox>
                             </f:fields>
                         </f:FormElement>
-                        <!-- <f:FormElement label="{i18n>DOCUMENT_NAME}">
-                            <f:fields>
-                                <Input value="{employeeRequestView>/request/Drfbn}" required="true">
-                                </Input>
-                            </f:fields>
-                        </f:FormElement> -->
                         <f:FormElement label="{i18n>DOCUMENT_NAME}">
                             <f:fields>
                                 <ComboBox id="idDocumentNameComboBox" selectedKey="{employeeRequestView>/request/Drfbn}" required="true" items="{ path:'/ValueHelpSet', filters : [ { path : 'Drfvh', operator : 'EQ', value1 : 'Drfbn'} ] }">
@@ -57,7 +44,6 @@
         <Table id="idEmployeeRequestChangeTable" class="erfTable centeredTable" items="{path: 'employeeRequestView>/dataList/DocumentRequestEmployeeSet', templateShareable: false}" noDataText="{i18n>NO_DATA_FOUND}" busyIndicatorDelay="0" growing="true" growingScrollToLoad="true" inset="false" width="95%">
             <headerToolbar>
                 <Toolbar>
-                    <!-- <Button text="{i18n>SAVE_EMPLOYEES}" type="Emphasized" press="onSaveButtonEmployeeChangePress" icon="sap-icon://save" visible="{= ${employeeRequestView>/selectedEmployees}.length > 0}"/> -->
                     <ToolbarSpacer/>
                     <SearchField id="employeeSearchField" tooltip="{i18n>SEARCH_ACTION_TOOLTIP}" search="onSearch" width="{= ${device>/system/phone} ? '100%' : '50%' }"></SearchField>
                 </Toolbar>
@@ -69,7 +55,7 @@
             </infoToolbar>
             <columns>
                 <Column id="idEmployeeNameColumn">
-                    <Text text="{i18n>PERSONNEL_COLUMN}"/>
+                    <Text text="{i18n>PERSONNEL_NAME_COL}"/>
                 </Column>
                 <Column id="idEmployeePositionColumn">
                     <Text text="{i18n>PERSONNEL_NO}"/>

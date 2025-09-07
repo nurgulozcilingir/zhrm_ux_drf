@@ -24,6 +24,11 @@
                                     </ComboBox>
                                 </f:fields>
                             </f:FormElement>
+                            <f:FormElement label="{i18n>DOCUMENT_NO}">
+                                <f:fields>
+                                    <Input value="{employeeRequestView>/requestDocument/Zblno}" required="true" />
+                                </f:fields>
+                            </f:FormElement>
                             <f:FormElement label="{i18n>INSTITUTE_NAME_LABEL}">
                                 <f:fields>
                                     <Input value="{employeeRequestView>/requestDocument/Zkurm}" required="true" />

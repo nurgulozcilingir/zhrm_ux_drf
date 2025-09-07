@@ -301,6 +301,8 @@ sap.ui.define([
 			var oViewModel = this.getModel("employeeRequestView");
 			var oThis = this;
 			var oRequestData = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet");
+			// var oRequestData = oViewModel.getProperty("/request");
+
 			var aEmployeeIds = [];
 
 			var sDrfbl = oViewModel.getProperty("/request/Drfbl");
@@ -351,6 +353,62 @@ sap.ui.define([
 					oThis._closeBusyFragment();
 				}
 			});
+
+		},
+		_updateRequestAdmin: function (oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack) {
+			debugger;
+			var oModel = this.getModel();
+			var oThis = this;
+
+			if (sStatusChange) {
+				oThis._openBusyFragment("FORM_STATUS_BEING_CHANGED");
+			} else {
+				oThis._openBusyFragment("FORM_BEING_SAVED");
+			}
+			if (sNewRequest) {
+				oModel.create("/DocumentRequestFormSet", oFormData, {
+					success: function (oData, oResponse) {
+						oThis._closeBusyFragment();
+
+						if (sStatusChange) {
+							oThis._callMessageToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+						} else {
+							oThis._callMessageToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
+						}
+
+						if (sNavBack) {
+							oThis.goBack(History);
+						} else {
+							if (typeof fnCallBack === "function") {
+								fnCallBack();
+							}
+						}
+					},
+					error: function (oError) {
+						oThis._closeBusyFragment();
+					}
+				});
+			} else {
+				var sPath = oModel.createKey("/DocumentRequestFormSet", {
+					Drfid: oFormData.Drfid
+				});
+				oModel.update(sPath, oFormData, {
+					success: function (oData, oResponse) {
+						oThis._closeBusyFragment();
+						if (sStatusChange) {
+							oThis._callMessageToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+						} else {
+							oThis._callMessageToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
+						}
+						if (sNavBack) {
+							oThis.goBack(History);
+						}
+					},
+					error: function (oError) {
+						oThis._closeBusyFragment();
+					}
+				});
+			}
 
 		},
 		onDownloadFile: function (sUrl) {
@@ -907,10 +965,6 @@ pointer-events: none !important;
 				};
 			});
 			oFormData.DocumentRequestEmployeeSet = aEmployeeChangeIds;
-	
-			// if(oFormData.DocumentRequestEmployeeSet){
-			// 	delete oFormData.DocumentRequestEmployeeSet;
-			// }
 
 			if (sStatusChange) {
 				oThis._openBusyFragment("FORM_STATUS_BEING_CHANGED");
@@ -924,8 +978,14 @@ pointer-events: none !important;
 
 						if (sStatusChange) {
 							oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+							setTimeout(function() {
+								oThis.getRouter().navTo("mngrequestlist");
+							  }, 3000);
 						} else {
 							oThis._sweetToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
+							setTimeout(function() {
+								oThis.getRouter().navTo("mngrequestlist");
+							  }, 3000);
 						}
 
 						if (sNavBack) {
@@ -947,12 +1007,12 @@ pointer-events: none !important;
 						if (sStatusChange) {
 							oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
 							setTimeout(function() {
-								that.getRouter().navTo("mngrequestlist");
+								oThis.getRouter().navTo("mngrequestlist");
 							  }, 3000);
 						} else {
 							oThis._sweetToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
 							setTimeout(function() {
-								that.getRouter().navTo("mngrequestlist");
+								oThis.getRouter().navTo("mngrequestlist");
 							  }, 3000);
 						}
 						if (sNavBack) {
