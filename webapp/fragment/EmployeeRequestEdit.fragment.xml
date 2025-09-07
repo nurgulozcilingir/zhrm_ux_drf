@@ -45,7 +45,7 @@
             <headerToolbar>
                 <Toolbar>
                     <ToolbarSpacer/>
-                    <SearchField id="employeeSearchField" tooltip="{i18n>SEARCH_ACTION_TOOLTIP}" search="onSearch" width="{= ${device>/system/phone} ? '100%' : '50%' }"></SearchField>
+                    <!-- <SearchField id="employeeSearchField" tooltip="{i18n>SEARCH_ACTION_TOOLTIP}" search="onSearch" width="{= ${device>/system/phone} ? '100%' : '50%' }"></SearchField> -->
                 </Toolbar>
             </headerToolbar>
             <infoToolbar>
@@ -72,9 +72,9 @@
                 <Column visible="{= ${employeeRequestView>/request/Drfrt} === '01'}">
                     <Text text="{i18n>REQUEST_REASON_COL}"/>
                 </Column>
-                <Column>
+                <!-- <Column>
                     <Text text="Sil"/>
-                </Column>
+                </Column> -->
                 <Column id="idEmployeeActionColumn">
                     <Text text="{i18n>ACTIONS_COL}"/>
                 </Column>
@@ -101,7 +101,7 @@
                         <ComboBox selectedKey="{employeeRequestView>Drfrs}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrs' } ] }" change="onDrfrsComboBoxChange">
                             <core:Item key="{Fldky}" text="{Fldvl}"/>
                         </ComboBox>
-                        <Button icon="sap-icon://delete" type="Reject" press="onRemoveSelectedChangeEmployee" tooltip="{i18n>REMOVE_PERSONNEL}" cd:employeeId="{employeeRequestView>Pernr}" cd:employeeName="{employeeRequestView>Ename}"/>
+                        <!-- <Button icon="sap-icon://delete" type="Reject" press="onRemoveSelectedChangeEmployee" tooltip="{i18n>REMOVE_PERSONNEL}" cd:employeeId="{employeeRequestView>Pernr}" cd:employeeName="{employeeRequestView>Ename}"/> -->
                         <Button icon="sap-icon://menu" type="Accept" press="onShowRequestActions" tooltip="{i18n>ACTION_LIST}" visible="{ path:'Drfsf', formatter: '.onCheckActionAvailable'}" class="erfActionButton"></Button>
                     </cells>
                 </ColumnListItem>

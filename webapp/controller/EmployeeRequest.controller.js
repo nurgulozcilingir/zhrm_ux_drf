@@ -3495,19 +3495,20 @@ sap.ui.define(
 
         onRemoveSelectedChangeEmployee: function(oEvent) {
           debugger;
-            var oSource = oEvent.getSource();
-            var oContext = oSource.getBindingContext("employeeRequestView");
-            var oEmployee = oContext.getObject();
+            // var oSource = oEvent.getSource();
+            // var oContext = oSource.getBindingContext("employeeRequestView");
+            // var oEmployee = oContext.getObject();
+            var oRowData = this._selectedRowData;
             var oViewModel = this.getView().getModel("employeeRequestView");
 
             var aSelectedEmployees = oViewModel.getProperty("/selectedEmployees") || [];
             var bIsNewEmployee = aSelectedEmployees.some(function(emp) {
-                return emp.Pernr === oEmployee.Pernr && emp.isNew === true;
+                return emp.Pernr === oRowData.Pernr && emp.isNew === true;
             });
             
-            this._removeFromBackendData(oEmployee);
+            this._removeFromBackendData(oRowData);
         },
-        _removeFromBackendData: function(oEmployee) {
+        _removeFromBackendData: function(oRowData) {
             var oViewModel = this.getView().getModel("employeeRequestView");
             var aCurrentEmployees = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
             
@@ -3517,7 +3518,7 @@ sap.ui.define(
             }
 
             var aUpdatedEmployees = aCurrentEmployees.filter(function(emp) {
-                return emp.Pernr !== oEmployee.Pernr;
+                return emp.Pernr !== oRowData.Pernr;
             });
             
             oViewModel.setProperty("/dataList/DocumentRequestEmployeeSet", aUpdatedEmployees);

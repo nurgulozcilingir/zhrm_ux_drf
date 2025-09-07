@@ -304,11 +304,12 @@ sap.ui.define([
 			// var oRequestData = oViewModel.getProperty("/request");
 
 			var aEmployeeIds = [];
-
+            var sDrfrt = oViewModel.getProperty("/request/Drfrt");
 			var sDrfbl = oViewModel.getProperty("/request/Drfbl");
 			var sDrfbn = oViewModel.getProperty("/request/Drfbn");
 
 			var aFilters = [
+				new Filter("Selk3", FilterOperator.EQ, sDrfrt),
 				new Filter("Selky", FilterOperator.EQ, sDrfbl),
 				new Filter("Selk2", FilterOperator.EQ, sDrfbn),
 				new Filter("Drfvh", FilterOperator.EQ, "Drfev")
@@ -896,6 +897,13 @@ pointer-events: none !important;
 		
 		_checkDocumentCompleteness: function(oRequestData, aRequiredDocuments) {
 			var oThis = this;
+			  if (!oRequestData || oRequestData.length === 0) {
+				sap.m.MessageBox.warning("En az bir personel ekleyiniz!", {
+					title: "Personel Bulunamadı",
+					actions: [sap.m.MessageBox.Action.OK]
+				});
+				return false;
+			}
 			var aIncompleteEmployees = [];
 
 			oRequestData.forEach(function(oEmployee) {
