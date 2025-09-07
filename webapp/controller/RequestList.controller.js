@@ -661,15 +661,6 @@ sap.ui.define(
             this._openRequestActions(oData, oSource);
           }
         },
-        // onAvailableRequestActions: function (oEvent) {
-        //   var oSource = oEvent.getSource();
-        //   var oData = this.getModel().getProperty(
-        //     oSource.getParent().getBindingContextPath()
-        //   );
-        //   if (oData) {
-        //     this._openRequestActions(oData, oSource);
-        //   }
-        // },
         _openRequestActions: function (oData, oSource) {
           if (this._adjustRequestActions(oData)) {
             if (!this._requestActions) {

@@ -86,7 +86,7 @@
                                         </Menu>
                                     </menu>
                                 </MenuButton>
-                                <Text text="{employeeRequestView>Rendc}"/>
+                                <Input value="{employeeRequestView>Rendc}" width="170px" enabled="{= ${employeeRequestView>Renwl} !== '1' }"/>
                                 <ComboBox selectedKey="{employeeRequestView>Drfrs}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrs' } ] }" change="onDrfrsComboBoxChange">
                                     <core:Item key="{Fldky}" text="{Fldvl}"/>
                                 </ComboBox>

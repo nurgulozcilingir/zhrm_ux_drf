@@ -4,7 +4,7 @@
     xmlns:core="sap.ui.core"
     xmlns:cd="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
     <VBox class="sapUiNoContentPaddings">
-        <f:Form editable="true" id="idEmployeeRequestForm2">
+        <f:Form editable="{= !${employeeRequestView>/applicationSettings/DisplayMode}}" id="idEmployeeRequestForm2">
             <f:layout>
                 <f:ResponsiveGridLayout labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="2" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false"/>
             </f:layout>
@@ -13,28 +13,28 @@
                     <f:formElements>
                         <f:FormElement label="{i18n>REQUEST_REASON}">
                             <f:fields>
-                                <ComboBox selectedKey="{path: 'employeeRequestView>/request/Drfrt'}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrt' } ] }" change="onReasonChanged">
+                                <ComboBox selectedKey="{path: 'employeeRequestView>/request/Drfrt'}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrt' } ] }" change="onReasonChanged" editable="{= !${employeeRequestView>/applicationSettings/DisplayMode}}">
                                     <core:Item key="{Fldky}" text="{Fldvl}"/>
                                 </ComboBox>
                             </f:fields>
                         </f:FormElement>
                         <f:FormElement label="{i18n>DOCUMENT_TYPE}">
                             <f:fields>
-                                <ComboBox selectedKey="{employeeRequestView>/request/Drfbl}" required="true" items="{ path:'/ValueHelpSet', filters : [ { path : 'Drfvh', operator : 'EQ', value1 : 'Drfbl'} ] }" change="onValueHelpSetNameComboBoxChange">
+                                <ComboBox selectedKey="{employeeRequestView>/request/Drfbl}" required="true" items="{ path:'/ValueHelpSet', filters : [ { path : 'Drfvh', operator : 'EQ', value1 : 'Drfbl'} ] }" change="onValueHelpSetNameComboBoxChange" editable="{= !${employeeRequestView>/applicationSettings/DisplayMode}}">
                                     <core:ListItem additionalText="{Selky}" key="{Fldky}" text="{Fldvl}"/>
                                 </ComboBox>
                             </f:fields>
                         </f:FormElement>
                         <f:FormElement label="{i18n>DOCUMENT_NAME}">
                             <f:fields>
-                                <ComboBox id="idDocumentNameComboBox" selectedKey="{employeeRequestView>/request/Drfbn}" required="true" items="{ path:'/ValueHelpSet', filters : [ { path : 'Drfvh', operator : 'EQ', value1 : 'Drfbn'} ] }">
+                                <ComboBox id="idDocumentNameComboBox" selectedKey="{employeeRequestView>/request/Drfbn}" required="true" items="{ path:'/ValueHelpSet', filters : [ { path : 'Drfvh', operator : 'EQ', value1 : 'Drfbn'} ] }" editable="{= !${employeeRequestView>/applicationSettings/DisplayMode}}">
                                     <core:ListItem additionalText="{Selky}" key="{Fldky}" text="{Fldvl}"/>
                                 </ComboBox>
                             </f:fields>
                         </f:FormElement>
                         <f:FormElement label="{i18n>EMPLOYEE_NAME}">
                             <f:fields>
-                                <Input value="{employeeRequestView>/request/Drfvh}" showValueHelp="true" valueHelpRequest="onDrfvhInputValueHelpRequest" placeholder="{i18n>SELECT_OPTION}" />
+                                <Input value="{employeeRequestView>/request/Drfvh}" showValueHelp="{= !${employeeRequestView>/applicationSettings/DisplayMode}}" valueHelpRequest="onDrfvhInputValueHelpRequest" placeholder="{i18n>SELECT_OPTION}" editable="{= !${employeeRequestView>/applicationSettings/DisplayMode}}" />
                             </f:fields>
                         </f:FormElement>
                     </f:formElements>
@@ -88,21 +88,21 @@
                         <Text text="{employeeRequestView>Pernr}"/>
                         <Text text="{employeeRequestView>Ename}"/>
                         <!-- <Text text="{employeeRequestView>Rentx}"/> -->
-                        <MenuButton text="{ path: 'employeeRequestView>Renwl', formatter: '.formatRenewalText' }">
+                        <MenuButton text="{ path: 'employeeRequestView>Renwl', formatter: '.formatRenewalText' }" >
                             <menu>
-                                <Menu itemSelected="onMenuActionsChange">
-                                    <MenuItem text="{i18n>YES_OPTION}" icon="sap-icon://accept" press="onYesMenuItemChangePress"/>
-                                    <MenuItem text="{i18n>NO_OPTION}" icon="sap-icon://decline" press="onNopeMenuItemChangePress" />
+                                <Menu itemSelected="onMenuActionsChange" >
+                                    <MenuItem text="{i18n>YES_OPTION}" icon="sap-icon://accept" press="onYesMenuItemChangePress" enabled="{= !${employeeRequestView>/applicationSettings/DisplayMode}}"/>
+                                    <MenuItem text="{i18n>NO_OPTION}" icon="sap-icon://decline" press="onNopeMenuItemChangePress" enabled="{= !${employeeRequestView>/applicationSettings/DisplayMode}}"/>
                                 </Menu>
                             </menu>
                         </MenuButton>
-                        <Text text="{employeeRequestView>Rendc}"/>
+                        <Input value="{employeeRequestView>Rendc}" enabled="{parts: ['employeeRequestView>/applicationSettings/DisplayMode', 'employeeRequestView>Renwl'], formatter: '.formatRendcEnabled'}" width="170px"/>
                         <!-- <Text text="{employeeRequestView>Drfrx}"/> -->
-                        <ComboBox selectedKey="{employeeRequestView>Drfrs}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrs' } ] }" change="onDrfrsComboBoxChange">
+                        <ComboBox selectedKey="{employeeRequestView>Drfrs}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrs' } ] }" change="onDrfrsComboBoxChange" editable="{= !{employeeRequestView>/applicationSettings/DisplayMode}}">
                             <core:Item key="{Fldky}" text="{Fldvl}"/>
                         </ComboBox>
                         <!-- <Button icon="sap-icon://delete" type="Reject" press="onRemoveSelectedChangeEmployee" tooltip="{i18n>REMOVE_PERSONNEL}" cd:employeeId="{employeeRequestView>Pernr}" cd:employeeName="{employeeRequestView>Ename}"/> -->
-                        <Button icon="sap-icon://menu" type="Accept" press="onShowRequestActions" tooltip="{i18n>ACTION_LIST}" visible="{ path:'Drfsf', formatter: '.onCheckActionAvailable'}" class="erfActionButton"></Button>
+                        <Button icon="sap-icon://menu" type="Accept" press="onShowRequestActions" tooltip="{i18n>ACTION_LIST}" class="erfActionButton"></Button>
                     </cells>
                 </ColumnListItem>
             </items>

@@ -111,6 +111,11 @@ sap.ui.define(
               statusChangeDialog: null,
               candidateListStyle: "display-in-table",
               selectedEmployees: [],
+              applicationSettings: {
+                DisplayMode: false,
+                Edit: true,
+                CallerRole: null
+              },
             }),
             oCandidateList = new JSONModel({
               SearchResults: {
@@ -149,6 +154,8 @@ sap.ui.define(
             .attachPatternMatched(this._onRequestMatched, this);
 
           this.setModel(oViewModel, "employeeRequestView");
+          
+          this._updateApplicationSettings();
           this.setModel(oCandidateList, "candidateListModel");
           // this.initOperations();
         },
@@ -258,7 +265,6 @@ sap.ui.define(
           var oViewModel = this.getModel("employeeRequestView");
           var that = this;
 
-          // İlk üç combobox'ın seçilip seçilmediğini kontrol et
           var oRequest = oViewModel.getProperty("/request");
           
           if (!oRequest || !oRequest.Drfrt || !oRequest.Drfbl || !oRequest.Drfbn) {
@@ -296,6 +302,12 @@ sap.ui.define(
             },
           });
         },
+        onCloseButtonEmployeePress:function(){
+          debugger;
+          if (this._employeeValueHelpDialog) {
+            this._employeeValueHelpDialog.close();
+          }
+        },  
         onEmployeeValueRequest: function (oEvent) {
           debugger;
           var sSourceField = oEvent.getSource().data("sourceField");
@@ -447,6 +459,39 @@ sap.ui.define(
           } catch (oEx) {
             jQuery.sap.log.error("Tree clear failed");
           }
+        },
+        
+        /**
+         * Formatter for action button visibility
+         * @param {boolean} bDisplayMode - Whether in display mode
+         * @param {string} sDrfsf - Status field
+         * @returns {boolean} - Whether button should be visible
+         */
+        formatActionButtonVisibility: function(bDisplayMode, sDrfsf) {
+          if (bDisplayMode) {
+            return false;
+          }
+          // Call the existing formatter if needed
+          return this.onCheckActionAvailable ? this.onCheckActionAvailable(sDrfsf) : true;
+        },
+        
+        /**
+         * Formatter for Rendc input enabled state
+         * @param {boolean} bDisplayMode - Whether in display mode
+         * @param {string} sRenwl - Renewal value ("1" means renewal required)
+         * @returns {boolean} - Whether Rendc input should be enabled
+         */
+        formatRendcEnabled: function(bDisplayMode, sRenwl) {
+          // If in display mode, always disabled
+          if (bDisplayMode) {
+            return false;
+          }
+          // If Renwl is "1", Rendc should be disabled (not editable)
+          if (sRenwl === "1" || sRenwl === 1) {
+            return false;
+          }
+          // Otherwise enabled
+          return true;
         },
         onPositionRowSelected: function (oEvent) {
           var oContext = oEvent.getParameters("rowContext");
@@ -1351,6 +1396,9 @@ sap.ui.define(
         _onNewRequestMatched: function (oEvent) {
           this._sNewRequest = true;
           this._setChangeListeners();
+          
+          this._updateApplicationSettings();
+          
           this._getRequestDefaults();
           this._getManagerHierarchy();
         },
@@ -1361,7 +1409,10 @@ sap.ui.define(
           var oViewModel = this.getModel("employeeRequestView");
           this._sDrfid = sDrfid;
           this._sNewRequest = false;
-          this._setChangeListeners();   
+          this._setChangeListeners();
+          
+          this._updateApplicationSettings();
+          
           // this._getRequest(sDrfid);
           this._loadRequestDataAndNavigate(sDrfid);
           this._getFormActions(sDrfid);
@@ -2273,22 +2324,28 @@ sap.ui.define(
             success: function (oData) {
               oViewModel.setProperty("/changeList", oData.results);
       
-              if (!that._oEmployeeSearchDialog) {
+              if (!that._oEmployeeChangeSearchDialog) {
                 sap.ui.core.Fragment.load({
                   name: "com.bmc.hcm.drf.zhcmuxdrf.fragment.EmployeeChangeSearch",
-                  id: "EmployeeSearchFragment",
+                  id: "EmployeeSearchChangeFragment",
                   controller: that,
                 }).then(function (oDialog) {
                   oView.addDependent(oDialog);
-                  that._oEmployeeSearchDialog = oDialog;
+                  that._oEmployeeChangeSearchDialog = oDialog;
                   oDialog.open();
                 });
               } else {
-                that._oEmployeeSearchDialog.open();
+                that._oEmployeeChangeSearchDialog.open();
               }
             },
             error: function () {},
           });
+        },
+        onCloseButtonEmployeeChangePress:function(){
+          debugger;
+          if (this._oEmployeeChangeSearchDialog) {
+            this._oEmployeeChangeSearchDialog.close();
+          }
         },
         onSaveButtonEmployeePress: function (oEvent) {
           var oTable = sap.ui.core.Fragment.byId(
@@ -2354,11 +2411,6 @@ sap.ui.define(
 
           oTable.removeSelections();
         },
-        onCloseButtonEmployeePress:function(){
-          if (this._employeeValueHelpDialog) {
-            this._employeeValueHelpDialog.close();
-          }
-        },
         onColumnListItemEmployeePress: function (oEvent) {
           var oSelectedItem = oEvent.getSource();
           var aSelectedContexts = oSelectedItem.getSelectedContexts(
@@ -2400,68 +2452,68 @@ sap.ui.define(
           }
         },
         
-        onSelectEmployeeFromDialog: function (oEvent) {
-          var oTable = sap.ui.core.Fragment.byId(
-            "EmployeeSearchFragment",
-            "idListEmployeeChangeTable"
-          );
-          if (!oTable) {
-            oTable = this.getView().byId("idListEmployeeChangeTable");
-          }
+        // onSelectEmployeeFromDialog: function (oEvent) {
+        //   var oTable = sap.ui.core.Fragment.byId(
+        //     "EmployeeChangeSearchDialog",
+        //     "idListEmployeeChangeTable"
+        //   );
+        //   if (!oTable) {
+        //     oTable = this.getView().byId("idListEmployeeChangeTable");
+        //   }
 
-          if (!oTable) {
-            console.error("Table not found");
-            sap.m.MessageToast.show("Tablo bulunamadı");
-            return;
-          }
+        //   if (!oTable) {
+        //     console.error("Table not found");
+        //     sap.m.MessageToast.show("Tablo bulunamadı");
+        //     return;
+        //   }
 
-          var aSelectedItems = oTable.getSelectedItems();
-          if (!aSelectedItems || aSelectedItems.length === 0) {
-            this._sweetToast(this.getText("PLEASE_SELECT_EMPLOYEE"), "W");
-            return;
-          }
+        //   var aSelectedItems = oTable.getSelectedItems();
+        //   if (!aSelectedItems || aSelectedItems.length === 0) {
+        //     this._sweetToast(this.getText("PLEASE_SELECT_EMPLOYEE"), "W");
+        //     return;
+        //   }
 
-          var oViewModel = this.getModel("employeeRequestView");
-          var aSelectedEmployees =
-            oViewModel.getProperty("/selectedEmployees") || [];
+        //   var oViewModel = this.getModel("employeeRequestView");
+        //   var aSelectedEmployees =
+        //     oViewModel.getProperty("/selectedEmployees") || [];
 
-          if (aSelectedItems.length > 1) {
-            this._sweetToast(this.getText("SINGLE_EMPLOYEE_ONLY"), "W");
-            return;
-          }
+        //   if (aSelectedItems.length > 1) {
+        //     this._sweetToast(this.getText("SINGLE_EMPLOYEE_ONLY"), "W");
+        //     return;
+        //   }
 
-          if (aSelectedEmployees.length > 0) {
-            this._sweetToast(this.getText("SINGLE_EMPLOYEE_ONLY"), "W");
-            return;
-          }
+        //   if (aSelectedEmployees.length > 0) {
+        //     this._sweetToast(this.getText("SINGLE_EMPLOYEE_ONLY"), "W");
+        //     return;
+        //   }
 
-          var oItem = aSelectedItems[0];
-          var oEmployee = oItem
-            .getBindingContext("employeeRequestView")
-            .getObject();
-          var bAlreadyExists = aSelectedEmployees.some(function (
-            oExistingEmployee
-          ) {
-            return oExistingEmployee.Pernr === oEmployee.Fldky;
-          });
+        //   var oItem = aSelectedItems[0];
+        //   var oEmployee = oItem
+        //     .getBindingContext("employeeRequestView")
+        //     .getObject();
+        //   var bAlreadyExists = aSelectedEmployees.some(function (
+        //     oExistingEmployee
+        //   ) {
+        //     return oExistingEmployee.Pernr === oEmployee.Fldky;
+        //   });
 
-          if (!bAlreadyExists) {
-            aSelectedEmployees.push({
-              Pernr: oEmployee.Fldky,
-              Ename: oEmployee.Fldvl,
-            });
-            oViewModel.setProperty("/selectedEmployees", aSelectedEmployees);
-            this._sweetToast(this.getText("EMPLOYEE_ADDED_SUCCESS"), "S");
-          } else {
-            this._sweetToast(this.getText("EMPLOYEE_ALREADY_ADDED"), "W");
-          }
+        //   if (!bAlreadyExists) {
+        //     aSelectedEmployees.push({
+        //       Pernr: oEmployee.Fldky,
+        //       Ename: oEmployee.Fldvl,
+        //     });
+        //     oViewModel.setProperty("/selectedEmployees", aSelectedEmployees);
+        //     this._sweetToast(this.getText("EMPLOYEE_ADDED_SUCCESS"), "S");
+        //   } else {
+        //     this._sweetToast(this.getText("EMPLOYEE_ALREADY_ADDED"), "W");
+        //   }
 
-          if (this._oEmployeeSearchDialog) {
-            this._oEmployeeSearchDialog.close();
-          }
+        //   if (this._oEmployeeSearchDialog) {
+        //     this._oEmployeeSearchDialog.close();
+        //   }
 
-          oTable.removeSelections();
-        },
+        //   oTable.removeSelections();
+        // },
         onRemoveSelectedEmployee: function (oEvent) {
           var oSource = oEvent.getSource();
           var sEmployeeId = oSource.data("employeeId");
@@ -2982,7 +3034,6 @@ sap.ui.define(
         },
         onNopeMenuItemPress: function(oEvent) {
           debugger;
-          // Hayır seçildiğinde Renwl = "2" set et ve dialog aç
           var oBindingContext = this._getCurrentEmployeeBindingContext(oEvent);
           if (oBindingContext) {
             var oModel = this.getModel("employeeRequestView");
@@ -2993,7 +3044,6 @@ sap.ui.define(
             aSelectedEmployees[iIndex].Renwl = "2";
             oModel.setProperty("/selectedEmployees", aSelectedEmployees);
             
-            // Geçici olarak mevcut çalışan verisini sakla
             this._currentEmployeeIndex = iIndex;
             oModel.setProperty("/currentEmployee", aSelectedEmployees[iIndex]);
             
@@ -3051,15 +3101,27 @@ sap.ui.define(
         
         onRenewalReasonCancel: function(oEvent) {
           debugger;
-          // İptal edildiğinde Renwl değerini sıfırla
+          if (this._currentEmployeeIndex !== undefined) {
+            var oModel = this.getModel("employeeRequestView");
+            var aSelectedEmployees = oModel.getProperty("/selectedEmployees") || [];
+            aSelectedEmployees[this._currentEmployeeIndex].Renwl = "";
+            aSelectedEmployees[this._currentEmployeeIndex].Rendc = "";
+            oModel.setProperty("/selectedEmployees", aSelectedEmployees);
+  
+            oModel.refresh(true);
+          }
+          
+          this._renewalRequestDialog.close();
+          this._currentEmployeeIndex = undefined;
+        },
+        onRenewalChangeReasonCancel:function(){
           if (this._currentEmployeeIndex !== undefined) {
             var oModel = this.getModel("employeeRequestView");
             var aSelectedEmployees = oModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
             aSelectedEmployees[this._currentEmployeeIndex].Renwl = "";
             aSelectedEmployees[this._currentEmployeeIndex].Rendc = "";
             oModel.setProperty("/dataList/DocumentRequestEmployeeSet", aSelectedEmployees);
-            
-            // Model'i refresh et
+  
             oModel.refresh(true);
           }
           
@@ -3068,7 +3130,6 @@ sap.ui.define(
         },
         onYesMenuItemPress: function(oEvent) {
           debugger;
-          // Evet seçildiğinde Renwl = "1" set et
           var oBindingContext = this._getCurrentEmployeeBindingContext(oEvent);
           if (oBindingContext) {
             var oModel = this.getModel("employeeRequestView");
@@ -3077,6 +3138,7 @@ sap.ui.define(
             var iIndex = parseInt(sPath.split("/")[2]);
             
             aSelectedEmployees[iIndex].Renwl = "1";
+            aSelectedEmployees[iIndex].Rendc = "";
             oModel.setProperty("/selectedEmployees", aSelectedEmployees);
  
           }
@@ -3142,22 +3204,6 @@ sap.ui.define(
             "E"
           );
         },
-
-        // onAttachDownloadLink: function(oEvent){
-        //   var oModel = this.getModel();
-        //   var Attid = oEvent
-        //     .getSource()
-        //     .getBindingContext()
-        //     .getProperty("Attid");
-        //   var oUrlPath = 
-        //     oModel.sServiceUrl +
-        //     var oUrlPath =  oModel.sServiceUrl +
-        //     "/DocumentListSet(Attid=guid'" +
-        //     Attid +
-        //     "')/$value";
-        //   window.open(oUrlPath);
-        // },
-
         onAttachDownload: function (oEvent) {
           debugger;
           var oModel = this.getModel();
@@ -3198,71 +3244,9 @@ sap.ui.define(
           var sFileName = oEvent.getParameter("newValue");
           this._sweetToast("Seçilen dosya: " + sFileName, "I");
         },
-        
-        // onConfirmUpload: function(oEvent) {
-        //   debugger;
-        //   var oFileUploader = sap.ui.getCore().byId("idUploadFileUploader");
-        //   var oModel = this.getModel();
-        //   var oViewModel = this.getModel("employeeRequestView");
-        //   var oUploadFilters = oViewModel.getProperty("/uploadFilters");
-          
-        //   if (!oFileUploader.getValue()) {
-        //     this._callMessageToast("Lütfen bir dosya seçiniz", "W");
-        //     return;
-        //   }
-          
-        //   // Security token ayarla
-        //   oModel.refreshSecurityToken();
-        //   oFileUploader.destroyHeaderParameters();
-        //   oFileUploader.addHeaderParameter(
-        //     new sap.ui.unified.FileUploaderParameter({
-        //       name: "x-csrf-token",
-        //       value: oModel.getSecurityToken()
-        //     })
-        //   );
-          
-        //   // Dosya adını ayarla
-        //   var sFileName = encodeURIComponent(oFileUploader.getValue());
-        //   oFileUploader.addHeaderParameter(
-        //     new sap.ui.unified.FileUploaderParameter({
-        //       name: "content-disposition",
-        //       value: "inline; filename='" + sFileName + "'"
-        //     })
-        //   );
-          
-        //   // Upload path ayarla
-        //   var sPath = oModel.sServiceUrl + "/EmployeeAttachmentOperationSet(Pernr='" + 
-        //              oUploadFilters.Pernr + "',Drfid='" + oUploadFilters.Drfid + "')/EmployeeAttachmentSet";
-        //   oFileUploader.setUploadUrl(sPath);
-          
-        //   // Yükleme başlat
-        //   this._openBusyFragment("Dosya yükleniyor...");
-        //   oFileUploader.upload();
-        // },
-        
         onCancelUpload: function(oEvent) {
           this._uploadDocumentDialog.close();
         },
-        
-        // onUploadComplete: function(oEvent) {
-        //   var sStatus = oEvent.getParameter("status");
-        //   var sResponse = oEvent.getParameter("response");
-          
-        //   this._closeBusyFragment();
-          
-        //   if (sStatus == "201" || sStatus == "200") {
-        //     this._callMessageToast("Dosya başarıyla yüklendi", "S");
-        //     this._uploadDocumentDialog.close();
-        //     this.getModel().refresh(true);
-        //   } else {
-        //     this._callMessageToast("Dosya yükleme hatası: " + sResponse, "E");
-        //   }
-          
-        //   // FileUploader temizle
-        //   var oFileUploader = sap.ui.getCore().byId("idUploadFileUploader");
-        //   oFileUploader.destroyHeaderParameters();
-        //   oFileUploader.clear();
-        // },
         
         onDownloadDocument: function(oEvent) {
           debugger;
@@ -3310,9 +3294,6 @@ sap.ui.define(
           
           return oBindingContext;
       },
-        // onMenuAction: function(oEvent) {
-        //   debugger;
-        // },
         formatRenewalText: function(sRenwl) {
           debugger;
           switch(sRenwl) {
@@ -3324,60 +3305,14 @@ sap.ui.define(
               return "Seçiniz";
           }
         },
-
-        // formatDrfrsText: function(sDrfrs) {
-        //   switch(sDrfrs) {
-        //     case "1":
-        //       return "Görev Değişikliği";
-        //     case "2":
-        //       return "Mevzuat Değişikliği";
-        //     case "3":
-        //       return "Ekipman araç değişikliği";
-        //     case "4":
-        //       return "İşten ayrılan Çalışan Yerine";
-        //     default:
-        //       return "Seçiniz";
-        //   }
-        // },
-
-        onDrfvhInputValueHelpRequest: function(oEvent) {
-            var oModel = this.getView().getModel();
-            var oViewModel = this.getView().getModel("employeeRequestView");
-            var that = this;
-            
-            // ValueHelp verilerini yükle
-            oModel.read("/ValueHelpSet", {
-                filters: [
-                    new sap.ui.model.Filter(
-                        "Drfvh",
-                        sap.ui.model.FilterOperator.EQ,
-                        "Emplye"
-                    )
-                ],
-                success: function(oData) {
-                    oViewModel.setProperty("/changeList", oData.results);
-                    
-                    if (!that._employeeChangeSearchDialog) {
-                        that._employeeChangeSearchDialog = sap.ui.xmlfragment(
-                            "com.bmc.hcm.drf.zhcmuxdrf.fragment.EmployeeChangeSearch",
-                            that
-                        );
-                        that.getView().addDependent(that._employeeChangeSearchDialog);
-                    }
-                    
-                    that._employeeChangeSearchDialog.open();
-                },
-                error: function(oError) {
-                    sap.m.MessageToast.show("Personel listesi yüklenirken hata oluştu");
-                }
-            });
-        },
-
         onSelectEmployeeFromDialog: function() {
           debugger;
             var oViewModel = this.getView().getModel("employeeRequestView");
-            var oTable = sap.ui.getCore().byId("idListEmployeeChangeTable");
-            
+            // var oTable = sap.ui.getCore().byId("idListEmployeeChangeTable");
+            var oTable = sap.ui.core.Fragment.byId(
+              "EmployeeSearchChangeFragment",
+              "idListEmployeeChangeTable"
+            );
             if (!oTable) {
                 oTable = this.byId("idListEmployeeChangeTable");
             }
@@ -3393,6 +3328,8 @@ sap.ui.define(
                 sap.m.MessageToast.show("Lütfen en az bir personel seçiniz");
                 return;
             }
+               // Birden fazla seçim kontrolü
+            
             
             var aSelectedEmployees = [];
             var aCurrentSelected = oViewModel.getProperty("/selectedEmployees") || [];
@@ -3422,18 +3359,28 @@ sap.ui.define(
                 sap.m.MessageToast.show("Seçilen personeller zaten mevcut");
                 return;
             }
+            if (aSelectedItems.length > 1) {
+              this._sweetToast(this.getText("SINGLE_EMPLOYEE_ONLY"), "W");
+              return;
+            }
+
+            // Zaten personel eklenmiş mi kontrolü
+            if (aSelectedEmployees.length > 0) {
+              this._sweetToast(this.getText("SINGLE_EMPLOYEE_ONLY"), "W");
+              return;
+            }
        
             var aMergedSelected = aCurrentSelected.concat(aSelectedEmployees);
             oViewModel.setProperty("/selectedEmployees", aMergedSelected);
             
        
-            this._employeeChangeSearchDialog.close();
+            this._oEmployeeChangeSearchDialog.close();
             
     
             oTable.removeSelections();
             
       
-            sap.m.MessageToast.show(aSelectedEmployees.length + " personel seçildi. Kaydetmek için 'Personelleri Kaydet' butonuna basınız.");
+            // sap.m.MessageToast.show(aSelectedEmployees.length + " personel seçildi. Kaydetmek için 'Personelleri Kaydet' butonuna basınız.");
             
         
             this._updateEmployeeTable();
@@ -3525,58 +3472,6 @@ sap.ui.define(
             
             sap.m.MessageToast.show("Personel tablodan silindi");
         },
-        
-        // onDocumentTypeSelectionChange: function(oEvent) {
-        //   debugger;
-        //   var oModel = this.getModel();
-        //   var oViewModel = this.getModel("employeeRequestView");
-        //   var oComboBox = oEvent.getSource();
-        //   var sSelectedKey = oComboBox.getSelectedKey();
-        //   var sSelectedText = oComboBox.getSelectedItem() ? oComboBox.getSelectedItem().getText() : ""; //02 zevrt
-        //   var sPath = "/sap/opu/odata/sap/ZHCM_UX_DRF_SRV/DocumentInfoSet(Zevrt='" + sSelectedKey + "')/$value";
-        //   var sTitle = this.getText("CANDIDATE_RESUME", [sSelectedText]);
-        //    this._callPDFViewer(sPath, sTitle);
-     
-          
-        //   var oTable = sap.ui.getCore().byId("idCandidateAttachmentList");
-        //   if (oTable) {
-        //     var aItems = oTable.getItems();
-        //     var bDocumentExists = false;
-            
-        //     for (var i = 0; i < aItems.length; i++) {
-        //       var oContext = aItems[i].getBindingContext();
-        //       if (oContext) {
-        //         var oData = oContext.getObject();
-        //         if (oData.Zevrt === sSelectedKey) {
-        //           bDocumentExists = true;
-        //           break;
-        //         }
-        //       }
-        //     }
-            
-        //     if (bDocumentExists) {
-        //       sap.m.MessageBox.warning(
-        //         "Bu evrak türü (" + sSelectedText + ") zaten yüklü. Farklı bir evrak türü seçiniz.",
-        //         {
-        //           title: "Evrak Türü Uyarısı",
-        //           actions: [sap.m.MessageBox.Action.OK],
-        //           onClose: function() {
-        //             // ComboBox'ı temizle
-        //             oComboBox.setSelectedKey("");
-        //             oViewModel.setProperty("/selectedDocumentType", "");
-        //             oViewModel.setProperty("/selectedDocumentTypeText", "");
-        //           }
-        //         }
-        //       );
-        //       return;
-        //     }
-        //   }
-
-        //   oViewModel.setProperty("/selectedDocumentType", sSelectedKey);
-        //   oViewModel.setProperty("/selectedDocumentTypeText", sSelectedText);
-      
-         
-        // },
         _callPDFViewer: function (sPath, sTitle) {
           /*this._pdfViewerDialog = sap.ui.xmlfragment(
             "com.bmc.hcm.erf.fragment.PDFViewer",
@@ -3664,9 +3559,9 @@ sap.ui.define(
             },
             error: function(oError) {
               that._sweetToast("Bu evrak türü için PDF indirme mevcut değil.", "W");
-              oComboBox.setSelectedKey("");
-              oViewModel.setProperty("/selectedDocumentType", "");
-              oViewModel.setProperty("/selectedDocumentTypeText", "");
+              // oComboBox.setSelectedKey("");
+              // oViewModel.setProperty("/selectedDocumentType", "");
+              // oViewModel.setProperty("/selectedDocumentTypeText", "");
             }
           });
         },
@@ -3728,6 +3623,23 @@ sap.ui.define(
     
           this._callConfirmDialog(this.getText("CONFIRMATION_REQUIRED"), "Message", "Warning", this.getText("CONFIRM_DELETION"),
             oBeginButtonProp, null).open();
+        },
+        
+        /**
+         * Updates application settings from SharedData to the view model
+         * @private
+         */
+        _updateApplicationSettings: function() {
+          var oViewModel = this.getModel("employeeRequestView");
+          var oApplicationSettings = SharedData.getApplicationSettings();
+          
+          if (oApplicationSettings) {
+            oViewModel.setProperty("/applicationSettings", {
+              DisplayMode: oApplicationSettings.DisplayMode || false,
+              Edit: oApplicationSettings.Edit || false,
+              CallerRole: oApplicationSettings.CallerRole || null
+            });
+          }
         },
       });
       
