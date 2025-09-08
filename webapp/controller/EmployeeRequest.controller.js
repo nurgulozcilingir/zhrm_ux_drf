@@ -2359,6 +2359,7 @@ sap.ui.define(
           var oModel = this.getModel();
           var oViewModel = this.getModel("employeeRequestView");
           var oRequest = oViewModel.getProperty("/request");
+          var oRequestEmployee = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet");
           var that = this;
   
           if (!oRequest.Drfrt || !oRequest.Drfbl || !oRequest.Drfbn) {
@@ -3366,84 +3367,151 @@ sap.ui.define(
         },
         onSelectEmployeeFromDialog: function() {
           debugger;
-            var oViewModel = this.getView().getModel("employeeRequestView");
-            // var oTable = sap.ui.getCore().byId("idListEmployeeChangeTable");
-            var oTable = sap.ui.core.Fragment.byId(
+          var oViewModel = this.getView().getModel("employeeRequestView");
+          var oTable = sap.ui.core.Fragment.byId(
               "EmployeeSearchChangeFragment",
               "idListEmployeeChangeTable"
-            );
-            if (!oTable) {
-                oTable = this.byId("idListEmployeeChangeTable");
-            }
+          );
+          if (!oTable) {
+              oTable = this.byId("idListEmployeeChangeTable");
+          }
+          
+          if (!oTable) {
+              sap.m.MessageToast.show("Tablo bulunamadı");
+              return;
+          }
+          
+          var aSelectedItems = oTable.getSelectedItems();
+          
+          if (aSelectedItems.length === 0) {
+              sap.m.MessageToast.show("Lütfen en az bir personel seçiniz");
+              return;
+          }
+ 
+          if (aSelectedItems.length > 1) {
+              this._sweetToast(this.getText("SINGLE_EMPLOYEE_ONLY"), "W");
+              return;
+          }
+          
+          var aCurrentEmployees = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
+
+          if (aCurrentEmployees.length > 0) {
+              this._sweetToast(this.getText("EMPLOYEE_ALREADY_EXISTS"), "W");
+              return;
+          }
+          
+          var aSelectedEmployees = [];
+          var aCurrentSelected = oViewModel.getProperty("/selectedEmployees") || [];
+          
+          aSelectedItems.forEach(function(oItem) {
+              var oContext = oItem.getBindingContext("employeeRequestView");
+              var oEmployee = oContext.getObject();
+      
+              var bAlreadyExists = aCurrentSelected.some(function(oExisting) {
+                  return oExisting.Pernr === oEmployee.Fldky;
+              });
+              
+              if (!bAlreadyExists) {
+                  aSelectedEmployees.push({
+                      Pernr: oEmployee.Fldky,
+                      Ename: oEmployee.Fldvl,
+                      isNew: true 
+                  });
+              }
+          }.bind(this));
+          
+          if (aSelectedEmployees.length === 0) {
+              sap.m.MessageToast.show("Seçilen personel zaten mevcut");
+              return;
+          }
+      
+          var aMergedSelected = aCurrentSelected.concat(aSelectedEmployees);
+          oViewModel.setProperty("/selectedEmployees", aMergedSelected);
+          
+          this._oEmployeeChangeSearchDialog.close();
+          oTable.removeSelections();
+          this._updateEmployeeTable();
+      },
+        // onSelectEmployeeFromDialog: function() {
+        //   debugger;
+        //     var oViewModel = this.getView().getModel("employeeRequestView");
+        //     // var oTable = sap.ui.getCore().byId("idListEmployeeChangeTable");
+        //     var oTable = sap.ui.core.Fragment.byId(
+        //       "EmployeeSearchChangeFragment",
+        //       "idListEmployeeChangeTable"
+        //     );
+        //     if (!oTable) {
+        //         oTable = this.byId("idListEmployeeChangeTable");
+        //     }
             
-            if (!oTable) {
-                sap.m.MessageToast.show("Tablo bulunamadı");
-                return;
-            }
+        //     if (!oTable) {
+        //         sap.m.MessageToast.show("Tablo bulunamadı");
+        //         return;
+        //     }
             
-            var aSelectedItems = oTable.getSelectedItems();
+        //     var aSelectedItems = oTable.getSelectedItems();
             
-            if (aSelectedItems.length === 0) {
-                sap.m.MessageToast.show("Lütfen en az bir personel seçiniz");
-                return;
-            }
-               // Birden fazla seçim kontrolü
+        //     if (aSelectedItems.length === 0) {
+        //         sap.m.MessageToast.show("Lütfen en az bir personel seçiniz");
+        //         return;
+        //     }
+        //        // Birden fazla seçim kontrolü
             
             
-            var aSelectedEmployees = [];
-            var aCurrentSelected = oViewModel.getProperty("/selectedEmployees") || [];
-            var aCurrentEmployees = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
+        //     var aSelectedEmployees = [];
+        //     var aCurrentSelected = oViewModel.getProperty("/selectedEmployees") || [];
+        //     var aCurrentEmployees = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
             
           
-            aSelectedItems.forEach(function(oItem) {
-                var oContext = oItem.getBindingContext("employeeRequestView");
-                var oEmployee = oContext.getObject();
+        //     aSelectedItems.forEach(function(oItem) {
+        //         var oContext = oItem.getBindingContext("employeeRequestView");
+        //         var oEmployee = oContext.getObject();
 
-                var bAlreadyExists = aCurrentEmployees.some(function(oExisting) {
-                    return oExisting.Pernr === oEmployee.Fldky;
-                }) || aCurrentSelected.some(function(oExisting) {
-                    return oExisting.Pernr === oEmployee.Fldky;
-                });
+        //         var bAlreadyExists = aCurrentEmployees.some(function(oExisting) {
+        //             return oExisting.Pernr === oEmployee.Fldky;
+        //         }) || aCurrentSelected.some(function(oExisting) {
+        //             return oExisting.Pernr === oEmployee.Fldky;
+        //         });
                 
-                if (!bAlreadyExists) {
-                    aSelectedEmployees.push({
-                        Pernr: oEmployee.Fldky,
-                        Ename: oEmployee.Fldvl,
-                        isNew: true 
-                    });
-                }
-            }.bind(this));
+        //         if (!bAlreadyExists) {
+        //             aSelectedEmployees.push({
+        //                 Pernr: oEmployee.Fldky,
+        //                 Ename: oEmployee.Fldvl,
+        //                 isNew: true 
+        //             });
+        //         }
+        //     }.bind(this));
             
-            if (aSelectedEmployees.length === 0) {
-                sap.m.MessageToast.show("Seçilen personeller zaten mevcut");
-                return;
-            }
-            if (aSelectedItems.length > 1) {
-              this._sweetToast(this.getText("SINGLE_EMPLOYEE_ONLY"), "W");
-              return;
-            }
+        //     if (aSelectedEmployees.length === 0) {
+        //         sap.m.MessageToast.show("Seçilen personeller zaten mevcut");
+        //         return;
+        //     }
+        //     if (aSelectedItems.length > 1) {
+        //       this._sweetToast(this.getText("SINGLE_EMPLOYEE_ONLY"), "W");
+        //       return;
+        //     }
 
-            // Zaten personel eklenmiş mi kontrolü
-            if (aSelectedEmployees.length > 0) {
-              this._sweetToast(this.getText("SINGLE_EMPLOYEE_ONLY"), "W");
-              return;
-            }
+        //     // Zaten personel eklenmiş mi kontrolü
+        //     if (aSelectedEmployees.length > 0) {
+        //       this._sweetToast(this.getText("SINGLE_EMPLOYEE_ONLY"), "W");
+        //       return;
+        //     }
        
-            var aMergedSelected = aCurrentSelected.concat(aSelectedEmployees);
-            oViewModel.setProperty("/selectedEmployees", aMergedSelected);
+        //     var aMergedSelected = aCurrentSelected.concat(aSelectedEmployees);
+        //     oViewModel.setProperty("/selectedEmployees", aMergedSelected);
             
        
-            this._oEmployeeChangeSearchDialog.close();
+        //     this._oEmployeeChangeSearchDialog.close();
             
     
-            oTable.removeSelections();
+        //     oTable.removeSelections();
             
       
-            // sap.m.MessageToast.show(aSelectedEmployees.length + " personel seçildi. Kaydetmek için 'Personelleri Kaydet' butonuna basınız.");
+        //     // sap.m.MessageToast.show(aSelectedEmployees.length + " personel seçildi. Kaydetmek için 'Personelleri Kaydet' butonuna basınız.");
             
         
-            this._updateEmployeeTable();
-        },
+        //     this._updateEmployeeTable();
+        // },
 
 
         onSaveButtonEmployeeChangePress: function() {
