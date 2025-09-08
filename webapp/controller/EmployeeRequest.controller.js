@@ -261,6 +261,7 @@ sap.ui.define(
         },
 
         onEmployeeSearchValueHelpRequest: function (oEvent) {
+          debugger;
           var oModel = this.getModel();
           var oViewModel = this.getModel("employeeRequestView");
           var that = this;
@@ -272,6 +273,17 @@ sap.ui.define(
             return;
           }
 
+          this._openEmployeeSearchDialog(oModel, oViewModel);
+        },
+        
+        /**
+         * Opens employee search dialog
+         * @private
+         */
+        _openEmployeeSearchDialog: function(oModel, oViewModel) {
+          debugger;
+          var that = this;
+          
           oModel.read("/ValueHelpSet", {
             filters: [
               new sap.ui.model.Filter(
@@ -296,7 +308,7 @@ sap.ui.define(
             },
             error: function (oError) {
               console.error("Hata:", oError);
-              this._sweetToast(
+              that._sweetToast(
                 "Personel listesi yüklenirken hata oluştu", "E"
               );
             },
@@ -307,6 +319,46 @@ sap.ui.define(
           if (this._employeeValueHelpDialog) {
             this._employeeValueHelpDialog.close();
           }
+        },
+        
+        /**
+         * Refresh personel data before remove operation
+         * @private
+         */
+        _refreshPersonelDataBeforeRemove: function(sDrfid, fnCallback) {
+          var oModel = this.getModel();
+          var oViewModel = this.getModel("employeeRequestView");
+          var that = this;
+          
+          var sPath = "/DocumentRequestFormSet('" + sDrfid + "')";
+          var sExpand = "DocumentRequestEmployeeSet" +
+                       ",DocumentRequestEmployeeSet/EmployeeAttachmentSet";
+                       
+          oModel.read(sPath, {
+            urlParameters: {
+              "$expand": sExpand
+            },
+            success: function(oData) {
+              // Sadece DocumentRequestEmployeeSet'i güncelle
+              oViewModel.setProperty("/dataList/DocumentRequestEmployeeSet", _.cloneDeep(oData.DocumentRequestEmployeeSet.results));
+              
+              console.log("Employee data refreshed successfully before remove");
+              
+              // Callback'i çağır
+              if (fnCallback && typeof fnCallback === 'function') {
+                fnCallback();
+              }
+            },
+            error: function(oError) {
+              console.error("Error refreshing employee data:", oError);
+              that._sweetToast("Veri yenilenirken hata oluştu, eski veri ile devam ediliyor", "W");
+              
+              // Hata durumunda da callback'i çağır (eski veri ile devam etsin)
+              if (fnCallback && typeof fnCallback === 'function') {
+                fnCallback();
+              }
+            }
+          });
         },  
         onEmployeeValueRequest: function (oEvent) {
           debugger;
@@ -2313,6 +2365,17 @@ sap.ui.define(
             this._sweetToast(this.getText("FILL_IN_ALL_REQUIRED_FIELDS"), "E");
             return;
           }
+          
+          this._openEmployeeChangeSearchDialog(oModel, oViewModel);
+        },
+        
+        /**
+         * Opens employee change search dialog
+         * @private
+         */
+        _openEmployeeChangeSearchDialog: function(oModel, oViewModel) {
+          var that = this;
+          
           oModel.read("/ValueHelpSet", {
             filters: [
               new sap.ui.model.Filter(
@@ -2325,18 +2388,14 @@ sap.ui.define(
               oViewModel.setProperty("/changeList", oData.results);
       
               if (!that._oEmployeeChangeSearchDialog) {
-                sap.ui.core.Fragment.load({
-                  name: "com.bmc.hcm.drf.zhcmuxdrf.fragment.EmployeeChangeSearch",
-                  id: "EmployeeSearchChangeFragment",
-                  controller: that,
-                }).then(function (oDialog) {
-                  oView.addDependent(oDialog);
-                  that._oEmployeeChangeSearchDialog = oDialog;
-                  oDialog.open();
-                });
-              } else {
-                that._oEmployeeChangeSearchDialog.open();
+                that._oEmployeeChangeSearchDialog = sap.ui.xmlfragment(
+                  "EmployeeSearchChangeFragment",
+                  "com.bmc.hcm.drf.zhcmuxdrf.fragment.EmployeeChangeSearch",
+                  that
+                );
+                that.getView().addDependent(that._oEmployeeChangeSearchDialog);
               }
+              that._oEmployeeChangeSearchDialog.open();
             },
             error: function () {},
           });
@@ -3447,13 +3506,42 @@ sap.ui.define(
             // var oEmployee = oContext.getObject();
             var oRowData = this._selectedRowData;
             var oViewModel = this.getView().getModel("employeeRequestView");
+            var that = this;
 
-            var aSelectedEmployees = oViewModel.getProperty("/selectedEmployees") || [];
-            var bIsNewEmployee = aSelectedEmployees.some(function(emp) {
-                return emp.Pernr === oRowData.Pernr && emp.isNew === true;
+            if (!oRowData || !oRowData.Drfid) {
+              this._sweetToast("Personel verisi bulunamadı", "E");
+              return;
+            }
+
+            // Önce güncel veriyi çek, sonra silme işlemini kontrol et
+            this._refreshPersonelDataBeforeRemove(oRowData.Drfid, function() {
+              // Güncel veriyi al
+              var aCurrentEmployees = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
+              var oCurrentEmployee = aCurrentEmployees.find(function(emp) {
+                return emp.Pernr === oRowData.Pernr;
+              });
+
+              if (!oCurrentEmployee) {
+                that._sweetToast("Personel bulunamadı", "E");
+                return;
+              }
+
+              // EmployeeAttachmentSet kontrolü - güncel veri ile
+              if (oCurrentEmployee && oCurrentEmployee.EmployeeAttachmentSet && 
+                  oCurrentEmployee.EmployeeAttachmentSet.results && 
+                  oCurrentEmployee.EmployeeAttachmentSet.results.length > 0) {
+                
+                that._sweetToast("Bu personelin evrakları mevcut. Önce evrakları silin, sonra personeli silebilirsiniz.", "W");
+                return;
+              }
+
+              var aSelectedEmployees = oViewModel.getProperty("/selectedEmployees") || [];
+              var bIsNewEmployee = aSelectedEmployees.some(function(emp) {
+                  return emp.Pernr === oRowData.Pernr && emp.isNew === true;
+              });
+              
+              that._removeFromBackendData(oRowData);
             });
-            
-            this._removeFromBackendData(oRowData);
         },
         _removeFromBackendData: function(oRowData) {
             var oViewModel = this.getView().getModel("employeeRequestView");
