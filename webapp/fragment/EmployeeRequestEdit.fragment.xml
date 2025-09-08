@@ -84,7 +84,7 @@
                 <ColumnListItem type="Navigation" press="onRequestDetail">
                     <cells>
                         <!-- <Text text="{employeeRequestView>Drfid}"/> -->
-                        <Image src="/sap/opu/odata/sap/ZHCM_GENERIC_SRV/EmployeeSearchSet('{employeeRequestView>Rqowp}')/$value" class="erfProfileImage" width="50px"/>
+                        <Image src="/sap/opu/odata/sap/ZHCM_GENERIC_SRV/EmployeeSearchSet('{employeeRequestView>Pernr}')/$value" class="erfProfileImage" width="50px"/>
                         <Text text="{employeeRequestView>Pernr}"/>
                         <Text text="{employeeRequestView>Ename}"/>
                         <!-- <Text text="{employeeRequestView>Rentx}"/> -->

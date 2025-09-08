@@ -3513,9 +3513,7 @@ sap.ui.define(
               return;
             }
 
-            // Önce güncel veriyi çek, sonra silme işlemini kontrol et
             this._refreshPersonelDataBeforeRemove(oRowData.Drfid, function() {
-              // Güncel veriyi al
               var aCurrentEmployees = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
               var oCurrentEmployee = aCurrentEmployees.find(function(emp) {
                 return emp.Pernr === oRowData.Pernr;
@@ -3526,7 +3524,6 @@ sap.ui.define(
                 return;
               }
 
-              // EmployeeAttachmentSet kontrolü - güncel veri ile
               if (oCurrentEmployee && oCurrentEmployee.EmployeeAttachmentSet && 
                   oCurrentEmployee.EmployeeAttachmentSet.results && 
                   oCurrentEmployee.EmployeeAttachmentSet.results.length > 0) {
@@ -3544,6 +3541,7 @@ sap.ui.define(
             });
         },
         _removeFromBackendData: function(oRowData) {
+          debugger;
             var oViewModel = this.getView().getModel("employeeRequestView");
             var aCurrentEmployees = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
             
