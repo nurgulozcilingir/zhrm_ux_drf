@@ -121,6 +121,7 @@ sap.ui.define([
 
 			oApplicationSettings.Edit = false;
 			oApplicationSettings.CallerRole = "APPROVER";
+			oApplicationSettings.DisplayMode = true;
 			SharedData.setApplicationSettings(oApplicationSettings);
 			SharedData.setCurrentRequest(oData);
 			oViewModel.setProperty("/busy", true);
@@ -137,6 +138,7 @@ sap.ui.define([
 
 			oApplicationSettings.Edit = false;
 			oApplicationSettings.CallerRole = "PNDAPP";
+			oApplicationSettings.DisplayMode = true;
 			SharedData.setApplicationSettings(oApplicationSettings);
 			SharedData.setCurrentRequest(oData);
 			oViewModel.setProperty("/busy", true);

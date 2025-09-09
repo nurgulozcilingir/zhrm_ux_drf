@@ -2647,6 +2647,8 @@ sap.ui.define(
               setTimeout(function() {
                 that.getRouter().navTo("mngrequestlist");
               }, 3000);
+              oViewModel.setProperty("/request", {});
+              oViewModel.setProperty("/selectedEmployees", []);
             },
             error: function (oError) {
               console.error("Create error:", oError);

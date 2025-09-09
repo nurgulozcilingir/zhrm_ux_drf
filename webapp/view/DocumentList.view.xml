@@ -25,7 +25,14 @@
                             <headerToolbar>
                                 <Toolbar>
                                     <ToolbarSpacer/>
-                                    <SearchField placeholder="{i18n>SEARCH_PLACEHOLDER}" width="300px" search="onSearch"/>
+                                    <ComboBox items="{ path:'/ValueHelpSet' , filters : [ { path : 'Drfvh', operator : 'EQ', value1 : 'Drfbl'} ] }" selectedKey="{DocumentListRequestView>/search/Zbelt}" placeholder="Belge Türü" change="onChangeDrfst">
+                                        <core:ListItem key="{Fldky}" text="{Fldvl}"/>
+                                    </ComboBox>
+                                    <ComboBox items="{ path:'DocumentListRequestView>/drfssList'}" placeholder="Belge Adı" selectedKey="{DocumentListRequestView>/search/Zbeln}" change="onRequestSearch">
+                                        <core:ListItem key="{DocumentListRequestView>Fldky}" text="{DocumentListRequestView>Fldvl}"/>
+                                    </ComboBox>
+                                    <SearchField id="idRequestSearchField" placeholder="Belgeler içinde ara..." value="{DocumentListRequestView>/search/Zznot}" width="{= ${device>/system/phone} ? '30%' : '15%' }" search="onRequestSearch"></SearchField>
+                                    <Button type="Emphasized" icon="sap-icon://refresh" text="{i18n>SEARCH_ACTION}" press="onRequestSearch"/>
                                 </Toolbar>
                             </headerToolbar>
                             <infoToolbar>
@@ -34,44 +41,52 @@
                                 </Toolbar>
                             </infoToolbar>
                             <columns>
+                                <Column>
+                                    <Text text="{i18n>DOCUMENT_LINK}"/>
+                                </Column>
                                 <Column minScreenWidth="Tablet" demandPopin="true">
                                     <Text text="{i18n>PERSONNEL_NO}" />
                                 </Column>
-                                <!-- <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
-                                    <Text text="Ad Soyad" />
-                                </Column> -->
-                                <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                                <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
+                                    <Text text="Personel Adı Soyadı" />
+                                </Column>
+                                <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
+                                    <Text text="Pozisyon" />
+                                </Column>
+                                <Column minScreenWidth="Desktop" demandPopin="true">
+                                    <Text text="Unvan" />
+                                </Column>
+                                <Column minScreenWidth="Desktop" demandPopin="true">
                                     <Text text="{i18n>DOCUMENT_TYPE}" />
                                 </Column>
-                                <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                                <Column minScreenWidth="Desktop" demandPopin="true">
                                     <Text text="{i18n>DOCUMENT_NAME}" />
                                 </Column>
-                                <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                                <Column minScreenWidth="Desktop" demandPopin="true">
                                     <Text text="{i18n>DOCUMENT_NO}" />
                                 </Column>
-                                <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                                <Column minScreenWidth="Desktop" demandPopin="true">
                                     <Text text="{i18n>INSTITUTE_NAME}" />
                                 </Column>
-                                <!-- <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
-                                    <Text text="{i18n>CERTIFICATE_DEPARTMENT}" />
-                                </Column> -->
-                                <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                                <Column minScreenWidth="Desktop" demandPopin="true">
                                     <Text text="{i18n>DOCUMENT_DATE}" />
                                 </Column>
-                                <Column hAlign="End">
+                                <Column minScreenWidth="Desktop" demandPopin="true">
                                     <Text text="{i18n>EXPIRY_DATE}" />
                                 </Column>
                             </columns>
                             <items>
                                 <ColumnListItem vAlign="Middle" type="Navigation" press="onItemPress">
                                     <cells>
-                                        <Text text="{Pernr}" />
-                                        <!-- <ObjectIdentifier title="{DocumentListRequestView>AdSoyad}"/> -->
-                                        <Text text="{Zblnx}" />
+                                        <Link press="onAttachDownloadDoc" text="{Aname}"/>
+                                        <ObjectIdentifier title="{Pernr}" />
+                                        <Text text="{Ename}"/>
+                                        <Text text="{= ${Nopln} ? ${Plaft} : ${Plstx} }" />
+                                        <Text text="{Stltx}"/>
                                         <Text text="{Zbltx}" />
+                                        <Text text="{Zblnx}" />
                                         <Text text="{Zblno}" />
                                         <Text text="{Zkurm}" />
-                                        <!-- <Text text="{Zbolm}" /> -->
                                         <Text text="{ path: 'Ztarh', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }" />
                                         <Text  text="{path: 'Zgecr', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }" />
                                     </cells>
