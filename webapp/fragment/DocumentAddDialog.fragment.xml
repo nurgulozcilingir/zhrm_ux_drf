@@ -35,8 +35,8 @@
 			</f:formContainers>
 		</f:Form>
 		<buttons>
-			<Button text="{i18n>CANCEL}" icon="sap-icon://cancel" press="onCloseUploadFormDialog"/>
-			<Button text="{i18n>UPLOAD_BUTTON}" icon="sap-icon://upload" type="Accept" press="onAttachmentUploadPress" id="idUploadCandidateInterviewForm"/>
+			<Button text="{i18n>CLOSE_BUTTON}" icon="sap-icon://cancel" press="onCloseUploadFormDialog"/>
+			<Button text="{i18n>INTERVIEW_SAVE}" icon="sap-icon://upload" type="Accept" press="onAttachmentUploadPress" id="idUploadCandidateInterviewForm" enabled="{= !${employeeRequestView>/applicationSettings/DisplayMode}}"/>
 		</buttons>
 		<VBox class="sapUiSmallMargin">
 			<Table id="idCandidateAttachmentList" busy="{candidateModel>/busy}" busyIndicatorDelay="0" items="{path: '/EmployeeAttachmentSet'}" class="erfTable">
@@ -67,7 +67,7 @@
 							<!-- <Text text="{parts: [{path:'candidateModel>/helpText/Canat'}, {path:'Attty'}], formatter: '._getValueHelpText' }"/> -->
 							<Text text="{ path: 'Crdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern: 'dd.MM.yyyy'}}"/>
 							<HBox justifyContent="Center">
-								<Button type="Reject" class="sapUiSmallMarginEnd" icon="sap-icon://delete" press="onDeleteAttachment"/>
+								<Button type="Reject" class="sapUiSmallMarginEnd" icon="sap-icon://delete" press="onDeleteAttachment" enabled="{= !${employeeRequestView>/applicationSettings/DisplayMode}}"/>
 							</HBox>
 						</cells>
 					</ColumnListItem>
