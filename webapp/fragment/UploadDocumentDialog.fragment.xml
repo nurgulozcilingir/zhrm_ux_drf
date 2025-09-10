@@ -66,8 +66,8 @@
             </f:Form>
         </content>
         <buttons>
-            <Button text="{i18n>CANCEL}" press="onCancelUpload" icon="sap-icon://cancel"/>
-            <Button text="{i18n>UPLOAD_BUTTON}" press="onDocumentUploadPress" type="Accept" icon="sap-icon://upload"/>
+            <Button text="{i18n>CLOSE_BUTTON}" press="onCancelUpload" icon="sap-icon://cancel"/>
+            <Button text="{i18n>INTERVIEW_SAVE}" press="onDocumentUploadPress" type="Accept" icon="sap-icon://upload"/>
         </buttons>
     </Dialog>
 </core:FragmentDefinition>

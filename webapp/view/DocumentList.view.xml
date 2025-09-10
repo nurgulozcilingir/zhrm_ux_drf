@@ -57,6 +57,9 @@
                                     <Text text="Unvan" />
                                 </Column>
                                 <Column minScreenWidth="Desktop" demandPopin="true">
+                                    <Text text="Organizasyon birimi" />
+                                </Column>
+                                <Column minScreenWidth="Desktop" demandPopin="true">
                                     <Text text="{i18n>DOCUMENT_TYPE}" />
                                 </Column>
                                 <Column minScreenWidth="Desktop" demandPopin="true">
@@ -83,6 +86,7 @@
                                         <Text text="{Ename}"/>
                                         <Text text="{= ${Nopln} ? ${Plaft} : ${Plstx} }" />
                                         <Text text="{Stltx}"/>
+                                        <Text text="{Orgtx}"/>
                                         <Text text="{Zbltx}" />
                                         <Text text="{Zblnx}" />
                                         <Text text="{Zblno}" />

@@ -302,10 +302,10 @@ sap.ui.define([
 			var oThis = this;
 			
 			if (oFormData.Drfid && !sNewRequest) {
-				oThis._continueWithUpdate(oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack);
-				// this._refreshRequestDataBeforeUpdate(oFormData.Drfid, function() {
-				// 	oThis._continueWithUpdate(oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack);
-				// });
+				// oThis._continueWithUpdate(oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack);
+				this._refreshRequestDataBeforeUpdate(oFormData.Drfid, function() {
+					oThis._continueWithUpdate(oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack);
+				});
 			} else {
 				this._continueWithUpdate(oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack);
 			}
