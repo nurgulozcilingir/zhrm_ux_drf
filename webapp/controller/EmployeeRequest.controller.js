@@ -174,6 +174,10 @@ sap.ui.define(
             this.getRouter().navTo("recruitmentadmin", {}, true);
           } else if (oApplicationSettings.CallerRole === "RECRUITER") {
             this.getRouter().navTo("recrequestlist", {}, true);
+          } else if (oApplicationSettings.CallerRole === "MANAGER") {
+            this.getRouter().navTo("mngrequestlist", {}, true);
+          } else if (oApplicationSettings.CallerRole === "APPROVER") {
+            this.getRouter().navTo("approvallist", {}, true);
           } else {
             this.getRouter().navTo("appdispatcher", {}, true);
           }
