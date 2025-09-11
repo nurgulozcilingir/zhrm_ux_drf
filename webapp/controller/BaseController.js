@@ -295,17 +295,17 @@ sap.ui.define([
 				}
 			});
 		},
-		_updateRequest: function (oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack) {
+		_updateRequest: function (oFormData, oFormDataDeep, sNewRequest, sNavBack, sStatusChange, History, fnCallBack) {
 			debugger;
 			var oModel = this.getModel();
 			var oViewModel = this.getModel("employeeRequestView");
 			var oThis = this;
 			
 			if (oFormData.Drfid && !sNewRequest) {
-				// oThis._continueWithUpdate(oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack);
-				this._refreshRequestDataBeforeUpdate(oFormData.Drfid, function() {
-					oThis._continueWithUpdate(oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack);
-				});
+				oThis._continueWithUpdate(oFormData, oFormDataDeep, sNewRequest, sNavBack, sStatusChange, History, fnCallBack);
+				// this._refreshRequestDataBeforeUpdate(oFormData.Drfid, function() {
+				// 	oThis._continueWithUpdate(oFormData, oFormDataDeep, sNewRequest, sNavBack, sStatusChange, History, fnCallBack);
+				// });
 			} else {
 				this._continueWithUpdate(oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack);
 			}
@@ -358,7 +358,8 @@ sap.ui.define([
 		 * Continue with update process after refresh
 		 * @private
 		 */
-		_continueWithUpdate: function(oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack) {
+		_continueWithUpdate: function(oFormData, oFormDataDeep, sNewRequest, sNavBack, sStatusChange, History, fnCallBack) {
+			debugger;
 			var oModel = this.getModel();
 			var oViewModel = this.getModel("employeeRequestView");
 			var oRequestData = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet");

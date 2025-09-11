@@ -32,7 +32,7 @@
                                 </ComboBox>
                             </f:fields>
                         </f:FormElement>
-                        <f:FormElement label="{i18n>EMPLOYEE_NAME}">
+                        <f:FormElement label="{i18n>EMPLOYEE_SELECT}">
                             <f:fields>
                                 <Input value="{employeeRequestView>/request/Drfvh}" showValueHelp="{= !${employeeRequestView>/applicationSettings/DisplayMode}}" valueHelpRequest="onDrfvhInputValueHelpRequest" placeholder="{i18n>SELECT_OPTION}" editable="{= !${employeeRequestView>/applicationSettings/DisplayMode}}" />
                             </f:fields>

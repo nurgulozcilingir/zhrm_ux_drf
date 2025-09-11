@@ -228,7 +228,8 @@ sap.ui.define([
 				applicationSettings: {
 					DisplayMode: false,
 					Edit: true,
-					CallerRole: null
+					CallerRole: null,
+					CurrentDrfso: null
 				},
 				formStatusList: [],
 				recruiterList: [],

@@ -647,7 +647,15 @@ sap.ui.define(
           return aActive.length > 0;
         },
         onNewEmployeeRequest: function (oEvent) {
+          debugger;
+          var oViewModel = this.getModel("requestListView");
+          oViewModel.setProperty("/request", {});
+          oViewModel.setProperty("/dataList/DocumentRequestEmployeeSet", []);
+          oViewModel.setProperty("/selectedEmployees", []);
           SharedData.setCurrentRequest(null);
+          var oApplicationSettings = {};
+          oApplicationSettings.CallerRole = this.callerRole;
+          SharedData.setApplicationSettings(oApplicationSettings);
           this.getRouter().navTo("employeerequestnew");
         },
 
