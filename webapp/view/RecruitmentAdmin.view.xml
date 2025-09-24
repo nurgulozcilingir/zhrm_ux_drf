@@ -60,8 +60,14 @@
                                 <Column id="idRequiredQualificationColumn6" minScreenWidth="Desktop">
                                     <Text text="{i18n>REQUEST_DATE}"/>
                                 </Column>
-                                <Column id="idRequiredQualificationColumn5" minScreenWidth="Desktop">
-                                    <Text text="{i18n>REQUEST_OWNER}"/>
+                                    <Column id="idRequiredQualificationColumn5" minScreenWidth="Desktop">
+                                        <Text text="{i18n>REQUEST_OWNER}"/>
+                                    </Column>
+                                <Column id="idRequiredPernrColumn6" minScreenWidth="Desktop">
+                                    <Text text="{i18n>PERSONNEL_NO}"/>
+                                </Column>
+                                <Column id="idRequiredEnameColumn7" minScreenWidth="Desktop">
+                                    <Text text="{i18n>PERSONNEL_NAME_COL}"/>
                                 </Column>
                             </columns>
                             <items>
@@ -74,6 +80,8 @@
                                         <Text text="{Drfnx}"/>
                                         <Text text="{ path: 'Rqdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }"/>
                                         <Text text="{Rqown}"/>
+                                        <Text text="{Pernr}"/>
+                                        <Text text="{Ename}"/>
                                     </cells>
                                 </ColumnListItem>
                             </items>

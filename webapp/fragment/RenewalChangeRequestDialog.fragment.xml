@@ -13,7 +13,7 @@
         </content>
         <buttons>
             <Button text="{i18n>OK_BUTTON}" press="onRenewalReasonConfirm" type="Emphasized"/>
-            <Button text="{i18n>CANCEL}" press="onRenewalReasonCancel"/>
+            <Button text="{i18n>CANCEL}" press="onRenewalChangeReasonCancel"/>
         </buttons>
     </Dialog>
 </core:FragmentDefinition>

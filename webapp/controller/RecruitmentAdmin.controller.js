@@ -225,6 +225,12 @@ sap.ui.define([
 					TargetRecruiter: "",
 					TargetRecruiterName: ""
 				},
+				applicationSettings: {
+					DisplayMode: false,
+					Edit: true,
+					CallerRole: null,
+					CurrentDrfso: null
+				},
 				formStatusList: [],
 				recruiterList: [],
 				processList: [],
@@ -344,6 +350,7 @@ sap.ui.define([
 					/*Set application settings*/
 					oApplicationSettings.Edit = true;
 					oApplicationSettings.CallerRole = this.callerRole;
+					oApplicationSettings.DisplayMode = false;
 					if (this.callerRole === "RECRUITER") {
 						oApplicationSettings.Edit = false;
 					}
@@ -359,6 +366,7 @@ sap.ui.define([
 					/*Set application settings*/
 					oApplicationSettings.Edit = false;
 					oApplicationSettings.CallerRole = this.callerRole;
+					oApplicationSettings.DisplayMode = true;
 					SharedData.setApplicationSettings(oApplicationSettings);
 					/*Set request data*/
 					SharedData.setCurrentRequest(oFormData);

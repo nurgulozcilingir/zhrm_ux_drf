@@ -19,7 +19,7 @@
                             </f:FormElement>
                             <f:FormElement label="{i18n>DOCUMENT_NAME}">
                                 <f:fields>
-                                    <ComboBox id="idDocumentName2ComboBox" selectedKey="{path: 'employeeRequestView>/requestDocument/Zbeln'}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfbn' } ] }" >
+                                    <ComboBox id="idZbelnComboBox" selectedKey="{path: 'employeeRequestView>/requestDocument/Zbeln'}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfbn' } ] }" >
                                         <core:ListItem additionalText="{Selky}" key="{Fldky}" text="{Fldvl}"/>
                                     </ComboBox>
                                 </f:fields>
@@ -52,7 +52,7 @@
                             </f:FormElement>
                             <f:FormElement label="{i18n>NOTE_LABEL}">
                                 <f:fields>
-                                    <TextArea value="{employeeRequestView>/requestDocument/Zznot}" required="true" maxLength="255" />
+                                    <TextArea value="{employeeRequestView>/requestDocument/Zznot}" maxLength="255" />
                                 </f:fields>
                             </f:FormElement>
                             <f:FormElement label="{i18n>DOCUMENT_UPLOAD}">
@@ -66,8 +66,8 @@
             </f:Form>
         </content>
         <buttons>
-            <Button text="{i18n>CANCEL}" press="onCancelUpload" icon="sap-icon://cancel"/>
-            <Button text="{i18n>UPLOAD_BUTTON}" press="onDocumentUploadPress" type="Accept" icon="sap-icon://upload"/>
+            <Button text="{i18n>CLOSE_BUTTON}" press="onCancelUpload" icon="sap-icon://cancel"/>
+            <Button text="{i18n>INTERVIEW_SAVE}" press="onDocumentUploadPress" type="Accept" icon="sap-icon://upload"/>
         </buttons>
     </Dialog>
 </core:FragmentDefinition>

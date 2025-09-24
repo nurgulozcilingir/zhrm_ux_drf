@@ -54,7 +54,7 @@
             </VBox>
         </content>
         <buttons>
-            <Button text="{i18n>CANCEL}" icon="sap-icon://cancel" press="onCloseViewDialog"/>
+            <Button text="{i18n>CLOSE_BUTTON}" icon="sap-icon://cancel" press="onCloseViewDialog"/>
         </buttons>
     </Dialog>
 </core:FragmentDefinition>

@@ -52,6 +52,12 @@
 						<Column id="idRequiredQualificationColumn4" minScreenWidth="Desktop">
 							<Text text="{i18n>REQUEST_OWNER}"/>
 						</Column>
+						<Column id="idRequiredQualificationColumn5" minScreenWidth="Desktop">
+							<Text text="{i18n>PERSONNEL_NO}"/>
+						</Column>
+						<Column id="idRequiredQualificationColumn6" minScreenWidth="Desktop">
+							<Text text="{i18n>PERSONNEL_NAME_COL}"/>
+						</Column>
 						<Column id="idActionsColumn" minScreenWidth="Tablet" width="5rem" hAlign="Center">
 							<Text text="{i18n>ACTION_LIST}"/>
 						</Column>
@@ -69,6 +75,8 @@
 								<Text
 								text="{ path: 'Rqdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern:'dd.MM.yyyy'} }"/>
 								<Text text="{Rqown}"/>
+								<Text text="{Pernr}"/>
+								<Text text="{Ename}"/>
 								<Button icon="sap-icon://menu" type="Accept" press="onAvailableRequestActions" tooltip="{i18n>ACTION_LIST}"
 									class="erfActionButton"></Button>
 							</cells>

@@ -3,7 +3,20 @@
     xmlns:cd="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
     <Dialog id="idEmployeeSearchDialog" title="{i18n>PERSONNEL_SELECTION}" draggable="true" resizable="true" contentWidth="500px" contentHeight="500px">
         <VBox>
+          
             <Table id="idListEmployeeTable" items="{employeeRequestView>/List}" mode="SingleSelect">
+                <headerToolbar>
+                    <Toolbar>
+                        <ToolbarSpacer/>     
+                        <SearchField id="idPersonnelSearchField" 
+                        placeholder="{i18n>SEARCH_ACTION_TOOLTIP}" 
+                        width="250px"
+                        search="onSearchPersonnel"
+                        liveChange="onLiveSearchPersonnel"
+                        class="sapUiSmallMarginEnd"/>
+                    </Toolbar>
+                </headerToolbar>
+           
                 <columns>
                     <Column width="12em">
                         <Text text="{i18n>PERSONNEL_NO}" />
@@ -23,7 +36,7 @@
             </Table>
         </VBox>
         <beginButton>
-            <Button text="Ekle" icon="sap-icon://add" type="Emphasized" press="onSaveButtonEmployeePress"/>
+            <Button text="{i18n>ADD_ACTION}" icon="sap-icon://add" type="Emphasized" press="onSaveButtonEmployeePress"/>
         </beginButton>
         <endButton>
             <Button text="{i18n>CLOSE_BUTTON}" press="onCloseButtonEmployeePress"/>

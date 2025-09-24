@@ -6,7 +6,7 @@
 
 	<Dialog title="{i18n>DOCUMENT_UPLOAD_LISTING}" contentWidth="50%" contentHeight="500px" resizable="true">
 		<MessageStrip class="sapUiSmallMargin" text="{i18n>MAX_FILE_SIZE_INFO}" type="Information" showCloseButton="true" showIcon="true"/>
-			<VBox class="sapUiSmallMargin">
+			<VBox class="sapUiSmallMargin" visible="{employeeRequestView>/showComboBox}">
 				<Label text="Evrak Türü Seçiniz:" required="true"/>
 				<ComboBox required="true" 
 						  selectedKey="{employeeRequestView>/selectedDocumentType}"
@@ -16,6 +16,9 @@
 					<core:Item key="{employeeRequestView>Fldky}" text="{employeeRequestView>Fldvl}"/>
 				</ComboBox>
 				<Button text="Şablon İndir" required="true" icon="sap-icon://download" press="onPdfDowlandPress" visible="{employeeRequestView>/downloadButtonVisible}" />
+			</VBox>
+			<VBox class="sapUiSmallMargin" visible="{= !${employeeRequestView>/showComboBox}}">
+				<MessageStrip text="Yüklenmesi gereken evrak bulunmamaktadır. Tüm evrak türleri zaten yüklenmiş." type="Success" showIcon="true"/>
 			</VBox>
 		<f:Form id="idUploadAttachmentForm" class="candidateFileUploader" editable="true">
 			<f:layout>
@@ -27,7 +30,7 @@
 					<f:formElements>
 						<f:FormElement label="{i18n>DOCUMENT_UPLOAD}">
 							<f:fields>
-								<u:FileUploader id="idAttachmentFileUploader" name="candidateFileUploader" uploadUrl="" uploadComplete="onAttachmentUploadComplete" change="onAttachmentFileChange" typeMissmatch="onFileTypeMissmatch" style="Emphasized" fileType="pdf,xls,xlsx,doc,docx,tiff,jpg,png,zip,rar,msg,eml" maximumFileSize="5" fileSizeExceed="onFileSizeExceed" placeholder="{i18n>LABEL_UPLOAD_PLACEHOLDER}" sendXHR="true" useMultipart="false" class="candidateFileUploader" width="95%"></u:FileUploader>
+								<u:FileUploader id="idAttachmentFileUploader" name="candidateFileUploader" uploadUrl="" uploadComplete="onAttachmentUploadComplete" change="onAttachmentFileChange" typeMissmatch="onFileTypeMissmatch" style="Emphasized" fileType="pdf,xls,xlsx,doc,docx,tiff,jpg,png,zip,rar,msg,eml" maximumFileSize="5" fileSizeExceed="onFileSizeExceed" placeholder="{i18n>LABEL_UPLOAD_PLACEHOLDER}" sendXHR="true" useMultipart="false" class="candidateFileUploader" enabled="{employeeRequestView>/showComboBox}" width="95%"></u:FileUploader>
 							</f:fields>
 						</f:FormElement>
 					</f:formElements>
@@ -35,8 +38,8 @@
 			</f:formContainers>
 		</f:Form>
 		<buttons>
-			<Button text="{i18n>CANCEL}" icon="sap-icon://cancel" press="onCloseUploadFormDialog"/>
-			<Button text="{i18n>UPLOAD_BUTTON}" icon="sap-icon://upload" type="Accept" press="onAttachmentUploadPress" id="idUploadCandidateInterviewForm"/>
+			<Button text="{i18n>CLOSE_BUTTON}" icon="sap-icon://cancel" press="onCloseUploadFormDialog"/>
+			<Button text="{i18n>UPLOAD_BUTTON}" icon="sap-icon://upload" type="Accept" press="onAttachmentUploadPress" id="idUploadCandidateInterviewForm" enabled="{= !${employeeRequestView>/applicationSettings/DisplayMode}}" visible="{employeeRequestView>/showComboBox}"/>
 		</buttons>
 		<VBox class="sapUiSmallMargin">
 			<Table id="idCandidateAttachmentList" busy="{candidateModel>/busy}" busyIndicatorDelay="0" items="{path: '/EmployeeAttachmentSet'}" class="erfTable">
@@ -67,7 +70,7 @@
 							<!-- <Text text="{parts: [{path:'candidateModel>/helpText/Canat'}, {path:'Attty'}], formatter: '._getValueHelpText' }"/> -->
 							<Text text="{ path: 'Crdat', type: 'sap.ui.model.type.Date', formatOptions: { pattern: 'dd.MM.yyyy'}}"/>
 							<HBox justifyContent="Center">
-								<Button type="Reject" class="sapUiSmallMarginEnd" icon="sap-icon://delete" press="onDeleteAttachment"/>
+								<Button type="Reject" class="sapUiSmallMarginEnd" icon="sap-icon://delete" press="onDeleteAttachment" enabled="{= !${employeeRequestView>/applicationSettings/DisplayMode}}"/>
 							</HBox>
 						</cells>
 					</ColumnListItem>

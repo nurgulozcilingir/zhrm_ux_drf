@@ -153,8 +153,8 @@ sap.ui.define([
 					sIcon = "info";
 			}
 			var Toast = Swal.mixin({
-				toast: true,
-				position: "bottom-end",
+				// toast: true,
+				position: "center",
 				showConfirmButton: false,
 				timer: 3000,
 				timerProgressBar: true,
@@ -295,14 +295,76 @@ sap.ui.define([
 				}
 			});
 		},
-		_updateRequest: function (oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack) {
+		_updateRequest: function (oFormData, oFormDataDeep, sNewRequest, sNavBack, sStatusChange, History, fnCallBack) {
 			debugger;
 			var oModel = this.getModel();
 			var oViewModel = this.getModel("employeeRequestView");
 			var oThis = this;
+			
+			if (oFormData.Drfid && !sNewRequest) {
+				oThis._continueWithUpdate(oFormData, oFormDataDeep, sNewRequest, sNavBack, sStatusChange, History, fnCallBack);
+				// this._refreshRequestDataBeforeUpdate(oFormData.Drfid, function() {
+				// 	oThis._continueWithUpdate(oFormData, oFormDataDeep, sNewRequest, sNavBack, sStatusChange, History, fnCallBack);
+				// });
+			} else {
+				this._continueWithUpdate(oFormData, sNewRequest, sNavBack, sStatusChange, History, fnCallBack);
+			}
+		},
+		
+		/**
+		 * Refresh current request data from backend before update
+		 * @private
+		 */
+		_refreshRequestDataBeforeUpdate: function(sDrfid, fnCallback) {
+			var oModel = this.getModel();
+			var oViewModel = this.getModel("employeeRequestView");
+			var that = this;
+			
+			var sPath = "/DocumentRequestFormSet('" + sDrfid + "')";
+			var sExpand = "DocumentRequestEmployeeSet" +
+						 ",DocumentRequestEmployeeSet/EmployeeAttachmentSet" +
+						 ",DocumentRequestHistorySet" +
+						 ",DocumentRequestPrintOut";
+						 
+			oModel.read(sPath, {
+				urlParameters: {
+					"$expand": sExpand
+				},
+				success: function(oData) {
+					oViewModel.setProperty("/request", oData);
+					oViewModel.setProperty("/dataList/DocumentRequestEmployeeSet", _.cloneDeep(oData.DocumentRequestEmployeeSet.results));
+
+					if (typeof SharedData !== 'undefined' && SharedData.setCurrentRequest) {
+						SharedData.setCurrentRequest(_.cloneDeep(oData));
+					}
+					
+					console.log("Request data refreshed successfully before update");
+
+					if (fnCallback && typeof fnCallback === 'function') {
+						fnCallback();
+					}
+				},
+				error: function(oError) {
+					that._sweetToast("Veri yenilenirken hata oluştu", "E");
+					
+					if (fnCallback && typeof fnCallback === 'function') {
+						fnCallback();
+					}
+				}
+			});
+		},
+		
+		/**
+		 * Continue with update process after refresh
+		 * @private
+		 */
+		_continueWithUpdate: function(oFormData, oFormDataDeep, sNewRequest, sNavBack, sStatusChange, History, fnCallBack) {
+			debugger;
+			var oModel = this.getModel();
+			var oViewModel = this.getModel("employeeRequestView");
 			var oRequestData = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet");
 			// var oRequestData = oViewModel.getProperty("/request");
-
+			var oThis = this;
 			var aEmployeeIds = [];
             var sDrfrt = oViewModel.getProperty("/request/Drfrt");
 			var sDrfbl = oViewModel.getProperty("/request/Drfbl");
@@ -986,14 +1048,33 @@ pointer-events: none !important;
 
 						if (sStatusChange) {
 							oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
-							setTimeout(function() {
-								oThis.getRouter().navTo("mngrequestlist");
-							  }, 3000);
+							var oApplicationSettings = SharedData.getApplicationSettings();
+							if (oApplicationSettings.CallerRole === "MANAGER") {
+								setTimeout(function() {
+									oThis.getRouter().navTo("mngrequestlist");
+								}, 3000);
+
+							} else if (oApplicationSettings.CallerRole === "APPROVER") {
+								setTimeout(function() {
+									oThis.getRouter().navTo("approvallist");
+								}, 3000);
+							}
+							// oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+							// setTimeout(function() {
+							// 	oThis.getRouter().navTo("mngrequestlist");
+							//   }, 3000);
 						} else {
 							oThis._sweetToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
-							setTimeout(function() {
-								oThis.getRouter().navTo("mngrequestlist");
-							  }, 3000);
+							var oApplicationSettings = SharedData.getApplicationSettings();
+							if (oApplicationSettings.CallerRole === "MANAGER") {
+								setTimeout(function() {
+									oThis.getRouter().navTo("mngrequestlist");
+								}, 3000);
+							} else if (oApplicationSettings.CallerRole === "APPROVER") {
+								setTimeout(function() {
+									oThis.getRouter().navTo("approvallist");
+								}, 3000);
+							}	
 						}
 
 						if (sNavBack) {
@@ -1014,15 +1095,31 @@ pointer-events: none !important;
 						oThis._closeBusyFragment();
 						if (sStatusChange) {
 							oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+							var oApplicationSettings = SharedData.getApplicationSettings();
+							if (oApplicationSettings.CallerRole === "MANAGER") {
 							setTimeout(function() {
-								oThis.getRouter().navTo("mngrequestlist");
-							  }, 3000);
+									oThis.getRouter().navTo("mngrequestlist");
+								}, 3000);
+
+							} else if (oApplicationSettings.CallerRole === "APPROVER") {
+								setTimeout(function() {
+									oThis.getRouter().navTo("approvallist");
+								}, 3000);
+							}
 						} else {
 							oThis._sweetToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
-							setTimeout(function() {
-								oThis.getRouter().navTo("mngrequestlist");
-							  }, 3000);
-						}
+							var oApplicationSettings = SharedData.getApplicationSettings();
+							if (oApplicationSettings.CallerRole === "MANAGER") {
+								setTimeout(function() {
+									oThis.getRouter().navTo("mngrequestlist");
+								}, 3000);
+							} else if (oApplicationSettings.CallerRole === "APPROVER") {
+								setTimeout(function() {
+									oThis.getRouter().navTo("approvallist");
+								}, 3000);
+							}
+						}		
+						
 						if (sNavBack) {
 							oThis.goBack(History);
 						}

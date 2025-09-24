@@ -113,30 +113,47 @@ sap.ui.define([
 		 * @public
 		 */
 		onRequestDetail: function (oEvent) {
+			debugger;
 			// The source is the list item that got pressed
 			var oSource = oEvent.getSource();
+			var getBindingContext = oSource.getBindingContext();
+			console.log(getBindingContext);
 			var oData = this.getModel().getProperty(oSource.getBindingContextPath());
 			var oApplicationSettings = {};
 			var oViewModel = this.getModel("approvalListView");
-
 			oApplicationSettings.Edit = false;
 			oApplicationSettings.CallerRole = "APPROVER";
+			oApplicationSettings.DisplayMode = true;
+			var sDrfso = getBindingContext.getProperty("Drfso");
+			if (sDrfso === "K01") {
+				oApplicationSettings.DisplayMode = false;
+			}
+
+			oApplicationSettings.CurrentDrfso = sDrfso;
 			SharedData.setApplicationSettings(oApplicationSettings);
 			SharedData.setCurrentRequest(oData);
 			oViewModel.setProperty("/busy", true);
 			this.getRouter().navTo("employeerequestedit", {
-				Drfid: oData.Drfid
+				Drfid: oData.Drfid,
 			});
 		},
 		onRequestDetailApp: function (oEvent) {
+			debugger;
 			// The source is the list item that got pressed
 			var oSource = oEvent.getSource();
+			var getBindingContext = oSource.getBindingContext();
+			console.log(getBindingContext);
 			var oData = this.getModel().getProperty(oSource.getBindingContextPath());
 			var oApplicationSettings = {};
 			var oViewModel = this.getModel("approvalListView");
 
 			oApplicationSettings.Edit = false;
 			oApplicationSettings.CallerRole = "PNDAPP";
+			oApplicationSettings.DisplayMode = true;
+			var Drfso = getBindingContext.getProperty("Drfso");
+			if (Drfso === "K01") {
+				oApplicationSettings.DisplayMode = false;
+			}
 			SharedData.setApplicationSettings(oApplicationSettings);
 			SharedData.setCurrentRequest(oData);
 			oViewModel.setProperty("/busy", true);

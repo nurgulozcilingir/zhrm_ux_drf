@@ -647,7 +647,15 @@ sap.ui.define(
           return aActive.length > 0;
         },
         onNewEmployeeRequest: function (oEvent) {
+          debugger;
+          var oViewModel = this.getModel("requestListView");
+          oViewModel.setProperty("/request", {});
+          oViewModel.setProperty("/dataList/DocumentRequestEmployeeSet", []);
+          oViewModel.setProperty("/selectedEmployees", []);
           SharedData.setCurrentRequest(null);
+          var oApplicationSettings = {};
+          oApplicationSettings.CallerRole = this.callerRole;
+          SharedData.setApplicationSettings(oApplicationSettings);
           this.getRouter().navTo("employeerequestnew");
         },
 
@@ -661,15 +669,6 @@ sap.ui.define(
             this._openRequestActions(oData, oSource);
           }
         },
-        // onAvailableRequestActions: function (oEvent) {
-        //   var oSource = oEvent.getSource();
-        //   var oData = this.getModel().getProperty(
-        //     oSource.getParent().getBindingContextPath()
-        //   );
-        //   if (oData) {
-        //     this._openRequestActions(oData, oSource);
-        //   }
-        // },
         _openRequestActions: function (oData, oSource) {
           if (this._adjustRequestActions(oData)) {
             if (!this._requestActions) {

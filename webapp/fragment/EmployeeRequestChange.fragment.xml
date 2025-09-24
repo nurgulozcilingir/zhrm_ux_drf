@@ -32,7 +32,7 @@
                                 </ComboBox>
                             </f:fields>
                         </f:FormElement>
-                        <f:FormElement label="{i18n>EMPLOYEE_NAME}">
+                        <f:FormElement label="{i18n>EMPLOYEE_SELECT}">
                             <f:fields>
                                 <Input value="{employeeRequestView>/request/Drfvh}" showValueHelp="true" valueHelpRequest="onEmployeeSearchValueHelpRequest" placeholder="{i18n>SELECT_PERSONNEL}" />
                             </f:fields>
@@ -65,7 +65,7 @@
                         <Text text="{i18n>RENEWAL_REASON_COLUMN}"/>
                     </Column>
                     <Column visible="{= ${employeeRequestView>/request/Drfrt} === '01'}">
-                        <Text text="{i18n>REQUEST_REASON_COL}"/>
+                        <Text text="*{i18n>REQUEST_REASON_COL}"/>
                     </Column>
                     <Column width="100px">
                         <Text text="{i18n>ACTIONS_COL}"/>
@@ -86,8 +86,8 @@
                                         </Menu>
                                     </menu>
                                 </MenuButton>
-                                <Text text="{employeeRequestView>Rendc}"/>
-                                <ComboBox selectedKey="{employeeRequestView>Drfrs}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrs' } ] }" change="onDrfrsComboBoxChange">
+                                <Input value="{employeeRequestView>Rendc}" width="170px" enabled="{= ${employeeRequestView>Renwl} !== '1' }"/>
+                                <ComboBox id="idRequestReasonComboBox" selectedKey="{employeeRequestView>Drfrs}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrs' } ] }" change="onDrfrsComboBoxChange">
                                     <core:Item key="{Fldky}" text="{Fldvl}"/>
                                 </ComboBox>
                             <Button icon="sap-icon://delete" type="Reject" press="onRemoveSelectedEmployee" tooltip="{i18n>REMOVE_PERSONNEL}" cd:employeeId="{employeeRequestView>Pernr}" cd:employeeName="{employeeRequestView>Ename}"/>
