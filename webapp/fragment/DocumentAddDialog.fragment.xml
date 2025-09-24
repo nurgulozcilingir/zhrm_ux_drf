@@ -6,6 +6,7 @@
 
 	<Dialog title="{i18n>DOCUMENT_UPLOAD_LISTING}" contentWidth="50%" contentHeight="500px" resizable="true">
 		<MessageStrip class="sapUiSmallMargin" text="{i18n>MAX_FILE_SIZE_INFO}" type="Information" showCloseButton="true" showIcon="true"/>
+		<MessageStrip class="sapUiSmallMargin" text="Yüklenmesi gereken evrak bulunmamaktadır." type="Information" showIcon="true" visible="{= ${employeeRequestView>/noDocumentTypesAvailable} &amp;&amp; !${employeeRequestView>/allDocumentsUploaded}}"/>
 			<VBox class="sapUiSmallMargin" visible="{employeeRequestView>/showComboBox}">
 				<Label text="Evrak Türü Seçiniz:" required="true"/>
 				<ComboBox required="true" 
@@ -17,8 +18,8 @@
 				</ComboBox>
 				<Button text="Şablon İndir" required="true" icon="sap-icon://download" press="onPdfDowlandPress" visible="{employeeRequestView>/downloadButtonVisible}" />
 			</VBox>
-			<VBox class="sapUiSmallMargin" visible="{= !${employeeRequestView>/showComboBox}}">
-				<MessageStrip text="Yüklenmesi gereken evrak bulunmamaktadır. Tüm evrak türleri zaten yüklenmiş." type="Success" showIcon="true"/>
+		<VBox class="sapUiSmallMargin" visible="{employeeRequestView>/allDocumentsUploaded}">
+			<MessageStrip text="Yüklenmesi gereken evrak bulunmamaktadır. Tüm evrak türleri zaten yüklenmiş." type="Success" showIcon="true"/>
 			</VBox>
 		<f:Form id="idUploadAttachmentForm" class="candidateFileUploader" editable="true">
 			<f:layout>

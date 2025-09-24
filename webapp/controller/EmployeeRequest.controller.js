@@ -92,6 +92,8 @@ sap.ui.define(
               selectedDocumentType: "",
               selectedDocumentTypeText: "",
               downloadButtonVisible: false,
+              noDocumentTypesAvailable: false,
+              allDocumentsUploaded: false,
               organizationHelp: {
                 enableAdd: false,
               },
@@ -857,100 +859,134 @@ sap.ui.define(
           debugger;
           var oSource = oEvent.getSource();
           var oViewModel = this.getModel("employeeRequestView");
-          var oFormData = oViewModel.getProperty("/request");
-          var oFormDataDeep = oViewModel.getProperty(
-            "/dataList/DocumentRequestEmployeeSet"
-          );
           var aFormActions = oViewModel.getProperty("/formActions");
           var sButtonId = oSource.data("buttonId");
           var aButtonProp = _.filter(aFormActions, {
             Drfbt: sButtonId,
           });
+          if (!aButtonProp || !aButtonProp.length) {
+            return;
+          }
+
           var sStatusChange = false;
           var oStatusChange = {};
+          var that = this;
 
-          try {
-            oFormData.Actio = aButtonProp[0].Drfbt;
-            oFormData.DrfstN = aButtonProp[0].DrfstN;
-            oFormData.DrfssN = aButtonProp[0].DrfssN;
-            oViewModel.setProperty("/request", oFormData);
-            oViewModel.setProperty(
-              "/dataList/DocumentRequestEmployeeSet",
-              oFormDataDeep
+          var fnHandleAction = function () {
+            var oFormData = _.cloneDeep(
+              oViewModel.getProperty("/request") || {}
             );
-            // if (!this._validateForm()) {
-            //   return;
-            // }
-            switch (aButtonProp[0].Drfbs) {
-              case "S": //Save
-                this._updateRequest(
-                  oFormData,
-                  oFormDataDeep,
-                  this._sNewRequest,
-                  true,
-                  false,
-                  History
-                );
-                return;
-              case "A": //Approve
-                oStatusChange.statusChangeNoteRequired = false;
-                oStatusChange.statusChangePlaceholder = this.getText(
-                  "ENTER_STATUS_CHANGE_REASON"
-                );
-                sStatusChange = true;
-                break;
-              case "B": //Back
-                oStatusChange.statusChangeNoteRequired = true;
-                oStatusChange.statusChangePlaceholder = this.getText(
-                  "ENTER_REVISION_REASON"
-                );
-                sStatusChange = true;
-                break;
-              case "R": //Reject
-                oStatusChange.statusChangeNoteRequired = true;
-                oStatusChange.statusChangePlaceholder = this.getText(
-                  "ENTER_REJECTION_REASON"
-                );
-                sStatusChange = true;
-                break;
-              default:
-                return;
-            }
+            var oFormDataDeep = _.cloneDeep(
+              oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") || []
+            );
 
-            if (sStatusChange) {
-              oStatusChange.statusChangeNote = "";
-              oStatusChange.beginButtonText = aButtonProp[0].Drfbx;
-              oStatusChange.beginButtonType = aButtonProp[0].Drfbs;
-              oStatusChange.beginButtonIcon = aButtonProp[0].Drfbi;
-              if (this._sNewRequest) {
-                oStatusChange.informationNote = this.getText(
-                  "NEW_EMPLOYEE_REQUEST_INFORMATION_NOTE"
-                );
-              } else {
-                oStatusChange.informationNote = this.getText(
-                  "STATUS_CHANGE_NOTE",
-                  aButtonProp[0].DrfsyN === ""
-                    ? aButtonProp[0].DrfsxN
-                    : aButtonProp[0].DrfsxN + "-" + aButtonProp[0].DrfsyN
+            try {
+              oFormData.Actio = aButtonProp[0].Drfbt;
+              oFormData.DrfstN = aButtonProp[0].DrfstN;
+              oFormData.DrfssN = aButtonProp[0].DrfssN;
+              oViewModel.setProperty("/request", oFormData);
+              oViewModel.setProperty(
+                "/dataList/DocumentRequestEmployeeSet",
+                oFormDataDeep
+              );
+
+              oFormData = _.cloneDeep(
+                oViewModel.getProperty("/request") || {}
+              );
+              oFormDataDeep = _.cloneDeep(
+                oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") || []
+              );
+
+              if (oFormData.DocumentRequestEmployeeSet) {
+                oFormData.DocumentRequestEmployeeSet.results = _.cloneDeep(
+                  oFormDataDeep
                 );
               }
 
-              oViewModel.setProperty("/statusChangeDialog", oStatusChange);
-
-              if (
-                !this._statusChangeDialog ||
-                this._statusChangeDialog.bIsDestroyed
-              ) {
-                this._statusChangeDialog = sap.ui.xmlfragment(
-                  "com.bmc.hcm.drf.zhcmuxdrf.fragment.StatusChange",
-                  this
-                );
-                this.getView().addDependent(this._statusChangeDialog, this);
+              if (SharedData && SharedData.setCurrentRequest) {
+                SharedData.setCurrentRequest(_.cloneDeep(oFormData));
               }
-              this._statusChangeDialog.open();
+
+              switch (aButtonProp[0].Drfbs) {
+                case "S": //Save
+                  that._updateRequest(
+                    oFormData,
+                    oFormDataDeep,
+                    that._sNewRequest,
+                    true,
+                    false,
+                    History
+                  );
+                  return;
+                case "A": //Approve
+                  oStatusChange.statusChangeNoteRequired = false;
+                  oStatusChange.statusChangePlaceholder = that.getText(
+                    "ENTER_STATUS_CHANGE_REASON"
+                  );
+                  sStatusChange = true;
+                  break;
+                case "B": //Back
+                  oStatusChange.statusChangeNoteRequired = true;
+                  oStatusChange.statusChangePlaceholder = that.getText(
+                    "ENTER_REVISION_REASON"
+                  );
+                  sStatusChange = true;
+                  break;
+                case "R": //Reject
+                  oStatusChange.statusChangeNoteRequired = true;
+                  oStatusChange.statusChangePlaceholder = that.getText(
+                    "ENTER_REJECTION_REASON"
+                  );
+                  sStatusChange = true;
+                  break;
+                default:
+                  return;
+              }
+
+              if (sStatusChange) {
+                oStatusChange.statusChangeNote = "";
+                oStatusChange.beginButtonText = aButtonProp[0].Drfbx;
+                oStatusChange.beginButtonType = aButtonProp[0].Drfbs;
+                oStatusChange.beginButtonIcon = aButtonProp[0].Drfbi;
+                if (that._sNewRequest) {
+                  oStatusChange.informationNote = that.getText(
+                    "NEW_EMPLOYEE_REQUEST_INFORMATION_NOTE"
+                  );
+                } else {
+                  oStatusChange.informationNote = that.getText(
+                    "STATUS_CHANGE_NOTE",
+                    aButtonProp[0].DrfsyN === ""
+                      ? aButtonProp[0].DrfsxN
+                      : aButtonProp[0].DrfsxN + "-" + aButtonProp[0].DrfsyN
+                  );
+                }
+
+                oViewModel.setProperty("/statusChangeDialog", oStatusChange);
+
+                if (
+                  !that._statusChangeDialog ||
+                  that._statusChangeDialog.bIsDestroyed
+                ) {
+                  that._statusChangeDialog = sap.ui.xmlfragment(
+                    "com.bmc.hcm.drf.zhcmuxdrf.fragment.StatusChange",
+                    that
+                  );
+                  that.getView().addDependent(that._statusChangeDialog, that);
+                }
+                that._statusChangeDialog.open();
+              }
+            } catch (oErr) {
+              jQuery.sap.log.error("Form action failed!");
             }
-          } catch (oErr) {
-            jQuery.sap.log.error("Form action failed!");
+          }.bind(this);
+
+          var oRequest = oViewModel.getProperty("/request") || {};
+          if (!this._sNewRequest && oRequest.Drfid) {
+            this._refreshRequestDataBeforeUpdate(oRequest.Drfid, function () {
+              fnHandleAction();
+            });
+          } else {
+            fnHandleAction();
           }
         },
 
@@ -1392,6 +1428,8 @@ sap.ui.define(
           oViewModel.setProperty("/virtualCompanyListProxy", null);
           oViewModel.setProperty("/usedPositionList", null);
           oViewModel.setProperty("/selectedEmployees", []);
+          oViewModel.setProperty("/noDocumentTypesAvailable", false);
+          oViewModel.setProperty("/allDocumentsUploaded", false);
 
           SharedData.setCurrentRequest(null);
 
@@ -2924,6 +2962,8 @@ sap.ui.define(
           oViewModel.setProperty("/selectedDocumentType", "");
           oViewModel.setProperty("/selectedDocumentTypeText", "");
           oViewModel.setProperty("/downloadButtonVisible", false);
+          oViewModel.setProperty("/noDocumentTypesAvailable", false);
+          oViewModel.setProperty("/allDocumentsUploaded", false);
           oViewModel.setProperty("/valueHelpList/Drfev", []);
 
           oViewModel.setProperty("/attachmentFilters/Pernr", oRowData.Pernr);
@@ -2951,6 +2991,15 @@ sap.ui.define(
             filters: aFilters,
             success: function (oData) {
               oViewModel.setProperty("/valueHelpList/Drfev", oData.results);
+
+              var bHasDocumentTypes =
+                !!(oData.results && oData.results.length);
+              oViewModel.setProperty(
+                "/noDocumentTypesAvailable",
+                !bHasDocumentTypes
+              );
+              oViewModel.setProperty("/showComboBox", bHasDocumentTypes);
+              oViewModel.setProperty("/allDocumentsUploaded", false);
 
               var oTable = sap.ui.getCore().byId("idCandidateAttachmentList");
               var aUploadedDocTypes = [];
@@ -3030,17 +3079,36 @@ sap.ui.define(
           }
 
           var aFilteredDocTypes;
-          if (bAllDocumentsUploaded && aAvailableDocTypes.length > 0) {
+          if (!aAvailableDocTypes.length) {
             aFilteredDocTypes = [];
             oViewModel.setProperty("/showComboBox", false);
+            oViewModel.setProperty("/allDocumentsUploaded", false);
+          } else if (bAllDocumentsUploaded) {
+            aFilteredDocTypes = [];
+            oViewModel.setProperty("/showComboBox", false);
+            oViewModel.setProperty("/allDocumentsUploaded", true);
           } else {
             aFilteredDocTypes = oData.results.filter(function (item) {
               return aRemainingDocTypes.indexOf(item.Fldky) !== -1;
             });
-            oViewModel.setProperty("/showComboBox", true);
+            var bFilteredHasItems = !!aFilteredDocTypes.length;
+            oViewModel.setProperty("/showComboBox", bFilteredHasItems);
+            oViewModel.setProperty("/allDocumentsUploaded", !bFilteredHasItems);
           }
 
           oViewModel.setProperty("/valueHelpList/Drfev", aFilteredDocTypes);
+          var bNoDocumentTypes = aFilteredDocTypes.length === 0;
+          oViewModel.setProperty(
+            "/noDocumentTypesAvailable",
+            bNoDocumentTypes
+          );
+
+          if (bNoDocumentTypes) {
+            oViewModel.setProperty(
+              "/allDocumentsUploaded",
+              aAvailableDocTypes.length > 0
+            );
+          }
 
           console.log("Data loaded successfully", oData);
           console.log(
