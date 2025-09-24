@@ -55,7 +55,7 @@
             </infoToolbar>
             <columns>
                 <Column id="idEmployeeNameColumn">
-                    <Text text="{i18n>PERSONNEL_NAME_COL}"/>
+                    <Text text=""/>
                 </Column>
                 <Column id="idEmployeePositionColumn">
                     <Text text="{i18n>PERSONNEL_NO}"/>

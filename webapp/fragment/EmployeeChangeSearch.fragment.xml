@@ -4,6 +4,17 @@
     <Dialog id="idEmployeeChangeSearchDialog" title="{i18n>PERSONNEL_SELECTION}" draggable="true" resizable="true" contentWidth="500px" contentHeight="500px">
         <VBox>
             <Table id="idListEmployeeChangeTable" items="{employeeRequestView>/changeList}" mode="SingleSelect">
+                <headerToolbar>
+                    <Toolbar>
+                        <ToolbarSpacer/>
+                        <SearchField id="idEmployeeChangeSearchField" 
+                        placeholder="{i18n>SEARCH_ACTION_TOOLTIP}" 
+                        width="250px"
+                        search="onSearchEmployeeChange"
+                        liveChange="onLiveSearchEmployeeChange"
+                        class="sapUiSmallMarginEnd"/>
+                    </Toolbar>
+                </headerToolbar>
                 <columns>
                     <Column width="12em">
                         <Text text="{i18n>PERSONNEL_NO}" />
@@ -23,7 +34,7 @@
             </Table>
         </VBox>
         <beginButton>
-            <Button text="Seç" icon="sap-icon://add" type="Emphasized" press="onSelectEmployeeFromDialog"/>
+            <Button text="{i18n>ADD_ACTION}" icon="sap-icon://add" type="Emphasized" press="onSelectEmployeeFromDialog"/>
         </beginButton>
         <endButton>
             <Button text="{i18n>CLOSE_BUTTON}" press="onCloseButtonEmployeeChangePress"/>

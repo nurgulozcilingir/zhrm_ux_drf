@@ -65,7 +65,7 @@
                         <Text text="{i18n>RENEWAL_REASON_COLUMN}"/>
                     </Column>
                     <Column visible="{= ${employeeRequestView>/request/Drfrt} === '01'}">
-                        <Text text="{i18n>REQUEST_REASON_COL}"/>
+                        <Text text="*{i18n>REQUEST_REASON_COL}"/>
                     </Column>
                     <Column width="100px">
                         <Text text="{i18n>ACTIONS_COL}"/>
@@ -87,7 +87,7 @@
                                     </menu>
                                 </MenuButton>
                                 <Input value="{employeeRequestView>Rendc}" width="170px" enabled="{= ${employeeRequestView>Renwl} !== '1' }"/>
-                                <ComboBox selectedKey="{employeeRequestView>Drfrs}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrs' } ] }" change="onDrfrsComboBoxChange">
+                                <ComboBox id="idRequestReasonComboBox" selectedKey="{employeeRequestView>Drfrs}" required="true" items="{ path:'/ValueHelpSet' , filters:[{path: 'Drfvh' , operator : 'EQ' , value1 : 'Drfrs' } ] }" change="onDrfrsComboBoxChange">
                                     <core:Item key="{Fldky}" text="{Fldvl}"/>
                                 </ComboBox>
                             <Button icon="sap-icon://delete" type="Reject" press="onRemoveSelectedEmployee" tooltip="{i18n>REMOVE_PERSONNEL}" cd:employeeId="{employeeRequestView>Pernr}" cd:employeeName="{employeeRequestView>Ename}"/>

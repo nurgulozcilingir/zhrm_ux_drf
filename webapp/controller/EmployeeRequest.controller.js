@@ -2,8 +2,8 @@
 /*global _*/
 sap.ui.define(
   [
-    'sap/m/MessagePopover',
-    'sap/m/MessageItem',
+    "sap/m/MessagePopover",
+    "sap/m/MessageItem",
     "com/bmc/hcm/drf/zhcmuxdrf/controller/BaseController",
     "com/bmc/hcm/drf/zhcmuxdrf/controller/SharedData",
     "sap/ui/model/json/JSONModel",
@@ -39,22 +39,23 @@ sap.ui.define(
   ) {
     "use strict";
     var oMessageTemplate = new MessageItem({
-      type: 'Error',
-      title: '{Infty}-{Subty} bilgi tipinde hata',
-      description: '{Message}',
-      subtitle: '{Message}'
+      type: "Error",
+      title: "{Infty}-{Subty} bilgi tipinde hata",
+      description: "{Message}",
+      subtitle: "{Message}",
     });
     var oMessagePopover = new MessagePopover({
       items: {
-        path: '/',
-        template: oMessageTemplate
-      }
+        path: "/",
+        template: oMessageTemplate,
+      },
     });
     var mModel = new JSONModel();
     oMessagePopover.setModel(mModel);
 
     return BaseController.extend(
-      "com.bmc.hcm.drf.zhcmuxdrf.controller.EmployeeRequest",{
+      "com.bmc.hcm.drf.zhcmuxdrf.controller.EmployeeRequest",
+      {
         formatter: formatter,
         _formFragments: {},
 
@@ -84,14 +85,13 @@ sap.ui.define(
               positionHelp: {
                 enableAdd: false,
               },
-              requestDocument:{},
+              requestDocument: {},
               valueHelpList: {
-                Drfev: []
+                Drfev: [],
               },
               selectedDocumentType: "",
               selectedDocumentTypeText: "",
               downloadButtonVisible: false,
-
               organizationHelp: {
                 enableAdd: false,
               },
@@ -115,7 +115,8 @@ sap.ui.define(
                 DisplayMode: false,
                 Edit: true,
                 CallerRole: null,
-                CurrentDrfso: null  
+                CurrentDrfso: null,
+                VisibleMode: false,
               },
             }),
             oCandidateList = new JSONModel({
@@ -146,7 +147,7 @@ sap.ui.define(
                 Isvic: false,
               },
             });
-      
+
           this.getRouter()
             .getRoute("employeerequestnew")
             .attachPatternMatched(this._onNewRequestMatched, this);
@@ -155,7 +156,7 @@ sap.ui.define(
             .attachPatternMatched(this._onRequestMatched, this);
 
           this.setModel(oViewModel, "employeeRequestView");
-          
+
           this._updateApplicationSettings();
           this.setModel(oCandidateList, "candidateListModel");
           // this.initOperations();
@@ -164,7 +165,6 @@ sap.ui.define(
         onExit: function () {
           this._initiateModels();
         },
-        
 
         /* =========================================================== */
         /* event handlers                                              */
@@ -191,7 +191,7 @@ sap.ui.define(
             this.getRouter().navTo("appdispatcher", {}, true);
             this._initiateModels();
             return;
-        }
+          }
           if (oApplicationSettings.callerRole === "MANAGER") {
             this.getRouter().navTo("mngrequestlist", {}, true);
           } else if (oApplicationSettings.callerRole === "RECRUITER") {
@@ -277,23 +277,31 @@ sap.ui.define(
           var that = this;
 
           var oRequest = oViewModel.getProperty("/request");
-          
-          if (!oRequest || !oRequest.Drfrt || !oRequest.Drfbl || !oRequest.Drfbn) {
-            this._sweetToast("Lütfen önce Talep Türü, Belge Türü ve Belge Adı alanlarını seçiniz.", "W");
+
+          if (
+            !oRequest ||
+            !oRequest.Drfrt ||
+            !oRequest.Drfbl ||
+            !oRequest.Drfbn
+          ) {
+            this._sweetToast(
+              "Lütfen önce Talep Türü, Belge Türü ve Belge Adı alanlarını seçiniz.",
+              "W"
+            );
             return;
           }
 
           this._openEmployeeSearchDialog(oModel, oViewModel);
         },
-        
+
         /**
          * Opens employee search dialog
          * @private
          */
-        _openEmployeeSearchDialog: function(oModel, oViewModel) {
+        _openEmployeeSearchDialog: function (oModel, oViewModel) {
           debugger;
           var that = this;
-          
+
           oModel.read("/ValueHelpSet", {
             filters: [
               new sap.ui.model.Filter(
@@ -318,57 +326,62 @@ sap.ui.define(
             },
             error: function (oError) {
               console.error("Hata:", oError);
-              that._sweetToast(
-                "Personel listesi yüklenirken hata oluştu", "E"
-              );
+              that._sweetToast("Personel listesi yüklenirken hata oluştu", "E");
             },
           });
         },
-        onCloseButtonEmployeePress:function(){
+        onCloseButtonEmployeePress: function () {
           debugger;
           if (this._employeeValueHelpDialog) {
             this._employeeValueHelpDialog.close();
           }
         },
-        
+
         /**
          * Refresh personel data before remove operation
          * @private
          */
-        _refreshPersonelDataBeforeRemove: function(sDrfid, fnCallback) {
+        _refreshPersonelDataBeforeRemove: function (sDrfid, fnCallback) {
           var oModel = this.getModel();
           var oViewModel = this.getModel("employeeRequestView");
           var that = this;
-          
+
           var sPath = "/DocumentRequestFormSet('" + sDrfid + "')";
-          var sExpand = "DocumentRequestEmployeeSet" +
-                       ",DocumentRequestEmployeeSet/EmployeeAttachmentSet";
-                       
+          var sExpand =
+            "DocumentRequestEmployeeSet" +
+            ",DocumentRequestEmployeeSet/EmployeeAttachmentSet";
+
           oModel.read(sPath, {
             urlParameters: {
-              "$expand": sExpand
+              $expand: sExpand,
             },
-            success: function(oData) {
+            success: function (oData) {
               oViewModel.setProperty("/request", oData);
-              oViewModel.setProperty("/dataList/DocumentRequestEmployeeSet", _.cloneDeep(oData.DocumentRequestEmployeeSet.results));
-              
+              oViewModel.setProperty(
+                "/dataList/DocumentRequestEmployeeSet",
+                _.cloneDeep(oData.DocumentRequestEmployeeSet.results)
+              );
+
               console.log("Employee data refreshed successfully before remove");
-              
+
               // Callback'i çağır
-              if (fnCallback && typeof fnCallback === 'function') {
+              if (fnCallback && typeof fnCallback === "function") {
                 fnCallback();
               }
             },
-            error: function(oError) {
+            error: function (oError) {
               console.error("Error refreshing employee data:", oError);
-              that._sweetToast("Veri yenilenirken hata oluştu, eski veri ile devam ediliyor", "W");
+              that._sweetToast(
+                "Veri yenilenirken hata oluştu, eski veri ile devam ediliyor",
+                "W"
+              );
 
-              if (fnCallback && typeof fnCallback === 'function') {
+              if (fnCallback && typeof fnCallback === "function") {
                 fnCallback();
               }
-            }
+            },
           });
-        },  
+        },
         onEmployeeValueRequest: function (oEvent) {
           debugger;
           var sSourceField = oEvent.getSource().data("sourceField");
@@ -438,9 +451,7 @@ sap.ui.define(
 
             var oSelectedEmployee = aSelectedContexts[0].getObject();
 
-            var bAlreadyExists = aSelectedEmployees.some(function (
-              oEmployee
-            ) {
+            var bAlreadyExists = aSelectedEmployees.some(function (oEmployee) {
               return oEmployee.Pernr === oSelectedEmployee.Pernr;
             });
 
@@ -518,28 +529,30 @@ sap.ui.define(
             jQuery.sap.log.error("Tree clear failed");
           }
         },
-        
+
         /**
          * Formatter for action button visibility
          * @param {boolean} bDisplayMode - Whether in display mode
          * @param {string} sDrfsf - Status field
          * @returns {boolean} - Whether button should be visible
          */
-        formatActionButtonVisibility: function(bDisplayMode, sDrfsf) {
+        formatActionButtonVisibility: function (bDisplayMode, sDrfsf) {
           if (bDisplayMode) {
             return false;
           }
           // Call the existing formatter if needed
-          return this.onCheckActionAvailable ? this.onCheckActionAvailable(sDrfsf) : true;
+          return this.onCheckActionAvailable
+            ? this.onCheckActionAvailable(sDrfsf)
+            : true;
         },
-        
+
         /**
          * Formatter for Rendc input enabled state
          * @param {boolean} bDisplayMode - Whether in display mode
          * @param {string} sRenwl - Renewal value ("1" means renewal required)
          * @returns {boolean} - Whether Rendc input should be enabled
          */
-        formatRendcEnabled: function(bDisplayMode, sRenwl) {
+        formatRendcEnabled: function (bDisplayMode, sRenwl) {
           // If in display mode, always disabled
           if (bDisplayMode) {
             return false;
@@ -845,7 +858,9 @@ sap.ui.define(
           var oSource = oEvent.getSource();
           var oViewModel = this.getModel("employeeRequestView");
           var oFormData = oViewModel.getProperty("/request");
-          var oFormDataDeep = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet");
+          var oFormDataDeep = oViewModel.getProperty(
+            "/dataList/DocumentRequestEmployeeSet"
+          );
           var aFormActions = oViewModel.getProperty("/formActions");
           var sButtonId = oSource.data("buttonId");
           var aButtonProp = _.filter(aFormActions, {
@@ -859,7 +874,10 @@ sap.ui.define(
             oFormData.DrfstN = aButtonProp[0].DrfstN;
             oFormData.DrfssN = aButtonProp[0].DrfssN;
             oViewModel.setProperty("/request", oFormData);
-            oViewModel.setProperty("/dataList/DocumentRequestEmployeeSet", oFormDataDeep);
+            oViewModel.setProperty(
+              "/dataList/DocumentRequestEmployeeSet",
+              oFormDataDeep
+            );
             // if (!this._validateForm()) {
             //   return;
             // }
@@ -1102,10 +1120,7 @@ sap.ui.define(
             oModel.remove(sPath, {
               success: function () {
                 oThis._closeBusyFragment();
-                oThis._sweetToast(
-                  oThis.getText("CANDIDATE_DELETED"),
-                  "S"
-                );
+                oThis._sweetToast(oThis.getText("CANDIDATE_DELETED"), "S");
                 oThis._getCandidateList(oCurrentCandidate.Erfid);
               },
               error: function () {
@@ -1360,10 +1375,10 @@ sap.ui.define(
          * @function
          * @param {sap.ui.base.Event} oEvent pattern match event in route 'object'
          * @private
-         */    
+         */
         _initiateModels: function () {
           var oViewModel = this.getModel("employeeRequestView");
-          
+
           oViewModel.setProperty("/request", null);
           oViewModel.setProperty("/formActions", []);
           oViewModel.setProperty("/formHistory", []);
@@ -1376,6 +1391,7 @@ sap.ui.define(
           oViewModel.setProperty("/organizationListProxy", null);
           oViewModel.setProperty("/virtualCompanyListProxy", null);
           oViewModel.setProperty("/usedPositionList", null);
+          oViewModel.setProperty("/selectedEmployees", []);
 
           SharedData.setCurrentRequest(null);
 
@@ -1416,9 +1432,8 @@ sap.ui.define(
           var sPath = "/DocumentRequestFormSet('" + sDrfid + "')";
           var sExpand =
             "DocumentRequestEmployeeSet" +
-            ",DocumentRequestEmployeeSet/EmployeeAttachmentSet"
-            ",DocumentRequestHistorySet" +
-            ",DocumentRequestPrintOut";
+            ",DocumentRequestEmployeeSet/EmployeeAttachmentSet";
+          ",DocumentRequestHistorySet" + ",DocumentRequestPrintOut";
 
           oModel.read(sPath, {
             urlParameters: {
@@ -1456,9 +1471,9 @@ sap.ui.define(
         _onNewRequestMatched: function (oEvent) {
           this._sNewRequest = true;
           this._setChangeListeners();
-          
+
           this._updateApplicationSettings();
-          
+
           this._getRequestDefaults();
           this._getManagerHierarchy();
         },
@@ -1466,14 +1481,17 @@ sap.ui.define(
           debugger;
           var sDrfid = oEvent.getParameter("arguments").Drfid;
           var oApplicationSettings = SharedData.getApplicationSettings();
-          var sDrfso = oApplicationSettings && oApplicationSettings.CurrentDrfso ? oApplicationSettings.CurrentDrfso : null;
+          var sDrfso =
+            oApplicationSettings && oApplicationSettings.CurrentDrfso
+              ? oApplicationSettings.CurrentDrfso
+              : null;
           var oViewModel = this.getModel("employeeRequestView");
           this._sDrfid = sDrfid;
           this._sNewRequest = false;
           this._setChangeListeners();
-          
+
           this._updateApplicationSettings();
-          
+
           // this._getRequest(sDrfid);
           this._loadRequestDataAndNavigate(sDrfid);
           this._getFormActions(sDrfid, sDrfso);
@@ -1481,13 +1499,21 @@ sap.ui.define(
           this._getManagerHierarchy();
           this._getCandidateList(sDrfid);
           this.getModel("employeeRequestView")
-          .bindProperty("/request/Drfbl")
-          .attachChange(
-            function (oEvent) {
-              var sDrfbn = oEvent.getSource().getValue();
-              this._handleConryChange(sDrfbn);
-            }.bind(this)
-          );
+            .bindProperty("/request/Drfbl")
+            .attachChange(
+              function (oEvent) {
+                var sDrfbn = oEvent.getSource().getValue();
+                this._handleConryChange(sDrfbn);
+              }.bind(this)
+            );
+          this.getModel("employeeRequestView")
+            .bindProperty("/requestDocument/Zbelt")
+            .attachChange(
+              function (oEvent) {
+                var sZbeln = oEvent.getSource().getValue();
+                this._handleZbelnChange(sZbeln);
+              }.bind(this)
+            );
         },
         _onCandidateListMatched: function (oEvent) {
           var oListModel = this.getModel("candidateListModel");
@@ -1660,15 +1686,26 @@ sap.ui.define(
           });
         },
         _handleConryChange: function (sDrfbn) {
-          debugger;
           var oDocComboBox = this.byId("idDocumentNameComboBox");
 
           if (sDrfbn && oDocComboBox) {
             var aFilters = [new Filter("Selky", FilterOperator.EQ, sDrfbn)];
-  
+
             var oBinding = oDocComboBox.getBinding("items");
             oBinding.filter(aFilters);
-         }
+          }
+        },
+        _handleZbelnChange: function (sZbeln) {
+          debugger;
+          var oZbelnComboBox = sap.ui.core.Fragment.byId(
+            "UploadDocumentFragment",
+            "idZbelnComboBox"
+          );
+          if (sZbeln && oZbelnComboBox) {
+            var aFilters = [new Filter("Selky", FilterOperator.EQ, sZbeln)];
+            var oBinding = oZbelnComboBox.getBinding("items");
+            oBinding.filter(aFilters);
+          }
         },
         _getManagerHierarchy: function () {
           var oViewModel = this.getModel("employeeRequestView");
@@ -1833,7 +1870,6 @@ sap.ui.define(
         },
 
         _getFormActions: function (sDrfid, sDrfso) {
-          debugger;
           console.log("Received Drfso:", sDrfso);
           var oButton = this.byId("idFormActionsButton");
           var oModel = this.getModel();
@@ -1856,7 +1892,8 @@ sap.ui.define(
                 aActions = oSettings.Edit
                   ? oData.results
                   : _.remove(oData.results, function (oLine) {
-                    return (oLine.Drfbs === "S" && sDrfso === "K01") || (oLine.Drfbs !== "S")
+                      // return (oLine.Drfbs === "S" && sDrfso === "K01") || (oLine.Drfbs !== "S")
+                      return oLine.Drfbs !== "S";
                     });
 
                 if (aActions.length > 0) {
@@ -2195,18 +2232,12 @@ sap.ui.define(
               urlParameters: oUrlParameters,
               success: function (oData, oResponse) {
                 oThis._closeBusyFragment();
-                oThis._sweetToast(
-                  oThis.getText("POOL_ASSIGN_SUCCESSFUL"),
-                  "S"
-                );
+                oThis._sweetToast(oThis.getText("POOL_ASSIGN_SUCCESSFUL"), "S");
                 oModel.refresh();
               },
               error: function (oError) {
                 oThis._closeBusyFragment();
-                oThis._sweetToast(
-                  oThis.getText("POOL_ASSIGN_FAILED"),
-                  "E"
-                );
+                oThis._sweetToast(oThis.getText("POOL_ASSIGN_FAILED"), "E");
               },
             });
           };
@@ -2370,24 +2401,26 @@ sap.ui.define(
           var oModel = this.getModel();
           var oViewModel = this.getModel("employeeRequestView");
           var oRequest = oViewModel.getProperty("/request");
-          var oRequestEmployee = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet");
+          var oRequestEmployee = oViewModel.getProperty(
+            "/dataList/DocumentRequestEmployeeSet"
+          );
           var that = this;
-  
+
           if (!oRequest.Drfrt || !oRequest.Drfbl || !oRequest.Drfbn) {
             this._sweetToast(this.getText("FILL_IN_ALL_REQUIRED_FIELDS"), "E");
             return;
           }
-          
+
           this._openEmployeeChangeSearchDialog(oModel, oViewModel);
         },
-        
+
         /**
          * Opens employee change search dialog
          * @private
          */
-        _openEmployeeChangeSearchDialog: function(oModel, oViewModel) {
+        _openEmployeeChangeSearchDialog: function (oModel, oViewModel) {
           var that = this;
-          
+
           oModel.read("/ValueHelpSet", {
             filters: [
               new sap.ui.model.Filter(
@@ -2398,7 +2431,7 @@ sap.ui.define(
             ],
             success: function (oData) {
               oViewModel.setProperty("/changeList", oData.results);
-      
+
               if (!that._oEmployeeChangeSearchDialog) {
                 that._oEmployeeChangeSearchDialog = sap.ui.xmlfragment(
                   "EmployeeSearchChangeFragment",
@@ -2412,7 +2445,7 @@ sap.ui.define(
             error: function () {},
           });
         },
-        onCloseButtonEmployeeChangePress:function(){
+        onCloseButtonEmployeeChangePress: function () {
           debugger;
           if (this._oEmployeeChangeSearchDialog) {
             this._oEmployeeChangeSearchDialog.close();
@@ -2522,7 +2555,7 @@ sap.ui.define(
         //     }
         //   }
         // },
-        
+
         // onSelectEmployeeFromDialog: function (oEvent) {
         //   var oTable = sap.ui.core.Fragment.byId(
         //     "EmployeeChangeSearchDialog",
@@ -2637,13 +2670,41 @@ sap.ui.define(
             that._sweetToast(that.getText("PLEASE_SELECT_EMPLOYEE"), "W");
             return;
           }
+          if (oRequestData.Drfrt === "01") {
+            var bValidationFailed = false;
+
+            for (var i = 0; i < aSelectedEmployees.length; i++) {
+              var oEmployee = aSelectedEmployees[i];
+
+              if (
+                !oEmployee.Drfrs ||
+                oEmployee.Drfrs === "" ||
+                oEmployee.Drfrs === "0"
+              ) {
+                bValidationFailed = true;
+                break;
+              }
+            }
+
+            if (bValidationFailed) {
+              sap.m.MessageBox.warning(
+                "Lütfen talep gerekçesi alanını doldurunuz.",
+                {
+                  title: "Eksik Bilgi",
+                  actions: [sap.m.MessageBox.Action.OK],
+                  emphasizedAction: sap.m.MessageBox.Action.OK,
+                }
+              );
+              return;
+            }
+          }
 
           var aEmployeeIds = aSelectedEmployees.map(function (oEmployee) {
             return {
               Pernr: oEmployee.Pernr,
-              Renwl: oEmployee.Renwl || "", 
+              Renwl: oEmployee.Renwl || "",
               Rendc: oEmployee.Rendc || "",
-              Drfrs: oEmployee.Drfrs || ""
+              Drfrs: oEmployee.Drfrs || "",
             };
           });
           oRequestData.DocumentRequestEmployeeSet = aEmployeeIds;
@@ -2653,8 +2714,11 @@ sap.ui.define(
 
           oModel.create("/DocumentRequestFormSet", oRequestData, {
             success: function (oData, oResponse) {
-              that._sweetToast("Talep başarıyla kaydedildi. Personele evrak eklemek için talep detayına gidiniz.", "S");
-              setTimeout(function() {
+              that._sweetToast(
+                "Talep başarıyla kaydedildi. Personele evrak eklemek için talep detayına gidiniz.",
+                "S"
+              );
+              setTimeout(function () {
                 that.getRouter().navTo("mngrequestlist");
               }, 3000);
               oViewModel.setProperty("/request", {});
@@ -2670,6 +2734,14 @@ sap.ui.define(
           debugger;
           var oRequestModel = this.getModel("employeeRequestView");
           var oRequestData = oRequestModel.getProperty("/request");
+          var oRequestDrfst = oRequestModel.getProperty("/request/Drfst");
+          console.log("oRequestDrfst", oRequestDrfst);
+          oRequestDrfst = oRequestDrfst === "030" ? true : false;
+          oRequestModel.setProperty(
+            "/applicationSettings/VisibleMode",
+            oRequestDrfst
+          );
+
           var oSource = oEvent.getSource();
 
           var oBindingContext = oSource
@@ -2699,12 +2771,161 @@ sap.ui.define(
 
           this._requestActions.openBy(oSource);
         },
+        // onAddDocument: function (oEvent) {
+        //   debugger;
+        //   var oModel = this.getModel();
+        //   var oRowData = this._selectedRowData;
+        //   var oViewModel = this.getModel("employeeRequestView");
+        //   oViewModel.setProperty("/showComboBox", true);
+        //   oViewModel.setProperty("/selectedDocumentType", "");
+        //   oViewModel.setProperty("/selectedDocumentTypeText", "");
+        //   oViewModel.setProperty("/downloadButtonVisible", false);
+        //   oViewModel.setProperty("/valueHelpList/Drfev", []);
+
+        //   oViewModel.setProperty("/attachmentFilters/Pernr", oRowData.Pernr);
+        //   oViewModel.setProperty("/attachmentFilters/Drfid", oRowData.Drfid);
+        //   var sDrfrt = oViewModel.getProperty("/request/Drfrt");
+        //   var sDrfbl = oViewModel.getProperty("/request/Drfbl");
+        //   var sDrfbn = oViewModel.getProperty("/request/Drfbn");
+
+        //   console.log(sDrfrt, sDrfbl, sDrfbn);
+
+        //   if (!oViewModel.getProperty("/valueHelpList")) {
+        //     oViewModel.setProperty("/valueHelpList", {});
+        //   }
+
+        //   var aFilters = [
+        //     new Filter("Selk3", FilterOperator.EQ, sDrfrt),
+        //     new Filter("Selky", FilterOperator.EQ, sDrfbl),
+        //     new Filter("Selk2", FilterOperator.EQ, sDrfbn),
+        //     new Filter("Drfvh", FilterOperator.EQ, "Drfev")
+        //   ];
+
+        //   var that = this;
+
+        //   oModel.read("/ValueHelpSet", {
+        //     filters: aFilters,
+        //     success: function (oData) {
+        //       oViewModel.setProperty("/valueHelpList/Drfev", oData.results);
+        //       var oTable = sap.ui.getCore().byId("idCandidateAttachmentList");
+        //       var aUploadedDocTypes = [];
+        //       var aAvailableDocTypes = [];
+
+        //       // Get all available document types from oData.results
+        //       if (oData.results && oData.results.length > 0) {
+        //           aAvailableDocTypes = oData.results.map(function(item) {
+        //               return item.Fldky; // Document type key
+        //           });
+        //       }
+
+        //       // Get uploaded document types from table
+        //       if (oTable) {
+        //           var aItems = oTable.getItems();
+        //           for (var i = 0; i < aItems.length; i++) {
+        //               var oContext = aItems[i].getBindingContext();
+        //               if (oContext) {
+        //                   var oItemData = oContext.getObject();
+        //                   if (oItemData.Zevrt) {
+        //                       aUploadedDocTypes.push(oItemData.Zevrt);
+        //                   }
+        //               }
+        //           }
+        //       }
+
+        //       // Check if all document types are already uploaded
+        //       var bAllDocumentsUploaded = true;
+        //       var aRemainingDocTypes = [];
+
+        //       for (var j = 0; j < aAvailableDocTypes.length; j++) {
+        //           var sDocType = aAvailableDocTypes[j];
+        //           if (aUploadedDocTypes.indexOf(sDocType) === -1) {
+        //               bAllDocumentsUploaded = false;
+        //               aRemainingDocTypes.push(sDocType);
+        //           }
+        //       }
+
+        //       if (bAllDocumentsUploaded && aAvailableDocTypes.length > 0) {
+        //           // All documents are uploaded, set flag and continue to open dialog
+        //           oViewModel.setProperty("/showComboBox", false);
+        //       } else {
+        //           oViewModel.setProperty("/showComboBox", true);
+        //       }
+
+        //       // Filter available document types to show only remaining ones
+        //       var aFilteredDocTypes;
+        //       if (bAllDocumentsUploaded && aAvailableDocTypes.length > 0) {
+        //           aFilteredDocTypes = [];
+        //           oViewModel.setProperty("/showComboBox", false);
+        //       } else {
+        //           aFilteredDocTypes = oData.results.filter(function(item) {
+        //               return aRemainingDocTypes.indexOf(item.Fldky) !== -1;
+        //           });
+        //           oViewModel.setProperty("/showComboBox", true);
+        //       }
+
+        //       oViewModel.setProperty("/valueHelpList/Drfev", aFilteredDocTypes);
+        //       console.log("Data loaded successfully", oData);
+        //       console.log("valueHelpList:", oViewModel.getProperty("/valueHelpList"));
+
+        //       oViewModel.setProperty("/downloadButtonVisible", false);
+        //       oViewModel.setProperty("/selectedDocumentType", "");
+
+        //       if (!that._documentAddDialog) {
+        //         that._documentAddDialog = sap.ui.xmlfragment(
+        //           "com.bmc.hcm.drf.zhcmuxdrf.fragment.DocumentAddDialog",
+        //           that
+        //         );
+        //         that.getView().addDependent(that._documentAddDialog);
+        //       }
+
+        //       that._documentAddDialog.open();
+
+        //       setTimeout(function () {
+        //         var oTable = sap.ui.getCore().byId("idCandidateAttachmentList");
+        //         if (oTable && oRowData) {
+        //           var aTableFilters = [
+        //             new sap.ui.model.Filter(
+        //               "Pernr",
+        //               sap.ui.model.FilterOperator.EQ,
+        //               oRowData.Pernr
+        //             ),
+        //             new sap.ui.model.Filter(
+        //               "Drfid",
+        //               sap.ui.model.FilterOperator.EQ,
+        //               oRowData.Drfid
+        //             ),
+        //             new sap.ui.model.Filter(
+        //               "Attyp",
+        //               sap.ui.model.FilterOperator.EQ,
+        //               '1'
+        //             ),
+        //           ];
+
+        //           var oBinding = oTable.getBinding("items");
+        //           if (oBinding) {
+        //             oBinding.filter(aTableFilters);
+        //           }
+        //         }
+        //       }, 300);
+        //     },
+        //     error: function (oError) {
+        //       console.error("ValueHelpSet read error:", oError);
+        //       that._sweetToast("Evrak türleri yüklenirken hata oluştu", "E");
+        //     },
+        //   });
+        // },
         onAddDocument: function (oEvent) {
           debugger;
           var oModel = this.getModel();
           var oRowData = this._selectedRowData;
           var oViewModel = this.getModel("employeeRequestView");
-          
+
+          oViewModel.setProperty("/showComboBox", true);
+          oViewModel.setProperty("/selectedDocumentType", "");
+          oViewModel.setProperty("/selectedDocumentTypeText", "");
+          oViewModel.setProperty("/downloadButtonVisible", false);
+          oViewModel.setProperty("/valueHelpList/Drfev", []);
+
           oViewModel.setProperty("/attachmentFilters/Pernr", oRowData.Pernr);
           oViewModel.setProperty("/attachmentFilters/Drfid", oRowData.Drfid);
           var sDrfrt = oViewModel.getProperty("/request/Drfrt");
@@ -2716,64 +2937,70 @@ sap.ui.define(
           if (!oViewModel.getProperty("/valueHelpList")) {
             oViewModel.setProperty("/valueHelpList", {});
           }
-          
+
           var aFilters = [
             new Filter("Selk3", FilterOperator.EQ, sDrfrt),
             new Filter("Selky", FilterOperator.EQ, sDrfbl),
             new Filter("Selk2", FilterOperator.EQ, sDrfbn),
-            new Filter("Drfvh", FilterOperator.EQ, "Drfev")
+            new Filter("Drfvh", FilterOperator.EQ, "Drfev"),
           ];
-          
+
           var that = this;
-          
+
           oModel.read("/ValueHelpSet", {
             filters: aFilters,
             success: function (oData) {
               oViewModel.setProperty("/valueHelpList/Drfev", oData.results);
-              
-              console.log("Data loaded successfully", oData);
-              console.log("valueHelpList:", oViewModel.getProperty("/valueHelpList"));
-   
-              oViewModel.setProperty("/downloadButtonVisible", false);
-              oViewModel.setProperty("/selectedDocumentType", "");
-              
-              if (!that._documentAddDialog) {
-                that._documentAddDialog = sap.ui.xmlfragment(
-                  "com.bmc.hcm.drf.zhcmuxdrf.fragment.DocumentAddDialog",
-                  that
-                );
-                that.getView().addDependent(that._documentAddDialog);
-              }
-              
-              that._documentAddDialog.open();
-              
-              setTimeout(function () {
-                var oTable = sap.ui.getCore().byId("idCandidateAttachmentList");
-                if (oTable && oRowData) {
-                  var aTableFilters = [
-                    new sap.ui.model.Filter(
-                      "Pernr",
-                      sap.ui.model.FilterOperator.EQ,
-                      oRowData.Pernr
-                    ),
-                    new sap.ui.model.Filter(
-                      "Drfid",
-                      sap.ui.model.FilterOperator.EQ,
-                      oRowData.Drfid
-                    ),
-                    new sap.ui.model.Filter(
-                      "Attyp",
-                      sap.ui.model.FilterOperator.EQ,
-                      '1'
-                    ),
-                  ];
 
-                  var oBinding = oTable.getBinding("items");
-                  if (oBinding) {
-                    oBinding.filter(aTableFilters);
+              var oTable = sap.ui.getCore().byId("idCandidateAttachmentList");
+              var aUploadedDocTypes = [];
+              var aAvailableDocTypes = [];
+
+              if (oData.results && oData.results.length > 0) {
+                aAvailableDocTypes = oData.results.map(function (item) {
+                  return item.Fldky;
+                });
+              }
+
+              var aAttachmentFilters = [
+                new Filter("Pernr", FilterOperator.EQ, oRowData.Pernr),
+                new Filter("Drfid", FilterOperator.EQ, oRowData.Drfid),
+                new Filter("Attyp", FilterOperator.EQ, "1"),
+              ];
+
+              oModel.read("/EmployeeAttachmentSet", {
+                filters: aAttachmentFilters,
+                success: function (oAttachmentData) {
+                  if (
+                    oAttachmentData.results &&
+                    oAttachmentData.results.length > 0
+                  ) {
+                    aUploadedDocTypes = oAttachmentData.results
+                      .map(function (item) {
+                        return item.Zevrt;
+                      })
+                      .filter(function (item) {
+                        return item;
+                      });
                   }
-                }
-              }, 300);
+
+                  that._processDocumentTypeCheck(
+                    oData,
+                    aUploadedDocTypes,
+                    aAvailableDocTypes,
+                    oRowData
+                  );
+                },
+                error: function (oError) {
+                  console.error("EmployeeAttachmentSet read error:", oError);
+                  that._processDocumentTypeCheck(
+                    oData,
+                    [],
+                    aAvailableDocTypes,
+                    oRowData
+                  );
+                },
+              });
             },
             error: function (oError) {
               console.error("ValueHelpSet read error:", oError);
@@ -2781,36 +3008,131 @@ sap.ui.define(
             },
           });
         },
-        
-        onUploadDocument: function(oEvent) {
+
+        _processDocumentTypeCheck: function (
+          oData,
+          aUploadedDocTypes,
+          aAvailableDocTypes,
+          oRowData
+        ) {
+          var oViewModel = this.getModel("employeeRequestView");
+          var that = this;
+
+          var bAllDocumentsUploaded = true;
+          var aRemainingDocTypes = [];
+
+          for (var j = 0; j < aAvailableDocTypes.length; j++) {
+            var sDocType = aAvailableDocTypes[j];
+            if (aUploadedDocTypes.indexOf(sDocType) === -1) {
+              bAllDocumentsUploaded = false;
+              aRemainingDocTypes.push(sDocType);
+            }
+          }
+
+          var aFilteredDocTypes;
+          if (bAllDocumentsUploaded && aAvailableDocTypes.length > 0) {
+            aFilteredDocTypes = [];
+            oViewModel.setProperty("/showComboBox", false);
+          } else {
+            aFilteredDocTypes = oData.results.filter(function (item) {
+              return aRemainingDocTypes.indexOf(item.Fldky) !== -1;
+            });
+            oViewModel.setProperty("/showComboBox", true);
+          }
+
+          oViewModel.setProperty("/valueHelpList/Drfev", aFilteredDocTypes);
+
+          console.log("Data loaded successfully", oData);
+          console.log(
+            "valueHelpList:",
+            oViewModel.getProperty("/valueHelpList")
+          );
+          console.log("Remaining document types:", aRemainingDocTypes);
+          console.log("Uploaded document types:", aUploadedDocTypes);
+
+          oViewModel.setProperty("/downloadButtonVisible", false);
+          oViewModel.setProperty("/selectedDocumentType", "");
+
+          if (!that._documentAddDialog) {
+            that._documentAddDialog = sap.ui.xmlfragment(
+              "com.bmc.hcm.drf.zhcmuxdrf.fragment.DocumentAddDialog",
+              that
+            );
+            that.getView().addDependent(that._documentAddDialog);
+          }
+
+          that._documentAddDialog.setModel(oViewModel, "employeeRequestView");
+          that._documentAddDialog.open();
+
+          setTimeout(function () {
+            var oTable = sap.ui.getCore().byId("idCandidateAttachmentList");
+            if (oTable && oRowData) {
+              var oBinding = oTable.getBinding("items");
+              if (oBinding) {
+                oBinding.filter([]);
+              }
+
+              var aTableFilters = [
+                new sap.ui.model.Filter(
+                  "Pernr",
+                  sap.ui.model.FilterOperator.EQ,
+                  oRowData.Pernr
+                ),
+                new sap.ui.model.Filter(
+                  "Drfid",
+                  sap.ui.model.FilterOperator.EQ,
+                  oRowData.Drfid
+                ),
+                new sap.ui.model.Filter(
+                  "Attyp",
+                  sap.ui.model.FilterOperator.EQ,
+                  "1"
+                ),
+              ];
+
+              if (oBinding) {
+                oBinding.filter(aTableFilters);
+                oBinding.refresh(true);
+              }
+            }
+          }, 300);
+        },
+
+        onUploadDocument: function (oEvent) {
           debugger;
+          var oRequestModel = this.getModel("employeeRequestView");
+          var oRequestData = oRequestModel.getProperty("/request");
           var oRowData = this._selectedRowData;
           var that = this;
-          
+
           if (!this._uploadDocumentDialog) {
             this._uploadDocumentDialog = sap.ui.xmlfragment(
+              "UploadDocumentFragment",
               "com.bmc.hcm.drf.zhcmuxdrf.fragment.UploadDocumentDialog",
               this
             );
             this.getView().addDependent(this._uploadDocumentDialog);
           }
-          
+
           // Seçili personel bilgilerini dialog'a aktar
           var oViewModel = this.getModel("employeeRequestView");
           oViewModel.setProperty("/uploadFilters/Pernr", oRowData.Pernr);
           oViewModel.setProperty("/uploadFilters/Drfid", oRowData.Drfid);
           oViewModel.setProperty("/uploadFilters/Ename", oRowData.Ename);
-          
+          oViewModel.setProperty("/request/Drfbl", oRequestData.Drfbl);
+          oViewModel.setProperty("/requestDocument/Zbelt", oRequestData.Drfbl);
+          oViewModel.setProperty("/requestDocument/Zbeln", oRequestData.Drfbn);
+          this._handleZbelnChange(oRequestData.Drfbl);
           this._uploadDocumentDialog.open();
         },
-        
-        onViewDocument: function(oEvent) {
+
+        onViewDocument: function (oEvent) {
           debugger;
           var oModel = this.getModel();
           var oViewModel = this.getModel("employeeRequestView");
           var oRowData = this._selectedRowData;
           var that = this;
-          
+
           if (!this._viewDocumentDialog) {
             this._viewDocumentDialog = sap.ui.xmlfragment(
               "com.bmc.hcm.drf.zhcmuxdrf.fragment.ViewDocumentDialog",
@@ -2818,48 +3140,57 @@ sap.ui.define(
             );
             this.getView().addDependent(this._viewDocumentDialog);
           }
-        
+
           var sPath = oModel.createKey("/DocumentListSet", {
             Drfid: oRowData.Drfid,
             Pernr: oRowData.Pernr,
-            Attyp: '2'
+            Attyp: "2",
           });
-          
+
           oViewModel.setProperty("/viewFilters/Ename", oRowData.Ename);
-          
+
           // Önce boş listeyi set et - böylece dialog her zaman açılır
           oViewModel.setProperty("/documentList", []);
-          
+
           // Dialog'ı hemen aç
           that._viewDocumentDialog.open();
-          
+
           // Belgeleri yükle
           oModel.read(sPath, {
-            success: function(oData) {
+            success: function (oData) {
               var aData = Array.isArray(oData) ? oData : [oData];
               oViewModel.setProperty("/documentList", aData);
             },
-            error: function(oError) {
+            error: function (oError) {
               oViewModel.setProperty("/documentList", []);
               // that._callMessageToast("Belge bulunamadı.", "W");
-            }
+            },
           });
         },
-        onDocumentUploadPress: function(){
+        onDocumentUploadPress: function () {
           debugger;
           var that = this;
           var oRowData = this._selectedRowData;
           var attyp2Count = 0;
-          if (oRowData && oRowData.EmployeeAttachmentSet && oRowData.EmployeeAttachmentSet.results) {
-            attyp2Count = oRowData.EmployeeAttachmentSet.results.filter(function(attachment) {
-              return parseInt(attachment.Attyp) === 2;
-            }).length;
+          if (
+            oRowData &&
+            oRowData.EmployeeAttachmentSet &&
+            oRowData.EmployeeAttachmentSet.results
+          ) {
+            attyp2Count = oRowData.EmployeeAttachmentSet.results.filter(
+              function (attachment) {
+                return parseInt(attachment.Attyp) === 2;
+              }
+            ).length;
           }
 
           if (attyp2Count >= 1) {
-            that._sweetToast("Bu evrak tipinden en fazla bir evrak ekleyebilirsiniz.", "W");
+            that._sweetToast(
+              "Çalışanın belgesi zaten mevcut. En fazla bir belge yükleyebilirsiniz.",
+              "W"
+            );
             return;
-           }
+          }
           var oModel = this.getView().getModel();
           var oEmployeeModel = this.getView().getModel("employeeRequestView");
           var oRequestDocument = oEmployeeModel.getProperty("/requestDocument");
@@ -2874,11 +3205,14 @@ sap.ui.define(
             Ztarh: oRequestDocument.Ztarh,
             Zgecr: oRequestDocument.Zgecr,
             Zznot: oRequestDocument.Zznot,
-          }
+          };
           var oFormToValidate =
-          sap.ui.getCore().byId("idUploadAttachmentForm2") || this.byId("idUploadAttachmentForm2"),
-          oEmployeeModel = this.getModel("employeeRequestView"),
-          oModel = this.getModel();
+              sap.ui.core.Fragment.byId(
+                "UploadDocumentFragment",
+                "idUploadAttachmentForm2"
+              ) || this.byId("idUploadAttachmentForm2"),
+            oEmployeeModel = this.getModel("employeeRequestView"),
+            oModel = this.getModel();
           if (!this._validateForm(oFormToValidate)) {
             this._sweetToast(this.getText("FILL_IN_ALL_REQUIRED_FIELDS"), "W");
             return;
@@ -2896,19 +3230,18 @@ sap.ui.define(
             },
           });
         },
-        onAttachmentDocumentUploadPress:function(oEvent){
+        onAttachmentDocumentUploadPress: function (oEvent) {
           debugger;
-          var oFileUploader = sap.ui.getCore().byId("idAttachmentFileUploaderDocument");
+          var oFileUploader = sap.ui
+            .getCore()
+            .byId("idAttachmentFileUploaderDocument");
           var oModel = this.getModel();
           var oProcess = SharedData.getCandidateProcess();
           var oRowData = this._selectedRowData;
           // requestDocument verilerini al
 
           if (!oFileUploader.getValue()) {
-            this._sweetToast(
-              this.getText("FILE_SELECTION_REQUIRED"),
-              "W"
-            );
+            this._sweetToast(this.getText("FILE_SELECTION_REQUIRED"), "W");
             return;
           }
 
@@ -2943,9 +3276,9 @@ sap.ui.define(
             "',Drfid='" +
             oRowData.Drfid +
             "',Attyp='" +
-            '2' +
+            "2" +
             "',Zevrt='" +
-            '' +
+            "" +
             "')/EmployeeAttachmentSet";
 
           oFileUploader.setUploadUrl(sPath);
@@ -2960,12 +3293,11 @@ sap.ui.define(
           var oModel = this.getModel();
           var oProcess = SharedData.getCandidateProcess();
           var oRowData = this._selectedRowData;
-          var oDocumentType = this.getModel("employeeRequestView").getProperty("/selectedDocumentType");
+          var oDocumentType = this.getModel("employeeRequestView").getProperty(
+            "/selectedDocumentType"
+          );
           if (!oFileUploader.getValue()) {
-            this._sweetToast(
-              this.getText("FILE_SELECTION_REQUIRED"),
-              "W"
-            );
+            this._sweetToast(this.getText("FILE_SELECTION_REQUIRED"), "W");
             return;
           }
 
@@ -3000,7 +3332,7 @@ sap.ui.define(
             "',Drfid='" +
             oRowData.Drfid +
             "',Attyp='" +
-            '1' +
+            "1" +
             "',Zevrt='" +
             oDocumentType +
             "')/EmployeeAttachmentSet";
@@ -3011,8 +3343,11 @@ sap.ui.define(
 
           oFileUploader.upload();
         },
-        onAttachmentDocumentUploadComplete:function(oEvent){
-          var oFileUploader = sap.ui.getCore().byId("idAttachmentFileUploaderDocument");
+        onAttachmentDocumentUploadComplete: function (oEvent) {
+          debugger;
+          var oFileUploader = sap.ui
+            .getCore()
+            .byId("idAttachmentFileUploaderDocument");
           oFileUploader.destroyHeaderParameters();
           oFileUploader.clear();
 
@@ -3021,7 +3356,7 @@ sap.ui.define(
           this._closeBusyFragment();
           if (sStatus == "201" || sStatus == "200") {
             this._sweetToast(this.getText("FILE_UPLOAD_SUCCESS"), "S");
-            // this._oUploadAttachmentDialog.close();
+            // this._documentAddDialog.close();
           } else {
             this._sweetToast(
               this.getText("FILE_UPLOAD_ERROR", [sResponse]),
@@ -3040,7 +3375,7 @@ sap.ui.define(
           this._closeBusyFragment();
           if (sStatus == "201" || sStatus == "200") {
             this._sweetToast(this.getText("FILE_UPLOAD_SUCCESS"), "S");
-            // this._oUploadAttachmentDialog.close();
+            this._documentAddDialog.close();
           } else {
             this._sweetToast(
               this.getText("FILE_UPLOAD_ERROR", [sResponse]),
@@ -3057,7 +3392,7 @@ sap.ui.define(
             "W"
           );
         },
-        onValueHelpSetNameComboBoxChange:function(oEvent){
+        onValueHelpSetNameComboBoxChange: function (oEvent) {
           debugger;
           var oComboBox = oEvent.getSource();
           var sSelectedKey = oComboBox.getSelectedKey();
@@ -3069,36 +3404,41 @@ sap.ui.define(
 
             var oBinding = oCityComboBox.getBinding("items");
             oBinding.filter(aFilters);
-        }
+          }
         },
-        onValueHelpSetName2ComboBoxChange:function(oEvent){
+        onValueHelpSetName2ComboBoxChange: function (oEvent) {
           debugger;
           var oName2 = oEvent.getSource();
           var sSelectedKeys = oName2.getSelectedKey();
-          var oName2ComboBox = this.byId("idDocumentName2ComboBox") ? this.byId("idDocumentName2ComboBox") : sap.ui.getCore().byId("idDocumentName2ComboBox");
+          var oName2ComboBox = this.byId("idDocumentName2ComboBox")
+            ? this.byId("idDocumentName2ComboBox")
+            : sap.ui.getCore().byId("idDocumentName2ComboBox");
 
           if (oName2ComboBox) {
             var aFilters = [];
-            aFilters.push(new Filter("Selky", FilterOperator.EQ, sSelectedKeys));
+            aFilters.push(
+              new Filter("Selky", FilterOperator.EQ, sSelectedKeys)
+            );
 
             var oBinding = oName2ComboBox.getBinding("items");
             oBinding.filter(aFilters);
-        }
+          }
         },
-        
-        onDrfrsComboBoxChange: function(oEvent) {
+
+        onDrfrsComboBoxChange: function (oEvent) {
           debugger;
           var oComboBox = oEvent.getSource();
           var sSelectedKey = oComboBox.getSelectedKey();
-          
+
           // Hangi satırın ComboBox'ı değiştirildiğini bul
           var oBindingContext = this._getCurrentEmployeeBindingContext(oEvent);
           if (oBindingContext) {
             var oModel = this.getModel("employeeRequestView");
-            var aSelectedEmployees = oModel.getProperty("/selectedEmployees") || [];
+            var aSelectedEmployees =
+              oModel.getProperty("/selectedEmployees") || [];
             var sPath = oBindingContext.getPath();
             var iIndex = parseInt(sPath.split("/")[2]);
-            
+
             aSelectedEmployees[iIndex].Drfrs = sSelectedKey;
             oModel.setProperty("/selectedEmployees", aSelectedEmployees);
           }
@@ -3117,21 +3457,22 @@ sap.ui.define(
             ])
           );
         },
-        onNopeMenuItemPress: function(oEvent) {
+        onNopeMenuItemPress: function (oEvent) {
           debugger;
           var oBindingContext = this._getCurrentEmployeeBindingContext(oEvent);
           if (oBindingContext) {
             var oModel = this.getModel("employeeRequestView");
-            var aSelectedEmployees = oModel.getProperty("/selectedEmployees") || [];
+            var aSelectedEmployees =
+              oModel.getProperty("/selectedEmployees") || [];
             var sPath = oBindingContext.getPath();
             var iIndex = parseInt(sPath.split("/")[2]);
-            
+
             aSelectedEmployees[iIndex].Renwl = "2";
             oModel.setProperty("/selectedEmployees", aSelectedEmployees);
-            
+
             this._currentEmployeeIndex = iIndex;
             oModel.setProperty("/currentEmployee", aSelectedEmployees[iIndex]);
-            
+
             // Dialog'u aç
             if (!this._renewalRequestDialog) {
               this._renewalRequestDialog = sap.ui.xmlfragment(
@@ -3143,133 +3484,162 @@ sap.ui.define(
             this._renewalRequestDialog.open();
           }
         },
-        
-        onRenewalReasonConfirm: function(oEvent) {
+
+        onRenewalReasonConfirm: function (oEvent) {
           debugger;
           var oModel = this.getModel("employeeRequestView");
-          var sReason = sap.ui.getCore().byId("renewalChangeReasonTextArea").getValue();
-          
+          var sReason = sap.ui
+            .getCore()
+            .byId("renewalChangeReasonTextArea")
+            .getValue();
+
           if (!sReason || sReason.trim() === "") {
             this._sweetToast("Lütfen gerekçe giriniz", "E");
             return;
           }
-          
+
           if (this._currentEmployeeIndex !== undefined) {
-            var aSelectedEmployees = oModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
-            aSelectedEmployees[this._currentEmployeeIndex].Rendc = sReason.trim();
-            oModel.setProperty("/dataList/DocumentRequestEmployeeSet", aSelectedEmployees);
+            var aSelectedEmployees =
+              oModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
+            aSelectedEmployees[this._currentEmployeeIndex].Rendc =
+              sReason.trim();
+            oModel.setProperty(
+              "/dataList/DocumentRequestEmployeeSet",
+              aSelectedEmployees
+            );
             oModel.refresh(true);
           }
-          
+
           this._renewalRequestDialog.close();
           this._currentEmployeeIndex = undefined;
         },
-        onRenewalChangeReasonConfirm: function(){
+        onRenewalChangeReasonConfirm: function () {
           var oModel = this.getModel("employeeRequestView");
-          var sReason = sap.ui.getCore().byId("renewalReasonTextArea").getValue();
-          
+          var sReason = sap.ui
+            .getCore()
+            .byId("renewalReasonTextArea")
+            .getValue();
+
           if (!sReason || sReason.trim() === "") {
             this._sweetToast("Lütfen gerekçe giriniz", "E");
             return;
           }
-          
+
           if (this._currentEmployeeIndex !== undefined) {
-            var aSelectedEmployees = oModel.getProperty("/selectedEmployees") || [];
-            aSelectedEmployees[this._currentEmployeeIndex].Rendc = sReason.trim();
+            var aSelectedEmployees =
+              oModel.getProperty("/selectedEmployees") || [];
+            aSelectedEmployees[this._currentEmployeeIndex].Rendc =
+              sReason.trim();
             oModel.setProperty("selectedEmployees", aSelectedEmployees);
             oModel.refresh(true);
           }
-          
+
           this._renewalRequestDialog.close();
           this._currentEmployeeIndex = undefined;
         },
-        
-        onRenewalReasonCancel: function(oEvent) {
+
+        onRenewalReasonCancel: function (oEvent) {
           debugger;
           if (this._currentEmployeeIndex !== undefined) {
             var oModel = this.getModel("employeeRequestView");
-            var aSelectedEmployees = oModel.getProperty("/selectedEmployees") || [];
+            var aSelectedEmployees =
+              oModel.getProperty("/selectedEmployees") || [];
             aSelectedEmployees[this._currentEmployeeIndex].Renwl = "";
             aSelectedEmployees[this._currentEmployeeIndex].Rendc = "";
             oModel.setProperty("/selectedEmployees", aSelectedEmployees);
-  
+
             oModel.refresh(true);
           }
-          
+
           this._renewalRequestDialog.close();
           this._currentEmployeeIndex = undefined;
         },
-        onRenewalChangeReasonCancel:function(){
+        onRenewalChangeReasonCancel: function () {
           if (this._currentEmployeeIndex !== undefined) {
             var oModel = this.getModel("employeeRequestView");
-            var aSelectedEmployees = oModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
+            var aSelectedEmployees =
+              oModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
             aSelectedEmployees[this._currentEmployeeIndex].Renwl = "";
             aSelectedEmployees[this._currentEmployeeIndex].Rendc = "";
-            oModel.setProperty("/dataList/DocumentRequestEmployeeSet", aSelectedEmployees);
-  
+            oModel.setProperty(
+              "/dataList/DocumentRequestEmployeeSet",
+              aSelectedEmployees
+            );
+
             oModel.refresh(true);
           }
-          
+
           this._renewalRequestDialog.close();
           this._currentEmployeeIndex = undefined;
         },
-        onYesMenuItemPress: function(oEvent) {
+        onYesMenuItemPress: function (oEvent) {
           debugger;
           var oBindingContext = this._getCurrentEmployeeBindingContext(oEvent);
           if (oBindingContext) {
             var oModel = this.getModel("employeeRequestView");
-            var aSelectedEmployees = oModel.getProperty("/selectedEmployees") || [];
+            var aSelectedEmployees =
+              oModel.getProperty("/selectedEmployees") || [];
             var sPath = oBindingContext.getPath();
             var iIndex = parseInt(sPath.split("/")[2]);
-            
+
             aSelectedEmployees[iIndex].Renwl = "1";
             aSelectedEmployees[iIndex].Rendc = "";
             oModel.setProperty("/selectedEmployees", aSelectedEmployees);
- 
           }
         },
-        onYesMenuItemChangePress: function(oEvent) {
+        onYesMenuItemChangePress: function (oEvent) {
           debugger;
           var oBindingContext = this._getCurrentEmployeeBindingContext(oEvent);
           if (oBindingContext) {
             var oModel = this.getModel("employeeRequestView");
-            var aSelectedEmployees = oModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
+            var aSelectedEmployees =
+              oModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
             var sPath = oBindingContext.getPath();
             var iIndex = parseInt(sPath.split("/").pop());
-      
+
             if (sPath.includes("/dataList/DocumentRequestEmployeeSet/")) {
               iIndex = parseInt(sPath.substring(sPath.lastIndexOf("/") + 1));
             }
-            
+
             if (aSelectedEmployees[iIndex]) {
               aSelectedEmployees[iIndex].Renwl = "1";
               aSelectedEmployees[iIndex].Rendc = "";
-              oModel.setProperty("/dataList/DocumentRequestEmployeeSet", aSelectedEmployees);
-        
+              oModel.setProperty(
+                "/dataList/DocumentRequestEmployeeSet",
+                aSelectedEmployees
+              );
+
               oModel.refresh(true);
             }
           }
         },
-        onNopeMenuItemChangePress:function(oEvent){
+        onNopeMenuItemChangePress: function (oEvent) {
           debugger;
           var oBindingContext = this._getCurrentEmployeeBindingContext(oEvent);
           if (oBindingContext) {
             var oModel = this.getModel("employeeRequestView");
-            var aSelectedEmployees = oModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
+            var aSelectedEmployees =
+              oModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
             var sPath = oBindingContext.getPath();
             var iIndex = parseInt(sPath.split("/").pop());
-            
+
             if (sPath.includes("/dataList/DocumentRequestEmployeeSet/")) {
               iIndex = parseInt(sPath.substring(sPath.lastIndexOf("/") + 1));
             }
-            
+
             if (aSelectedEmployees[iIndex]) {
               aSelectedEmployees[iIndex].Renwl = "2";
-              oModel.setProperty("/dataList/DocumentRequestEmployeeSet", aSelectedEmployees);
-              
+              oModel.setProperty(
+                "/dataList/DocumentRequestEmployeeSet",
+                aSelectedEmployees
+              );
+
               this._currentEmployeeIndex = iIndex;
-              oModel.setProperty("/currentChangeEmployee", aSelectedEmployees[iIndex]);
-              
+              oModel.setProperty(
+                "/currentChangeEmployee",
+                aSelectedEmployees[iIndex]
+              );
+
               if (!this._renewalRequestDialog) {
                 this._renewalRequestDialog = sap.ui.xmlfragment(
                   "com.bmc.hcm.drf.zhcmuxdrf.fragment.RenewalChangeRequestDialog",
@@ -3307,81 +3677,100 @@ sap.ui.define(
           debugger;
           var oSource = oEvent.getSource();
 
-          var oBindingContext = oSource.getBindingContext("employeeRequestView");
-      
+          var oBindingContext = oSource.getBindingContext(
+            "employeeRequestView"
+          );
+
           if (oBindingContext) {
+            var oRowData = oBindingContext.getObject();
+            this._selectedAttidData = oRowData;
 
-              var oRowData = oBindingContext.getObject();  
-              this._selectedAttidData = oRowData;
-      
-              var Attid = oRowData.Attid;
+            var Attid = oRowData.Attid;
 
-              var oModel = this.getModel();
-              var oUrlPath = oModel.sServiceUrl + "/EmployeeAttachmentSet(Attid=guid'" + Attid + "')/$value";
-      
-              window.open(oUrlPath);
+            var oModel = this.getModel();
+            var oUrlPath =
+              oModel.sServiceUrl +
+              "/EmployeeAttachmentSet(Attid=guid'" +
+              Attid +
+              "')/$value";
+
+            window.open(oUrlPath);
           }
-      },
+        },
         onCloseUploadFormDialog: function () {
           this._documentAddDialog.close();
-        },        
-        onUploadFileChange: function(oEvent) {
+        },
+        onUploadFileChange: function (oEvent) {
           var sFileName = oEvent.getParameter("newValue");
           this._sweetToast("Seçilen dosya: " + sFileName, "I");
         },
-        onCancelUpload: function(oEvent) {
+        onCancelUpload: function (oEvent) {
           this._uploadDocumentDialog.close();
         },
-        
-        onDownloadDocument: function(oEvent) {
+
+        onDownloadDocument: function (oEvent) {
           debugger;
-          var oContext = oEvent.getSource().getBindingContext("employeeRequestView");
+          var oContext = oEvent
+            .getSource()
+            .getBindingContext("employeeRequestView");
           var oDocument = oContext.getObject();
           var oModel = this.getModel();
-          
-          var sDownloadUrl = oModel.sServiceUrl + "/EmployeeAttachmentSet(Attid=guid'" + 
-                            oDocument.Attid + "')/$value";
+
+          var sDownloadUrl =
+            oModel.sServiceUrl +
+            "/EmployeeAttachmentSet(Attid=guid'" +
+            oDocument.Attid +
+            "')/$value";
           window.open(sDownloadUrl, "_blank");
         },
-        
-        onDisplayDocument: function(oEvent) {
+
+        onDisplayDocument: function (oEvent) {
           debugger;
-          var oContext = oEvent.getSource().getBindingContext("employeeRequestView");
+          var oContext = oEvent
+            .getSource()
+            .getBindingContext("employeeRequestView");
           var oDocument = oContext.getObject();
           var oModel = this.getModel();
-          
-          var sDisplayUrl = oModel.sServiceUrl + "/EmployeeAttachmentSet(Attid=guid'" + 
-                           oDocument.Attid + "')/$value";
-          
+
+          var sDisplayUrl =
+            oModel.sServiceUrl +
+            "/EmployeeAttachmentSet(Attid=guid'" +
+            oDocument.Attid +
+            "')/$value";
+
           // PDF Viewer ile aç
           var sTitle = "Belge Görüntüle - " + oDocument.Filename;
           this._callPDFViewer(sDisplayUrl, sTitle);
         },
-        
-        onCloseViewDialog: function(oEvent) {
+
+        onCloseViewDialog: function (oEvent) {
           this._viewDocumentDialog.close();
         },
-        _getCurrentEmployeeBindingContext: function(oEvent) {
+        _getCurrentEmployeeBindingContext: function (oEvent) {
           debugger;
           const oSource = oEvent.getSource();
-          
+
           // Bazen source'un kendisinde binding context olabilir
-          let oBindingContext = oSource.getBindingContext("employeeRequestView");
-          
+          let oBindingContext = oSource.getBindingContext(
+            "employeeRequestView"
+          );
+
           if (!oBindingContext) {
-              // Parent'larda ara
-              let oParent = oSource.getParent();
-              while (oParent && !oBindingContext) {
-                  oBindingContext = oParent.getBindingContext("employeeRequestView");
-                  oParent = oParent.getParent();
-              }
+            // Parent'larda ara
+            let oParent = oSource.getParent();
+            while (oParent && !oBindingContext) {
+              oBindingContext = oParent.getBindingContext(
+                "employeeRequestView"
+              );
+              oParent = oParent.getParent();
+            }
           }
-          
+
           return oBindingContext;
-      },
-        formatRenewalText: function(sRenwl) {
+        },
+        formatRenewalText: function (sRenwl) {
           debugger;
-          switch(sRenwl) {
+          switch (sRenwl) {
             case "1":
               return "Evet";
             case "2":
@@ -3390,250 +3779,293 @@ sap.ui.define(
               return "Seçiniz";
           }
         },
-        onSelectEmployeeFromDialog: function() {
+        onSelectEmployeeFromDialog: function () {
           debugger;
           var oViewModel = this.getView().getModel("employeeRequestView");
           var oTable = sap.ui.core.Fragment.byId(
-              "EmployeeSearchChangeFragment",
-              "idListEmployeeChangeTable"
+            "EmployeeSearchChangeFragment",
+            "idListEmployeeChangeTable"
           );
           if (!oTable) {
-              oTable = this.byId("idListEmployeeChangeTable");
+            oTable = this.byId("idListEmployeeChangeTable");
           }
-          
+
           if (!oTable) {
-              sap.m.MessageToast.show("Tablo bulunamadı");
-              return;
+            sap.m.MessageToast.show("Tablo bulunamadı");
+            return;
           }
-          
+
           var aSelectedItems = oTable.getSelectedItems();
-          
+
           if (aSelectedItems.length === 0) {
-              sap.m.MessageToast.show("Lütfen en az bir personel seçiniz");
-              return;
+            sap.m.MessageToast.show("Lütfen en az bir personel seçiniz");
+            return;
           }
- 
+
           if (aSelectedItems.length > 1) {
-              this._sweetToast(this.getText("SINGLE_EMPLOYEE_ONLY"), "W");
-              return;
+            this._sweetToast(this.getText("SINGLE_EMPLOYEE_ONLY"), "W");
+            return;
           }
-          
-          var aCurrentEmployees = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
+
+          var aCurrentEmployees =
+            oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") ||
+            [];
 
           if (aCurrentEmployees.length > 0) {
-              this._sweetToast(this.getText("EMPLOYEE_ALREADY_EXISTS"), "W");
-              return;
+            this._sweetToast(this.getText("EMPLOYEE_ALREADY_EXISTS"), "W");
+            return;
           }
-          
+
           var aSelectedEmployees = [];
-          var aCurrentSelected = oViewModel.getProperty("/selectedEmployees") || [];
-          
-          aSelectedItems.forEach(function(oItem) {
+          var aCurrentSelected =
+            oViewModel.getProperty("/selectedEmployees") || [];
+
+          aSelectedItems.forEach(
+            function (oItem) {
               var oContext = oItem.getBindingContext("employeeRequestView");
               var oEmployee = oContext.getObject();
-      
-              var bAlreadyExists = aCurrentSelected.some(function(oExisting) {
-                  return oExisting.Pernr === oEmployee.Fldky;
+
+              var bAlreadyExists = aCurrentSelected.some(function (oExisting) {
+                return oExisting.Pernr === oEmployee.Fldky;
               });
-              
+
               if (!bAlreadyExists) {
-                  aSelectedEmployees.push({
-                      Pernr: oEmployee.Fldky,
-                      Ename: oEmployee.Fldvl,
-                      // isNew: true 
-                  });
+                aSelectedEmployees.push({
+                  Pernr: oEmployee.Fldky,
+                  Ename: oEmployee.Fldvl,
+                  // isNew: true
+                });
               }
-          }.bind(this));
-          
+            }.bind(this)
+          );
+
           if (aSelectedEmployees.length === 0) {
-              sap.m.MessageToast.show("Seçilen personel zaten mevcut");
-              return;
+            sap.m.MessageToast.show("Seçilen personel zaten mevcut");
+            return;
           }
-      
+
           var aMergedSelected = aCurrentSelected.concat(aSelectedEmployees);
           oViewModel.setProperty("/selectedEmployees", aMergedSelected);
-          
+
           this._oEmployeeChangeSearchDialog.close();
           oTable.removeSelections();
           this._updateEmployeeTable();
-      },
-        onSaveButtonEmployeeChangePress: function() {
-            var oViewModel = this.getView().getModel("employeeRequestView");
-            
-       
-            var aSelectedEmployees = oViewModel.getProperty("/selectedEmployees") || [];
-            var aNewEmployees = aSelectedEmployees.filter(function(emp) {
-                return emp.isNew === true;
-            });
-            
-            if (aNewEmployees.length === 0) {
-                sap.m.MessageToast.show("Eklenecek yeni personel bulunmamaktadır");
-                return;
-            }
-            
-            var aOriginalEmployees = oViewModel.getProperty("/dataList/_originalDocumentRequestEmployeeSet") || 
-                                     oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
-            
+        },
+        onSaveButtonEmployeeChangePress: function () {
+          var oViewModel = this.getView().getModel("employeeRequestView");
 
-            aNewEmployees.forEach(function(oNewEmployee) {
-          
-                delete oNewEmployee.isNew;
-                aOriginalEmployees.push(oNewEmployee);
-            });
-            
-            oViewModel.setProperty("/dataList/DocumentRequestEmployeeSet", aOriginalEmployees);
-         
-            oViewModel.setProperty("/selectedEmployees", []);
-            oViewModel.setProperty("/dataList/_originalDocumentRequestEmployeeSet", null);
-            
-      
-            sap.m.MessageToast.show(aNewEmployees.length + " personel başarıyla eklendi");
+          var aSelectedEmployees =
+            oViewModel.getProperty("/selectedEmployees") || [];
+          var aNewEmployees = aSelectedEmployees.filter(function (emp) {
+            return emp.isNew === true;
+          });
+
+          if (aNewEmployees.length === 0) {
+            sap.m.MessageToast.show("Eklenecek yeni personel bulunmamaktadır");
+            return;
+          }
+
+          var aOriginalEmployees =
+            oViewModel.getProperty(
+              "/dataList/_originalDocumentRequestEmployeeSet"
+            ) ||
+            oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") ||
+            [];
+
+          aNewEmployees.forEach(function (oNewEmployee) {
+            delete oNewEmployee.isNew;
+            aOriginalEmployees.push(oNewEmployee);
+          });
+
+          oViewModel.setProperty(
+            "/dataList/DocumentRequestEmployeeSet",
+            aOriginalEmployees
+          );
+
+          oViewModel.setProperty("/selectedEmployees", []);
+          oViewModel.setProperty(
+            "/dataList/_originalDocumentRequestEmployeeSet",
+            null
+          );
+
+          sap.m.MessageToast.show(
+            aNewEmployees.length + " personel başarıyla eklendi"
+          );
         },
 
-
-        _updateEmployeeTable: function() {
+        _updateEmployeeTable: function () {
           debugger;
-            var that = this;
-            var oTable = this.byId("idEmployeeRequestChangeTable");
-            var oViewModel = this.getView().getModel("employeeRequestView");
-            var oModel = this.getView().getModel(); 
-            var oFormData = oViewModel.getProperty("/request");
-            if (!oTable) {
-                return;
-            }
-      
-            var aCurrentEmployees = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
-            var aSelectedEmployees = oViewModel.getProperty("/selectedEmployees") || [];
- 
-            var aTempData = aCurrentEmployees.concat(aSelectedEmployees);
-     
-            var aOriginalData = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet");
-            oViewModel.setProperty("/dataList/DocumentRequestEmployeeSet", aTempData);
-            oFormData.DocumentRequestEmployeeSet = aTempData;
-            oFormData.Actio = "SAVE";
-            // oViewModel.setProperty("/dataList/_originalDocumentRequestEmployeeSet", aOriginalData);
-            oModel.create("/DocumentRequestFormSet", oFormData, {
-              success: function(oData) {
-                  that._sweetToast("Personel başarıyla eklendi.", "S");
-                  
-                  // View model'i güncelle
-                  // oViewModel.setProperty("/dataList/DocumentRequestEmployeeSet", oData.DocumentRequestEmployeeSet.results);
-                  oViewModel.setProperty(
-                    "/dataList/DocumentRequestEmployeeSet",
-                    _.cloneDeep(oData.DocumentRequestEmployeeSet.results)
-                  );
-                  // window.location.reload();
-              },
-              error: function(oError) {
-                  console.log("Backend Create Error:", oError);
-                  
-                  that._sweetToast(sErrorMsg, "E");
-              }
+          var that = this;
+          var oTable = this.byId("idEmployeeRequestChangeTable");
+          var oViewModel = this.getView().getModel("employeeRequestView");
+          var oModel = this.getView().getModel();
+          var oFormData = oViewModel.getProperty("/request");
+          if (!oTable) {
+            return;
+          }
+
+          var aCurrentEmployees =
+            oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") ||
+            [];
+          var aSelectedEmployees =
+            oViewModel.getProperty("/selectedEmployees") || [];
+
+          var aTempData = aCurrentEmployees.concat(aSelectedEmployees);
+
+          var aOriginalData = oViewModel.getProperty(
+            "/dataList/DocumentRequestEmployeeSet"
+          );
+          oViewModel.setProperty(
+            "/dataList/DocumentRequestEmployeeSet",
+            aTempData
+          );
+          oFormData.DocumentRequestEmployeeSet = aTempData;
+          oFormData.Actio = "SAVE";
+          // oViewModel.setProperty("/dataList/_originalDocumentRequestEmployeeSet", aOriginalData);
+          oModel.create("/DocumentRequestFormSet", oFormData, {
+            success: function (oData) {
+              that._sweetToast("Personel başarıyla eklendi.", "S");
+
+              // View model'i güncelle
+              // oViewModel.setProperty("/dataList/DocumentRequestEmployeeSet", oData.DocumentRequestEmployeeSet.results);
+              oViewModel.setProperty(
+                "/dataList/DocumentRequestEmployeeSet",
+                _.cloneDeep(oData.DocumentRequestEmployeeSet.results)
+              );
+              // window.location.reload();
+            },
+            error: function (oError) {
+              console.log("Backend Create Error:", oError);
+
+              that._sweetToast(sErrorMsg, "E");
+            },
           });
         },
 
-        onRemoveSelectedChangeEmployee: function(oEvent) {
+        onRemoveSelectedChangeEmployee: function (oEvent) {
           debugger;
-            // var oSource = oEvent.getSource();
-            // var oContext = oSource.getBindingContext("employeeRequestView");
-            // var oEmployee = oContext.getObject();
-            var oViewModel = this.getView().getModel("employeeRequestView");
-            var oModel = this.getView().getModel(); 
-            var oFormData = oViewModel.getProperty("/request");
-            var oRowData = this._selectedRowData;
-            var oViewModel = this.getView().getModel("employeeRequestView");
-            var that = this;
+          // var oSource = oEvent.getSource();
+          // var oContext = oSource.getBindingContext("employeeRequestView");
+          // var oEmployee = oContext.getObject();
+          var oViewModel = this.getView().getModel("employeeRequestView");
+          var oModel = this.getView().getModel();
+          var oFormData = oViewModel.getProperty("/request");
+          var oRowData = this._selectedRowData;
+          var oViewModel = this.getView().getModel("employeeRequestView");
+          var that = this;
 
-            if (!oRowData || !oRowData.Drfid) {
-              this._sweetToast("Personel verisi bulunamadı", "E");
+          if (!oRowData || !oRowData.Drfid) {
+            this._sweetToast("Personel verisi bulunamadı", "E");
+            return;
+          }
+
+          this._refreshPersonelDataBeforeRemove(oRowData.Drfid, function () {
+            var aCurrentEmployees =
+              oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") ||
+              [];
+            var oCurrentEmployee = aCurrentEmployees.find(function (emp) {
+              return emp.Pernr === oRowData.Pernr;
+            });
+
+            if (!oCurrentEmployee) {
+              that._sweetToast("Personel bulunamadı", "E");
               return;
             }
 
-            this._refreshPersonelDataBeforeRemove(oRowData.Drfid, function() {
-              var aCurrentEmployees = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
-              var oCurrentEmployee = aCurrentEmployees.find(function(emp) {
-                return emp.Pernr === oRowData.Pernr;
-              });
+            // if (oCurrentEmployee && oCurrentEmployee.EmployeeAttachmentSet &&
+            //     oCurrentEmployee.EmployeeAttachmentSet.results &&
+            //     oCurrentEmployee.EmployeeAttachmentSet.results.length > 0) {
 
-              if (!oCurrentEmployee) {
-                that._sweetToast("Personel bulunamadı", "E");
-                return;
-              }
+            //   that._sweetToast("Bu personelin evrakları mevcut. Önce evrakları silin, sonra personeli silebilirsiniz.", "W");
+            //   return;
+            // }
+            if (
+              oCurrentEmployee &&
+              oCurrentEmployee.EmployeeAttachmentSet &&
+              oCurrentEmployee.EmployeeAttachmentSet.results &&
+              oCurrentEmployee.EmployeeAttachmentSet.results.length > 0
+            ) {
+              var attachmentsWithAttyp1 =
+                oCurrentEmployee.EmployeeAttachmentSet.results.filter(function (
+                  attachment
+                ) {
+                  return attachment.Attyp === "1";
+                });
 
-              // if (oCurrentEmployee && oCurrentEmployee.EmployeeAttachmentSet && 
-              //     oCurrentEmployee.EmployeeAttachmentSet.results && 
-              //     oCurrentEmployee.EmployeeAttachmentSet.results.length > 0) {
-                
-              //   that._sweetToast("Bu personelin evrakları mevcut. Önce evrakları silin, sonra personeli silebilirsiniz.", "W");
-              //   return;
-              // }
-              if (oCurrentEmployee && oCurrentEmployee.EmployeeAttachmentSet && 
-                oCurrentEmployee.EmployeeAttachmentSet.results && 
-                oCurrentEmployee.EmployeeAttachmentSet.results.length > 0) {
- 
-              var attachmentsWithAttyp1 = oCurrentEmployee.EmployeeAttachmentSet.results.filter(function(attachment) {
-                return attachment.Attyp === "1";
-              });
-              
               if (attachmentsWithAttyp1.length > 0) {
-                that._sweetToast("Bu personelin evrakları mevcut. Önce evrakları silin, sonra personeli silebilirsiniz.", "W");
+                that._sweetToast(
+                  "Bu personelin evrakları mevcut. Önce evrakları silin, sonra personeli silebilirsiniz.",
+                  "W"
+                );
                 return;
               }
             }
 
-              var aSelectedEmployees = oViewModel.getProperty("/selectedEmployees") || [];
-              var bIsNewEmployee = aSelectedEmployees.some(function(emp) {
-                  return emp.Pernr === oRowData.Pernr && emp.isNew === true;
-              });
-              
-              that._removeFromBackendData(oFormData,oRowData);
+            var aSelectedEmployees =
+              oViewModel.getProperty("/selectedEmployees") || [];
+            var bIsNewEmployee = aSelectedEmployees.some(function (emp) {
+              return emp.Pernr === oRowData.Pernr && emp.isNew === true;
             });
+
+            that._removeFromBackendData(oFormData, oRowData);
+          });
         },
-      
-        _removeFromBackendData: function(oFormData, oRowData) {
-        debugger;
-        var oViewModel = this.getView().getModel("employeeRequestView");
-        var oModel = this.getView().getModel(); 
-        var that = this;
-    
-        var aCurrentEmployees = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
 
-        var aUpdatedEmployees = aCurrentEmployees.filter(function(emp) {
+        _removeFromBackendData: function (oFormData, oRowData) {
+          debugger;
+          var oViewModel = this.getView().getModel("employeeRequestView");
+          var oModel = this.getView().getModel();
+          var that = this;
+
+          var aCurrentEmployees =
+            oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") ||
+            [];
+
+          var aUpdatedEmployees = aCurrentEmployees.filter(function (emp) {
             return emp.Pernr !== oRowData.Pernr;
-        });
-        oViewModel.setProperty("/dataList/DocumentRequestEmployeeSet", aUpdatedEmployees);
+          });
+          oViewModel.setProperty(
+            "/dataList/DocumentRequestEmployeeSet",
+            aUpdatedEmployees
+          );
 
-        var aCurrentEmployeesNew = oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") || [];
+          var aCurrentEmployeesNew =
+            oViewModel.getProperty("/dataList/DocumentRequestEmployeeSet") ||
+            [];
 
-        var aEmployeeChangeIds = aCurrentEmployeesNew.map(function (oEmployee) {
-          return {
-            Pernr: oEmployee.Pernr,
-            Drfid: oEmployee.Drfid,
-            Drfno: oEmployee.Drfno,
-            Renwl: oEmployee.Renwl || "", 
-            Rendc: oEmployee.Rendc || "", 
-            Drfrs: oEmployee.Drfrs || "" 
-          };
-        });
-        oFormData.DocumentRequestEmployeeSet = aEmployeeChangeIds;
-        oFormData.Actio = "SAVE";
-    
-        oModel.create("/DocumentRequestFormSet", oFormData, {
-            success: function(oData) {
-                that._sweetToast("Personel başarıyla silindi.", "S");
-                
-                // View model'i güncelle
-                oViewModel.setProperty("/dataList/DocumentRequestEmployeeSet", aUpdatedEmployees);
+          var aEmployeeChangeIds = aCurrentEmployeesNew.map(function (
+            oEmployee
+          ) {
+            return {
+              Pernr: oEmployee.Pernr,
+              Drfid: oEmployee.Drfid,
+              Drfno: oEmployee.Drfno,
+              Renwl: oEmployee.Renwl || "",
+              Rendc: oEmployee.Rendc || "",
+              Drfrs: oEmployee.Drfrs || "",
+            };
+          });
+          oFormData.DocumentRequestEmployeeSet = aEmployeeChangeIds;
+          oFormData.Actio = "SAVE";
+
+          oModel.create("/DocumentRequestFormSet", oFormData, {
+            success: function (oData) {
+              that._sweetToast("Personel başarıyla silindi.", "S");
+
+              // View model'i güncelle
+              oViewModel.setProperty(
+                "/dataList/DocumentRequestEmployeeSet",
+                aUpdatedEmployees
+              );
             },
-            error: function(oError) {
-                console.log("Backend Create Error:", oError);
-                
-                that._sweetToast(sErrorMsg, "E");
-            }
-        });
-    },
-      
-      
+            error: function (oError) {
+              console.log("Backend Create Error:", oError);
+
+              that._sweetToast(sErrorMsg, "E");
+            },
+          });
+        },
+
         _callPDFViewer: function (sPath, sTitle) {
           /*this._pdfViewerDialog = sap.ui.xmlfragment(
             "com.bmc.hcm.erf.fragment.PDFViewer",
@@ -3645,24 +4077,94 @@ sap.ui.define(
           this._pdfViewerDialog.setTitle(sTitle);
           this._pdfViewerDialog.open();*/
           var oDevice = this.getModel("device").getData();
-    
-          
-          if(oDevice.browser.name === "cr" && oDevice.system.desktop){
+
+          if (oDevice.browser.name === "cr" && oDevice.system.desktop) {
             var oPDFViewer = new sap.m.PDFViewer();
             oPDFViewer.setSource(sPath);
             oPDFViewer.setTitle(sTitle);
-            oPDFViewer.open();	
-          }else{
+            oPDFViewer.open();
+          } else {
             sap.m.URLHelper.redirect(sPath, true);
           }
-          
         },
-        onDocumentTypeSelectionChange: function(oEvent) {
+        // onDocumentTypeSelectionChange: function(oEvent) {
+        //   debugger;
+        //   var oModel = this.getModel();
+        //   var oComboBox = oEvent.getSource();
+        //   var sSelectedKey = oComboBox.getSelectedKey();
+        //   var sSelectedText = oComboBox.getSelectedItem() ? oComboBox.getSelectedItem().getText() : "";
+        //   var oViewModel = this.getModel("employeeRequestView");
+        //   var that = this;
+
+        //   if (!sSelectedKey) {
+        //     oViewModel.setProperty("/selectedDocumentType", "");
+        //     oViewModel.setProperty("/selectedDocumentTypeText", "");
+        //     return;
+        //   }
+
+        //   var sPath = "/DocumentInfoOperationSet(Zevrt='" + sSelectedKey + "')";
+        //   console.log("sSelectedKey:", sSelectedKey);
+        //   console.log("sPath:", sPath);
+
+        //   oModel.read(sPath, {
+        //     // filters: aFilters,
+        //     success: function(oData) {
+
+        //       var oTable = sap.ui.getCore().byId("idCandidateAttachmentList");
+        //       if (oTable) {
+        //         var aItems = oTable.getItems();
+        //         var bDocumentExists = false;
+
+        //         for (var i = 0; i < aItems.length; i++) {
+        //           var oContext = aItems[i].getBindingContext();
+        //           if (oContext) {
+        //             var oData = oContext.getObject();
+        //             if (oData.Zevrt === sSelectedKey) {
+        //               bDocumentExists = true;
+
+        //               break;
+        //             }
+        //           }
+        //         }
+
+        //         if (bDocumentExists) {
+        //           sap.m.MessageBox.warning(
+        //             "Bu evrak türü (" + sSelectedText + ") zaten yüklü. Farklı bir evrak türü seçiniz.",
+        //             {
+        //               title: "Evrak Türü Uyarısı",
+        //               actions: [sap.m.MessageBox.Action.OK],
+        //               onClose: function() {
+        //                 // ComboBox'ı temizle
+        //                 oComboBox.setSelectedKey("");
+        //                 oViewModel.setProperty("/selectedDocumentType", "");
+        //                 oViewModel.setProperty("/selectedDocumentTypeText", "");
+        //               }
+        //             }
+        //           );
+        //           return;
+        //         }
+        //       }
+        //       oViewModel.setProperty("/downloadButtonVisible", true);
+        //       oViewModel.setProperty("/selectedDocumentType", sSelectedKey);
+        //       oViewModel.setProperty("/selectedDocumentTypeText", sSelectedText);
+        //     },
+        //     error: function(oError) {
+        //       that._sweetToast("Bu evrak türü için şablon mevcut değil.", "W");
+        //       oViewModel.setProperty("/downloadButtonVisible", false);
+        //       // oComboBox.setSelectedKey("");
+        //       // oViewModel.setProperty("/selectedDocumentType", "");
+        //       // oViewModel.setProperty("/selectedDocumentTypeText", "");
+        //     }
+        //   });
+        // },
+        onDocumentTypeSelectionChange: function (oEvent) {
           debugger;
           var oModel = this.getModel();
           var oComboBox = oEvent.getSource();
           var sSelectedKey = oComboBox.getSelectedKey();
-          var sSelectedText = oComboBox.getSelectedItem() ? oComboBox.getSelectedItem().getText() : "";
+          var sSelectedText = oComboBox.getSelectedItem()
+            ? oComboBox.getSelectedItem().getText()
+            : "";
           var oViewModel = this.getModel("employeeRequestView");
           var that = this;
 
@@ -3672,76 +4174,90 @@ sap.ui.define(
             return;
           }
 
+          var oTable = sap.ui.getCore().byId("idCandidateAttachmentList");
+          var bDocumentExists = false;
 
-          var sPath = "/DocumentInfoOperationSet(Zevrt='" + sSelectedKey + "')";
-          console.log("sSelectedKey:", sSelectedKey);
-          console.log("sPath:", sPath);
-
-          oModel.read(sPath, {
-            // filters: aFilters,
-            success: function(oData) {
-            
-              var oTable = sap.ui.getCore().byId("idCandidateAttachmentList");
-              if (oTable) {
-                var aItems = oTable.getItems();
-                var bDocumentExists = false;
-                
-                for (var i = 0; i < aItems.length; i++) {
-                  var oContext = aItems[i].getBindingContext();
-                  if (oContext) {
-                    var oData = oContext.getObject();
-                    if (oData.Zevrt === sSelectedKey) {
-                      bDocumentExists = true;
-                 
-                      break;
-                    }
-                  }
-                }
-                
-                if (bDocumentExists) {
-                  sap.m.MessageBox.warning(
-                    "Bu evrak türü (" + sSelectedText + ") zaten yüklü. Farklı bir evrak türü seçiniz.",
-                    {
-                      title: "Evrak Türü Uyarısı",
-                      actions: [sap.m.MessageBox.Action.OK],
-                      onClose: function() {
-                        // ComboBox'ı temizle
-                        oComboBox.setSelectedKey("");
-                        oViewModel.setProperty("/selectedDocumentType", "");
-                        oViewModel.setProperty("/selectedDocumentTypeText", "");
-                      }
-                    }
-                  );
-                  return;
+          if (oTable) {
+            var aItems = oTable.getItems();
+            for (var i = 0; i < aItems.length; i++) {
+              var oContext = aItems[i].getBindingContext();
+              if (oContext) {
+                var oItemData = oContext.getObject();
+                if (oItemData.Zevrt === sSelectedKey) {
+                  bDocumentExists = true;
+                  break;
                 }
               }
+            }
+          }
+
+          if (bDocumentExists) {
+            sap.m.MessageBox.warning(
+              "Bu evrak türü (" +
+                sSelectedText +
+                ") zaten yüklü. Farklı bir evrak türü seçiniz.",
+              {
+                title: "Evrak Türü Uyarısı",
+                actions: [sap.m.MessageBox.Action.OK],
+                onClose: function () {
+                  oComboBox.setSelectedKey("");
+                  oViewModel.setProperty("/selectedDocumentType", "");
+                  oViewModel.setProperty("/selectedDocumentTypeText", "");
+                },
+              }
+            );
+            return;
+          }
+
+          var sPath = "/DocumentInfoOperationSet(Zevrt='" + sSelectedKey + "')";
+
+          oModel.read(sPath, {
+            success: function (oData) {
+              console.log("Template available for:", sSelectedKey);
               oViewModel.setProperty("/downloadButtonVisible", true);
               oViewModel.setProperty("/selectedDocumentType", sSelectedKey);
-              oViewModel.setProperty("/selectedDocumentTypeText", sSelectedText);
+              oViewModel.setProperty(
+                "/selectedDocumentTypeText",
+                sSelectedText
+              );
             },
-            error: function(oError) {
-              that._sweetToast("Bu evrak türü için PDF indirme mevcut değil.", "W");
-              // oComboBox.setSelectedKey("");
-              // oViewModel.setProperty("/selectedDocumentType", "");
-              // oViewModel.setProperty("/selectedDocumentTypeText", "");
-            }
+            error: function (oError) {
+              console.log("No template available for:", sSelectedKey);
+              that._sweetToast(
+                "Bu evrak türü için şablon mevcut değil, ancak evrak yükleyebilirsiniz.",
+                "I"
+              );
+              oViewModel.setProperty("/downloadButtonVisible", false);
+              oViewModel.setProperty("/selectedDocumentType", sSelectedKey);
+              oViewModel.setProperty(
+                "/selectedDocumentTypeText",
+                sSelectedText
+              );
+            },
           });
         },
 
-        onPdfDowlandPress: function(oEvent) {
+        onPdfDowlandPress: function (oEvent) {
           debugger;
           var oViewModel = this.getModel("employeeRequestView");
-          var sSelectedDocumentType = oViewModel.getProperty("/selectedDocumentType");
-          var sSelectedDocumentTypeText = oViewModel.getProperty("/selectedDocumentTypeText");
-          
+          var sSelectedDocumentType = oViewModel.getProperty(
+            "/selectedDocumentType"
+          );
+          var sSelectedDocumentTypeText = oViewModel.getProperty(
+            "/selectedDocumentTypeText"
+          );
+
           if (!sSelectedDocumentType) {
             this._sweetToast("Lütfen önce bir evrak türü seçiniz.", "W");
             return;
           }
 
-          var sPath = "/sap/opu/odata/sap/ZHCM_UX_DRF_SRV/DocumentInfoSet(Zevrt='" + sSelectedDocumentType + "')/$value";
+          var sPath =
+            "/sap/opu/odata/sap/ZHCM_UX_DRF_SRV/DocumentInfoSet(Zevrt='" +
+            sSelectedDocumentType +
+            "')/$value";
           var sTitle = "Evrak: " + sSelectedDocumentTypeText;
-          
+
           this._callPDFViewer(sPath, sTitle);
         },
         onMessagePress: function (oEvent) {
@@ -3752,58 +4268,95 @@ sap.ui.define(
           var oModel = this.getModel();
           var oThis = this;
           var oViewModel = this.getModel("employeeRequestView");
-          var Attid = oEvent.getSource().getBindingContext().getProperty("Attid");
+          var Attid = oEvent
+            .getSource()
+            .getBindingContext()
+            .getProperty("Attid");
           var sPath = "/EmployeeAttachmentSet(Attid=guid'" + Attid + "')";
           var _doDeleteAttachment = function () {
             var oMessageModel = oMessagePopover.getModel();
             var oMessageData = {};
             oMessageModel.setData(oMessageData);
             oViewModel.setProperty("/busy", true);
-    
+
             oModel.remove(sPath, {
               success: function (oData, oResponse) {
                 if (oResponse["headers"]["message"]) {
                   oThis._callMessageToast("Evrak silinirken hata", "E");
                 } else {
                   oThis._callMessageToast("Evrak başarıyla silindi", "S");
+                  oThis._documentAddDialog.close();
                 }
                 oViewModel.setProperty("/busy", false);
               },
-              error: function (oError) {
-    
-              }
+              error: function (oError) {},
             });
-    
           };
           var oBeginButtonProp = {
             text: this.getText("DELETE"),
             type: "Reject",
             icon: "sap-icon://delete",
-            onPressed: _doDeleteAttachment
-    
+            onPressed: _doDeleteAttachment,
           };
-    
-          this._callConfirmDialog(this.getText("CONFIRMATION_REQUIRED"), "Message", "Warning", this.getText("CONFIRM_DELETION"),
-            oBeginButtonProp, null).open();
+
+          this._callConfirmDialog(
+            this.getText("CONFIRMATION_REQUIRED"),
+            "Message",
+            "Warning",
+            this.getText("CONFIRM_DELETION"),
+            oBeginButtonProp,
+            null
+          ).open();
         },
-        
+
         /**
          * Updates application settings from SharedData to the view model
          * @private
          */
-        _updateApplicationSettings: function() {
+        _updateApplicationSettings: function () {
           var oViewModel = this.getModel("employeeRequestView");
           var oApplicationSettings = SharedData.getApplicationSettings();
-          
+
           if (oApplicationSettings) {
             oViewModel.setProperty("/applicationSettings", {
               DisplayMode: oApplicationSettings.DisplayMode || false,
               Edit: oApplicationSettings.Edit || false,
-              CallerRole: oApplicationSettings.CallerRole || null
+              CallerRole: oApplicationSettings.CallerRole || null,
             });
           }
         },
-      });
-      
+        onLiveSearchPersonnel: function (oEvent) {
+          debugger;
+          var oTable = sap.ui.core.Fragment.byId(
+            "EmployeeSearchFragment",
+            "idListEmployeeTable"
+          );
+          if (!oTable) return;
+
+          var sQuery = oEvent.getParameter("newValue");
+          this._filterTable(oTable, sQuery);
+        },
+        _filterTable: function (oTable, sQuery) {
+          var aFilters = [];
+
+          if (sQuery && sQuery.length > 0) {
+            aFilters.push(new Filter("Fldvl", FilterOperator.Contains, sQuery));
+          }
+
+          oTable.getBinding("items").filter(aFilters, "Application");
+        },
+        onLiveSearchEmployeeChange: function (oEvent) {
+          debugger;
+          var oTable = sap.ui.core.Fragment.byId(
+            "EmployeeSearchChangeFragment",
+            "idListEmployeeChangeTable"
+          );
+          if (!oTable) return;
+
+          var sQuery = oEvent.getParameter("newValue");
+          this._filterTable(oTable, sQuery);
+        },
+      }
+    );
   }
 );

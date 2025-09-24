@@ -53,7 +53,7 @@
 							<Text text="{i18n>REQUEST_OWNER}"/>
 						</Column>
 						<Column id="idRequiredQualificationColumn5" minScreenWidth="Desktop">
-							<Text text="{i18n>EMPLOYEE_NUMBER}"/>
+							<Text text="{i18n>PERSONNEL_NO}"/>
 						</Column>
 						<Column id="idRequiredQualificationColumn6" minScreenWidth="Desktop">
 							<Text text="{i18n>PERSONNEL_NAME_COL}"/>

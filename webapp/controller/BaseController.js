@@ -153,8 +153,8 @@ sap.ui.define([
 					sIcon = "info";
 			}
 			var Toast = Swal.mixin({
-				toast: true,
-				position: "bottom-end",
+				// toast: true,
+				position: "center",
 				showConfirmButton: false,
 				timer: 3000,
 				timerProgressBar: true,
@@ -1048,14 +1048,33 @@ pointer-events: none !important;
 
 						if (sStatusChange) {
 							oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
-							setTimeout(function() {
-								oThis.getRouter().navTo("mngrequestlist");
-							  }, 3000);
+							var oApplicationSettings = SharedData.getApplicationSettings();
+							if (oApplicationSettings.CallerRole === "MANAGER") {
+								setTimeout(function() {
+									oThis.getRouter().navTo("mngrequestlist");
+								}, 3000);
+
+							} else if (oApplicationSettings.CallerRole === "APPROVER") {
+								setTimeout(function() {
+									oThis.getRouter().navTo("approvallist");
+								}, 3000);
+							}
+							// oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+							// setTimeout(function() {
+							// 	oThis.getRouter().navTo("mngrequestlist");
+							//   }, 3000);
 						} else {
 							oThis._sweetToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
-							setTimeout(function() {
-								oThis.getRouter().navTo("mngrequestlist");
-							  }, 3000);
+							var oApplicationSettings = SharedData.getApplicationSettings();
+							if (oApplicationSettings.CallerRole === "MANAGER") {
+								setTimeout(function() {
+									oThis.getRouter().navTo("mngrequestlist");
+								}, 3000);
+							} else if (oApplicationSettings.CallerRole === "APPROVER") {
+								setTimeout(function() {
+									oThis.getRouter().navTo("approvallist");
+								}, 3000);
+							}	
 						}
 
 						if (sNavBack) {
@@ -1076,15 +1095,31 @@ pointer-events: none !important;
 						oThis._closeBusyFragment();
 						if (sStatusChange) {
 							oThis._sweetToast(oThis.getText("FORM_STATUS_CHANGE_SUCCESSFUL"), "S");
+							var oApplicationSettings = SharedData.getApplicationSettings();
+							if (oApplicationSettings.CallerRole === "MANAGER") {
 							setTimeout(function() {
-								oThis.getRouter().navTo("mngrequestlist");
-							  }, 3000);
+									oThis.getRouter().navTo("mngrequestlist");
+								}, 3000);
+
+							} else if (oApplicationSettings.CallerRole === "APPROVER") {
+								setTimeout(function() {
+									oThis.getRouter().navTo("approvallist");
+								}, 3000);
+							}
 						} else {
 							oThis._sweetToast(oThis.getText("FORM_SAVE_SUCCESSFUL"), "S");
-							setTimeout(function() {
-								oThis.getRouter().navTo("mngrequestlist");
-							  }, 3000);
-						}
+							var oApplicationSettings = SharedData.getApplicationSettings();
+							if (oApplicationSettings.CallerRole === "MANAGER") {
+								setTimeout(function() {
+									oThis.getRouter().navTo("mngrequestlist");
+								}, 3000);
+							} else if (oApplicationSettings.CallerRole === "APPROVER") {
+								setTimeout(function() {
+									oThis.getRouter().navTo("approvallist");
+								}, 3000);
+							}
+						}		
+						
 						if (sNavBack) {
 							oThis.goBack(History);
 						}

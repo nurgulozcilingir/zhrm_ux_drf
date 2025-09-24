@@ -3,7 +3,7 @@
 	xmlns:cd="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 	<ActionSheet title="{i18n>DOCUMENT_ACTIONS}" placement="Bottom">
 		<buttons>
-			<Button text="{i18n>EVRAK_UPLOAD}" icon="sap-icon://upload" type="Emphasized" press="onAddDocument" />
+			<Button text="{i18n>EVRAK_UPLOAD}" icon="sap-icon://upload" type="Emphasized" press="onAddDocument" visible="{= !${employeeRequestView>/applicationSettings/VisibleMode}}" />
 			<Button text="{i18n>DOCUMENT_UPLOAD_ACTION}" icon="sap-icon://add-document" type="Default" press="onUploadDocument"  visible="{= ${employeeRequestView>/request/Drfst} === '030' }" />
 			<Button text="{i18n>DOCUMENT_VIEW}" icon="sap-icon://document" type="Transparent" press="onViewDocument" visible="{= ${employeeRequestView>/request/Drfst} === '030' }" />
 			<Button icon="sap-icon://delete" type="Reject" press="onRemoveSelectedChangeEmployee" text="{i18n>REMOVE_PERSONNEL}" cd:employeeId="{employeeRequestView>Pernr}" cd:employeeName="{employeeRequestView>Ename}" enabled="{= !${employeeRequestView>/applicationSettings/DisplayMode}}"/>

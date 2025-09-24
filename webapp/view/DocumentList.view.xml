@@ -48,7 +48,7 @@
                                     <Text text="{i18n>PERSONNEL_NO}" />
                                 </Column>
                                 <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
-                                    <Text text="Personel Adı Soyadı" />
+                                    <Text text="Çalışan Adı Soyadı" />
                                 </Column>
                                 <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
                                     <Text text="Pozisyon" />

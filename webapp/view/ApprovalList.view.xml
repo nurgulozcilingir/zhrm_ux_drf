@@ -49,7 +49,7 @@
 									<Text text="{i18n>REQUEST_STATUS}"/>
 								</Column>
 								<Column id="idRequestPernrColumn" minScreenWidth="Tablet" demandPopin="true">
-									<Text text="{i18n>EMPLOYEE_NUMBER}"/>
+									<Text text="{i18n>PERSONNEL_NO}"/>
 								</Column>
 								<Column id="idRequestEnameColumn" minScreenWidth="Tablet" demandPopin="true">
 									<Text text="{i18n>PERSONNEL_NAME_COL}"/>
