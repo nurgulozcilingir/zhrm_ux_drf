@@ -8,11 +8,10 @@
     "sapui5"
   ],
   "main": "webapp/index.html",
-  "dependencies": {},
   "devDependencies": {
-    "@ui5/cli": "^3.0.0",
+    "@sap-ux/ui5-middleware-fe-mockserver": "2",
     "@sap/ux-ui5-tooling": "1",
-    "@sap-ux/ui5-middleware-fe-mockserver": "2"
+    "@ui5/cli": "^3.11.11"
   },
   "scripts": {
     "start": "fiori run --open \"test/flpSandbox.html?sap-client=100&sap-ui-xx-viewCache=false#combmchcmdrfzhcmuxdrf-display\"",
@@ -24,9 +23,11 @@
     "start-mock": "fiori run --config ./ui5-mock.yaml --open \"test/flpSandbox.html?sap-client=100&sap-ui-xx-viewCache=false#combmchcmdrfzhcmuxdrf-display\"",
     "start-variants-management": "fiori run --open \"preview.html?&sap-client=100&sap-ui-xx-viewCache=false&fiori-tools-rta-mode=true&sap-ui-rta-skip-flex-validation=true#preview-app\"",
     "unit-tests": "fiori run --config ./ui5-mock.yaml --open 'test/unit/unitTests.qunit.html'",
-    "upload":"npm run build && npx nwabap upload",
+    "upload": "npm run build && npx nwabap upload",
     "int-tests": "fiori run --config ./ui5-mock.yaml --open 'test/integration/opaTests.qunit.html'"
-    
   },
-  "sapuxLayer": "CUSTOMER_BASE"
+  "sapuxLayer": "CUSTOMER_BASE",
+  "dependencies": {
+    "npm": "^11.6.1"
+  }
 }

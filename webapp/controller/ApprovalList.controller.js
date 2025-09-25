@@ -128,7 +128,9 @@ sap.ui.define([
 			if (sDrfso === "K01") {
 				oApplicationSettings.DisplayMode = false;
 			}
-
+			else{
+				oApplicationSettings.DisplayMode = true;
+			}
 			oApplicationSettings.CurrentDrfso = sDrfso;
 			SharedData.setApplicationSettings(oApplicationSettings);
 			SharedData.setCurrentRequest(oData);
@@ -153,6 +155,7 @@ sap.ui.define([
 			var Drfso = getBindingContext.getProperty("Drfso");
 			if (Drfso === "K01") {
 				oApplicationSettings.DisplayMode = false;
+				
 			}
 			SharedData.setApplicationSettings(oApplicationSettings);
 			SharedData.setCurrentRequest(oData);

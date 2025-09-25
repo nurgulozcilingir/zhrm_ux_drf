@@ -102,7 +102,7 @@
                             <core:Item key="{Fldky}" text="{Fldvl}"/>
                         </ComboBox>
                         <!-- <Button icon="sap-icon://delete" type="Reject" press="onRemoveSelectedChangeEmployee" tooltip="{i18n>REMOVE_PERSONNEL}" cd:employeeId="{employeeRequestView>Pernr}" cd:employeeName="{employeeRequestView>Ename}"/> -->
-                        <Button icon="sap-icon://menu" type="Accept" press="onShowRequestActions" tooltip="{i18n>ACTION_LIST}" class="erfActionButton"></Button>
+                        <Button icon="sap-icon://menu" type="Accept" press="onShowRequestActions" tooltip="{i18n>ACTION_LIST}" class="erfActionButton" enabled="{= !${employeeRequestView>/applicationSettings/DisplayMode}}"></Button>
                     </cells>
                 </ColumnListItem>
             </items>
